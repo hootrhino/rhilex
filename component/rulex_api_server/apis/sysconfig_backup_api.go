@@ -25,7 +25,7 @@ func DownloadSqlite(c *gin.Context, ruleEngine typex.RuleX) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	fileName := "rulex.db"
+	fileName := "rhilex.db"
 	dir := wd
 	c.Writer.WriteHeader(http.StatusOK)
 	c.FileAttachment(fmt.Sprintf("%s/%s", dir, fileName),

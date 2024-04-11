@@ -24,7 +24,7 @@ const (
 	// Rulex 工作目录
 	MainWorkDir = "/usr/local"
 	// RULEX 的配置数据库
-	RunDbPath = "/usr/local/rulex.db"
+	RunDbPath = "/usr/local/rhilex.db"
 	// 固件保存路径
 	FirmwarePath = "/usr/local/upload/Firmware/Firmware.zip"
 	// 升级日志
