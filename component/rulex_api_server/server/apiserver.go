@@ -276,10 +276,10 @@ func initStaticModel() {
 	// 初始化一个用户
 	service.InitMUser(
 		&model.MUser{
-			Role:        "DefaultAdmin",
-			Username:    "hootrhino",
+			Role:        "RhilexAdmin",
+			Username:    "rhilex",
 			Password:    "25d55ad283aa400af464c76d713c07ad", //12345678
-			Description: "Default Rulex Admin User",
+			Description: "Default Rhilex Admin",
 		},
 	)
 }
