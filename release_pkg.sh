@@ -125,7 +125,7 @@ calculate_and_save_md5() {
 
 fetch_dashboard() {
     local owner="hootrhino"
-    local repo="hootrhino-eekit-web"
+    local repo="rhilex-web"
 
     # 检查当前目录是否已经存在 www.zip 文件
     if [ -f "www.zip" ]; then
