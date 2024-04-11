@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/hootrhino/rulex/rulexlib"
+	"github.com/hootrhino/rhilex/rulexlib"
 
 	"testing"
 )

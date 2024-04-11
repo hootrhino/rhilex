@@ -19,8 +19,8 @@ import (
 	"encoding/json"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/component/datacenter"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/datacenter"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

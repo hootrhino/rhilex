@@ -1,6 +1,6 @@
 #! /bin/bash
 set -e
-APP=rulex
+APP=rhilex
 RESPOSITORY="https://github.com/hootrhino"
 
 #

@@ -3,7 +3,7 @@ package intermetric
 import (
 	"math"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var __DefaultInternalMetric *InternalMetric

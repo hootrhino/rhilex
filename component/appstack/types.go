@@ -15,7 +15,7 @@
 
 package appstack
 
-import "github.com/hootrhino/rulex/typex"
+import "github.com/hootrhino/rhilex/typex"
 
 /*
 *

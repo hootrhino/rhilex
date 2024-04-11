@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 	modbus "github.com/wwhai/gomodbus"
 )
 

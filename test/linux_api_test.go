@@ -1,7 +1,7 @@
 package test
 
 import (
-	// "github.com/hootrhino/rulex/utils"
+	// "github.com/hootrhino/rhilex/utils"
 
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 /*
 *
 * 测试UnixAPI
-* go test -timeout 30s -run ^Test_unix_InotifyInit1$ github.com/hootrhino/rulex/test -v -count=1
+* go test -timeout 30s -run ^Test_unix_InotifyInit1$ github.com/hootrhino/rhilex/test -v -count=1
 *
  */
 // func Test_unix_InotifyInit1(t *testing.T) {
@@ -71,7 +71,7 @@ import (
 // 	}
 // }
 
-// go test -timeout 30s -run ^Test_Cgo_ReleaseInfo github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Cgo_ReleaseInfo github.com/hootrhino/rhilex/test -v -count=1
 func Test_Cgo_ReleaseInfo(t *testing.T) {
 
 	//t.Log("Test_Cgo_ReleaseInfo=>", (utils.ReleaseInfo()))

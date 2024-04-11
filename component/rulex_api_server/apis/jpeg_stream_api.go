@@ -17,10 +17,10 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/hootrhino/rulex/component/jpegstream"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/component/jpegstream"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type JpegStreamVo struct {

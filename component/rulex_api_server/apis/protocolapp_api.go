@@ -2,7 +2,7 @@ package apis
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

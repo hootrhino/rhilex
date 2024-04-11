@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hootrhino/rulex/component/intermetric"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/intermetric"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var DefaultDataCacheQueue XQueue

@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var __HwPortsManager *HwPortsManager

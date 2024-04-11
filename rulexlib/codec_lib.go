@@ -3,7 +3,7 @@ package rulexlib
 import (
 	"reflect"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 
 	lua "github.com/hootrhino/gopher-lua"
 )

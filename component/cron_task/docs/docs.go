@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "API Support",
-            "url": "https://github.com/hootrhino/rulex"
+            "url": "https://github.com/hootrhino/rhilex"
         },
         "version": "{{.Version}}"
     },

@@ -18,7 +18,7 @@ package iotschema
 import (
 	"fmt"
 
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type IoTPropertyType string
@@ -204,7 +204,6 @@ func (V IoTProperty) ValidateType() error {
 	default:
 		return fmt.Errorf("Unknown And Invalid IoT Property Type:%v", V.Type)
 	}
-	return nil
 }
 
 /*
@@ -231,11 +230,11 @@ func (S StringRule) Validate(Value interface{}) error {
 	case string:
 		L := len(SV)
 		if L >= S.MaxLength {
-			return fmt.Errorf("Value exceed Max Length:", L)
+			return fmt.Errorf("Value exceed Max Length:%d", L)
 		}
 	default:
 		{
-			return fmt.Errorf("Invalid Value type, Expect UTF8 string:", SV)
+			return fmt.Errorf("Invalid Value type, Expect UTF8 string:%s", SV)
 		}
 	}
 	return nil

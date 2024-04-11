@@ -19,11 +19,11 @@ import (
 	"encoding/json"
 	"runtime"
 
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/ossupport"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"go.bug.st/serial"
 )
 

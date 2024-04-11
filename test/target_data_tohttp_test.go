@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/go-playground/assert/v2"
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var _DataToHttp_luaCase = `function Main(arg) for i = 1, 3, 1 do local err = applib:DataToHttp('httpServer',applib:T2J({temp = 20,humi = 13.45})) applib:log('result =>') time:Sleep(100) end return 0 end`

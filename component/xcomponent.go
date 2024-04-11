@@ -16,7 +16,7 @@
 package component
 
 import (
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 type XComponentMetaInfo struct {

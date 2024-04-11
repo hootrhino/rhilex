@@ -1,13 +1,13 @@
 package test
 
 import (
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/glogger"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/glogger"
 
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func Test_Generic_snmp_device(t *testing.T) {

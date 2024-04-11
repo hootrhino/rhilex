@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 	"github.com/mitchellh/go-homedir"
 	"golang.org/x/crypto/ssh"
 )

@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/device"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/device"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func Test_Generic_opcua_device(t *testing.T) {

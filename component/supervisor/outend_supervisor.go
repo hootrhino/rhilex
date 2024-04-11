@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hootrhino/rulex/component/internotify"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/internotify"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func StartOutSupervisor(ctx context.Context, out *typex.OutEnd, ruleEngine typex.RuleX) {

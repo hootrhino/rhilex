@@ -6,7 +6,7 @@ import (
 	"runtime"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // lua 虚拟机的参数

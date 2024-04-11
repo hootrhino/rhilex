@@ -4,7 +4,7 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 	"gopkg.in/ini.v1"
 )
 

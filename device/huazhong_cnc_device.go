@@ -19,13 +19,13 @@ import (
 	"context"
 	"time"
 
-	hnc8cache "github.com/hootrhino/rulex/component/intercache/hnccnc"
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/component/iotschema"
+	hnc8cache "github.com/hootrhino/rhilex/component/intercache/hnccnc"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/component/iotschema"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 /*

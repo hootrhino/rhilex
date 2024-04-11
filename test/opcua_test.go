@@ -7,7 +7,7 @@ import (
 	"github.com/gopcua/opcua"
 	"github.com/gopcua/opcua/ua"
 	"github.com/gopcua/opcua/uacp"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 )
 
 func Test_opcua_read(t *testing.T) {
@@ -16,11 +16,11 @@ func Test_opcua_read(t *testing.T) {
 	startClient(ctx)
 }
 func startClient(ctx context.Context) {
-	c := opcua.NewClient("opc.tcp://localhost:4840/foo/bar", opcua.SecurityMode(ua.MessageSecurityModeNone))
+	c, _ := opcua.NewClient("opc.tcp://localhost:4840/foo/bar")
 	if err := c.Connect(ctx); err != nil {
 		glogger.GLogger.Fatal(err)
 	}
-	defer c.CloseSessionWithContext(ctx)
+	defer c.Close(ctx)
 
 	req := &ua.ReadRequest{
 		MaxAge:             2000,
@@ -28,7 +28,7 @@ func startClient(ctx context.Context) {
 		TimestampsToReturn: ua.TimestampsToReturnBoth,
 	}
 
-	resp, err := c.ReadWithContext(ctx, req)
+	resp, err := c.Read(ctx, req)
 	if err != nil {
 		glogger.GLogger.Fatalf("Read failed: %s", err)
 	}

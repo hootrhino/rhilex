@@ -3,14 +3,14 @@ package test
 import (
 	"context"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/glogger"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/glogger"
 	mbserver "github.com/tbrandon/mbserver"
 
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func Test_Generic_modbus_device_tcp_mode(t *testing.T) {

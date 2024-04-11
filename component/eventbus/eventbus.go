@@ -19,8 +19,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 var __DefaultEventBus *EventBus

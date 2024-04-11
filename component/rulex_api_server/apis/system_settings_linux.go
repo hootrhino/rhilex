@@ -1,6 +1,6 @@
 package apis
 
-import "github.com/hootrhino/rulex/component/rulex_api_server/server"
+import "github.com/hootrhino/rhilex/component/rulex_api_server/server"
 
 // Copyright (C) 2023 wwhai
 //

@@ -18,10 +18,10 @@ package test
 import (
 	"testing"
 
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/utils"
 )
 
-// go test -timeout 30s -run ^Test_parse_siemens_address github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_parse_siemens_address github.com/hootrhino/rhilex/test -v -count=1
 func Test_parse_siemens_address(t *testing.T) {
 	I := "I0.1"
 	Q := "Q0.1"
@@ -58,7 +58,7 @@ func Test_parse_siemens_address(t *testing.T) {
 	}
 }
 
-// go test -timeout 30s -run ^Test_parse_siemens_address_error github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_parse_siemens_address_error github.com/hootrhino/rhilex/test -v -count=1
 func Test_parse_siemens_address_error(t *testing.T) {
 	I := "I0"
 	Q := "Q0"

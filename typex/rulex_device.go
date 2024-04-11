@@ -15,7 +15,7 @@
 
 package typex
 
-import "github.com/hootrhino/rulex/utils"
+import "github.com/hootrhino/rhilex/utils"
 
 // 设备元数据, 本质是保存在配置里面的数据的一个内存映射实例
 type Device struct {

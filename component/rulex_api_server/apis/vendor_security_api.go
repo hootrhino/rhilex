@@ -20,9 +20,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/typex"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/ini.v1"
 )
 

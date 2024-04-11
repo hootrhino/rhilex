@@ -19,7 +19,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/hootrhino/rulex/component/iotschema"
+	"github.com/hootrhino/rhilex/component/iotschema"
 )
 
 /*
@@ -33,7 +33,7 @@ type IoTSchemaVo struct {
 	Schema iotschema.IoTSchema `json:"schema"`
 }
 
-// go test -timeout 30s -run ^Test_IoTSchema_gen github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_IoTSchema_gen github.com/hootrhino/rhilex/test -v -count=1
 func Test_IoTSchema_gen(t *testing.T) {
 	IoTSchemaVo := IoTSchemaVo{
 		UUID: "AABBCCDDEEFFTT",

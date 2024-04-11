@@ -15,7 +15,7 @@
 
 package core
 
-import "github.com/hootrhino/rulex/typex"
+import "github.com/hootrhino/rhilex/typex"
 
 type DeviceTypeManager struct {
 	// K: 资源类型

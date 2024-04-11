@@ -7,7 +7,7 @@
 package typex
 
 import (
-	"github.com/hootrhino/rulex/component/iotschema"
+	"github.com/hootrhino/rhilex/component/iotschema"
 )
 
 type DeviceType string

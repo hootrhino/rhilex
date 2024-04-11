@@ -7,9 +7,9 @@ import (
 
 	"time"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 
 	"github.com/thinkgos/go-iecp5/asdu"
 	"github.com/thinkgos/go-iecp5/cs104"

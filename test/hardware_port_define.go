@@ -24,7 +24,7 @@ type BspPort struct {
 	Video  []string // 显卡
 }
 
-// go test -timeout 30s -run ^Test_gen_hd_define github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_gen_hd_define github.com/hootrhino/rhilex/test -v -count=1
 func Test_gen_hd_define(t *testing.T) {
 
 }

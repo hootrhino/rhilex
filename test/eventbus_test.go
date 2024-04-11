@@ -20,10 +20,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/component/eventbus"
+	"github.com/hootrhino/rhilex/component/eventbus"
 )
 
-// @ go test -timeout 30s -run ^TestEventBus github.com/hootrhino/rulex/test -v -count=1
+// @ go test -timeout 30s -run ^TestEventBus github.com/hootrhino/rhilex/test -v -count=1
 func TestEventBus(t *testing.T) {
 
 	eventbus.InitEventBus()

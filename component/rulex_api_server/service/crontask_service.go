@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/hootrhino/rulex/component/cron_task"
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/component/rulex_api_server/dto"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/component/cron_task"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/dto"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 func CreateScheduleTask(data *dto.CronTaskCreateDTO) (*model.MCronTask, error) {

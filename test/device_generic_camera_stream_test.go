@@ -1,13 +1,13 @@
 package test
 
 import (
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/glogger"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/glogger"
 
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*
@@ -15,7 +15,7 @@ import (
 * 本地摄像头拉流
 *
  */
-// go test -timeout 30s -run ^Test_Generic_Local_camera github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Generic_Local_camera github.com/hootrhino/rhilex/test -v -count=1
 
 func Test_Generic_Local_camera(t *testing.T) {
 	engine := RunTestEngine()
@@ -48,7 +48,7 @@ func Test_Generic_Local_camera(t *testing.T) {
 * RTSP 拉流
 *
  */
-// go test -timeout 30s -run ^Test_Generic_RTSP_camera github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Generic_RTSP_camera github.com/hootrhino/rhilex/test -v -count=1
 
 func Test_Generic_RTSP_camera(t *testing.T) {
 	engine := RunTestEngine()
@@ -76,7 +76,7 @@ func Test_Generic_RTSP_camera(t *testing.T) {
 	engine.Stop()
 }
 
-// go test -timeout 30s -run ^Test_Generic_LOCAL_camera github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Generic_LOCAL_camera github.com/hootrhino/rhilex/test -v -count=1
 
 func Test_Generic_LOCAL_camera(t *testing.T) {
 	engine := RunTestEngine()

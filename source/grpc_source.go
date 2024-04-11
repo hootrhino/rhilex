@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/component/rulexrpc"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/component/rulexrpc"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 
 	"google.golang.org/grpc"
 )

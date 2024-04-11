@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/component/appstack"
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/appstack"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*
@@ -113,7 +113,7 @@ func CustomTCPRequestEmu() {
 	fmt.Println("Read>>>>:", data)
 }
 
-// // go test -timeout 30s -run ^TestCustomTCP github.com/hootrhino/rulex/test -v -count=1
+// // go test -timeout 30s -run ^TestCustomTCP github.com/hootrhino/rhilex/test -v -count=1
 // func TestCustomTCP(t *testing.T) {
 // 	go StartCustomTCPServer()
 // 	time.Sleep(1000 * time.Millisecond)

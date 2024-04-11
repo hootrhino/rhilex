@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/glogger"
 	"github.com/robfig/cron/v3"
 )
 
@@ -120,7 +120,7 @@ func (m *CronManager) DeleteTask(id string) {
 	}
 	err := m.processManager.KillProcess(id)
 	if err != nil {
-		glogger.GLogger.Error("kill process failed, err=%+v", err)
+		glogger.GLogger.Error("kill process failed, err=", err)
 		return
 	}
 	m.cronEngine.Remove(entryID)

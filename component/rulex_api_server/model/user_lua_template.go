@@ -15,7 +15,7 @@
 package model
 
 import (
-	"github.com/hootrhino/rulex/component/rulex_api_server/dto"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/dto"
 	"gopkg.in/square/go-jose.v2/json"
 )
 

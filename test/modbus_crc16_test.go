@@ -49,7 +49,7 @@ func uint16ToBytes(val uint16) []byte {
 	return bytes
 }
 
-// go test -timeout 30s -run ^Test_calculateCRC github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_calculateCRC github.com/hootrhino/rhilex/test -v -count=1
 func Test_calculateCRC(t *testing.T) {
 	// [132 10] => 84 0A
 	t.Log(uint16ToBytes(calculateCRC16([]byte{01, 03, 00, 00, 00, 01})))

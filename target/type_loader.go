@@ -16,8 +16,8 @@
 package target
 
 import (
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var TM typex.TargetRegistry

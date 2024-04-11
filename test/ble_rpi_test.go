@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"testing"
 
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 	"github.com/muka/go-bluetooth/api"
 	"github.com/muka/go-bluetooth/api/beacon"
 	"github.com/muka/go-bluetooth/bluez/profile/adapter"

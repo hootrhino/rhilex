@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/component/interqueue"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/interqueue"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func DataToMqtt(rx typex.RuleX) func(*lua.LState) int {

@@ -40,7 +40,6 @@ func (s *AiBaseServer) Stream(s1 AIBaseService_StreamServer) error {
 		}
 		log.Println(r1.Data)
 	}
-	return nil
 }
 func StartTestServer() {
 	lis, err := net.Listen("tcp", ":50051")

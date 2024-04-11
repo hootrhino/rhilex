@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/glogger"
 )
 
 /*

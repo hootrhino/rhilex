@@ -1,8 +1,8 @@
 package source
 
 import (
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var SM typex.SourceRegistry = core.NewSourceTypeManager()

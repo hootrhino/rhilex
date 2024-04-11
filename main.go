@@ -24,11 +24,11 @@ import (
 	"runtime"
 	"time"
 
-	_ "github.com/hootrhino/rulex/component/cron_task/docs"
-	"github.com/hootrhino/rulex/engine"
-	"github.com/hootrhino/rulex/ossupport"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	_ "github.com/hootrhino/rhilex/component/cron_task/docs"
+	"github.com/hootrhino/rhilex/engine"
+	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/urfave/cli/v2"
 )
 
@@ -72,7 +72,7 @@ func init() {
 // @description     Rulex Swagger API
 
 // @contact.name   API Support
-// @contact.url    https://github.com/hootrhino/rulex
+// @contact.url    https://github.com/hootrhino/rhilex
 // @BasePath  /api/v1
 //
 //go:generate bash ./gen_info.sh

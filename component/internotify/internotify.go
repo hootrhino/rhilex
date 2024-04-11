@@ -20,8 +20,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var __DefaultInternalEventBus *InternalEventBus

@@ -64,7 +64,7 @@ definitions:
 info:
   contact:
     name: API Support
-    url: https://github.com/hootrhino/rulex
+    url: https://github.com/hootrhino/rhilex
   description: Rulex Swagger API
   title: Rulex API
   version: "1.0"

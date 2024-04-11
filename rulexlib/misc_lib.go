@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 /*

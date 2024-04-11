@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/ini.v1"
 )

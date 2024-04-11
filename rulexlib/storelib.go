@@ -2,8 +2,8 @@ package rulexlib
 
 import (
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/typex"
 	"time"
 )
 

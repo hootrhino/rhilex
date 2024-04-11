@@ -30,7 +30,7 @@ import (
 	"time"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

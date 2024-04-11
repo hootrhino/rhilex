@@ -19,8 +19,8 @@ import (
 	"errors"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/component/interpipeline"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/interpipeline"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 const (

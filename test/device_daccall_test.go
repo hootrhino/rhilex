@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/glogger"
-	mqttserver "github.com/hootrhino/rulex/plugin/mqtt_server"
-	"github.com/hootrhino/rulex/typex"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/glogger"
+	mqttserver "github.com/hootrhino/rhilex/plugin/mqtt_server"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func Test_dac_call_device(t *testing.T) {

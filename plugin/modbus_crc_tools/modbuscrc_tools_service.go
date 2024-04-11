@@ -20,7 +20,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func (mc *modbusCRCCalculator) Service(arg typex.ServiceArg) typex.ServiceResult {

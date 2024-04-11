@@ -5,7 +5,7 @@ package rulexlib
 import (
 	"encoding/json"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 
 	lua "github.com/hootrhino/gopher-lua"
 )

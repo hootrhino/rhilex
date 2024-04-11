@@ -16,7 +16,7 @@
 package aibase
 
 import (
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 type BodyPoseRecognition struct {

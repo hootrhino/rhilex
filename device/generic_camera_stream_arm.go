@@ -19,9 +19,9 @@
 package device
 
 import (
-	"github.com/hootrhino/rulex/component/iotschema"
+	"github.com/hootrhino/rhilex/component/iotschema"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 type videoCamera struct {

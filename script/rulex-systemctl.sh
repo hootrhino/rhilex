@@ -20,21 +20,21 @@ echo_yellow() {
 }
 install(){
     local source_dir="$PWD"
-    local service_file="/etc/systemd/system/rulex.service"
-    local executable="/usr/local/rulex"
+    local service_file="/etc/systemd/system/rhilex.service"
+    local executable="/usr/local/rhilex"
     local WORKING_DIRECTORY="/usr/local/"
-    local config_file="/usr/local/rulex.ini"
-    local db_file="/usr/local/rulex.db"
+    local config_file="/usr/local/rhilex.ini"
+    local db_file="/usr/local/rhilex.db"
 cat > "$service_file" << EOL
 [Unit]
-Description=Rulex Daemon
+Description=rhilex Daemon
 After=network.target
 
 [Service]
 Environment="ARCHSUPPORT=EEKITH3"
 WorkingDirectory=$WORKING_DIRECTORY
 ExecStart=$executable run -config=$config_file -db=$db_file
-ConditionPathExists=!/var/run/rulex-upgrade.lock
+ConditionPathExists=!/var/run/rhilex-upgrade.lock
 Restart=always
 User=root
 Group=root
@@ -43,43 +43,43 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOL
-    chmod +x $source_dir/rulex
-    echo "[.] Copy $source_dir/rulex to $WORKING_DIRECTORY."
-    cp "$source_dir/rulex" "$executable"
-    echo "[.] Copy $source_dir/rulex.ini to $WORKING_DIRECTORY."
-    cp "$source_dir/rulex.ini" "$config_file"
+    chmod +x $source_dir/rhilex
+    echo "[.] Copy $source_dir/rhilex to $WORKING_DIRECTORY."
+    cp "$source_dir/rhilex" "$executable"
+    echo "[.] Copy $source_dir/rhilex.ini to $WORKING_DIRECTORY."
+    cp "$source_dir/rhilex.ini" "$config_file"
     echo "[.] Copy $source_dir/license.key to /usr/local/license.key."
     cp "$source_dir/license.key" "/usr/local/license.key"
     echo "[.] Copy $source_dir/license.lic to /usr/local/license.lic."
     cp "$source_dir/license.lic" "/usr/local/license.lic"
     systemctl daemon-reload
-    systemctl enable rulex
-    systemctl start rulex
+    systemctl enable rhilex
+    systemctl start rhilex
     if [ $? -eq 0 ]; then
-        echo "[√] Rulex service has been created and extracted."
+        echo "[√] rhilex service has been created and extracted."
     else
-        echo "[x] Failed to create the Rulex service or extract files."
+        echo "[x] Failed to create the rhilex service or extract files."
     fi
     exit 0
 }
 
 start(){
     systemctl daemon-reload
-    systemctl start rulex
-    echo "[√] RULEX started as a daemon."
+    systemctl start rhilex
+    echo "[√] rhilex started as a daemon."
     exit 0
 }
 status(){
-    systemctl status rulex
+    systemctl status rhilex
 }
 restart(){
-    systemctl stop rulex
+    systemctl stop rhilex
     start
 }
 
 stop(){
-    systemctl stop rulex
-    echo "[√] Service Rulex has been stopped."
+    systemctl stop rhilex
+    echo "[√] Service rhilex has been stopped."
 }
 remove_files() {
     if [ -e "$1" ]; then
@@ -95,12 +95,12 @@ remove_files() {
 }
 
 uninstall(){
-    systemctl stop rulex
-    systemctl disable rulex
-    remove_files /etc/systemd/system/rulex.service
-    remove_files $WORKING_DIRECTORY/rulex
-    remove_files $WORKING_DIRECTORY/rulex.ini
-    remove_files $WORKING_DIRECTORY/rulex.db
+    systemctl stop rhilex
+    systemctl disable rhilex
+    remove_files /etc/systemd/system/rhilex.service
+    remove_files $WORKING_DIRECTORY/rhilex
+    remove_files $WORKING_DIRECTORY/rhilex.ini
+    remove_files $WORKING_DIRECTORY/rhilex.db
     remove_files $WORKING_DIRECTORY/upload/
     remove_files $WORKING_DIRECTORY/license.key
     remove_files $WORKING_DIRECTORY/license.lic
@@ -108,7 +108,7 @@ uninstall(){
     rm -f "$WORKING_DIRECTORY/*.txt.gz"
     systemctl daemon-reload
     systemctl reset-failed
-    echo "[√] Rulex has been uninstalled."
+    echo "[√] rhilex has been uninstalled."
 }
 #
 #

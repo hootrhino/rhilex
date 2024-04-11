@@ -1,13 +1,13 @@
 package test
 
 import (
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/engine"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/engine"
 
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func Test_ABS_device1(t *testing.T) {

@@ -18,9 +18,9 @@ package engine
 import (
 	"sync"
 
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // LoadRule: 每个规则都绑定了资源(FromSource)或者设备(FromDevice)

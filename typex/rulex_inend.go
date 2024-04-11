@@ -1,6 +1,6 @@
 package typex
 
-import "github.com/hootrhino/rulex/utils"
+import "github.com/hootrhino/rhilex/utils"
 
 type InEnd struct {
 	//
@@ -15,7 +15,6 @@ type InEnd struct {
 	DataModelsMap map[string]XDataModel  `json:"-"`
 	Source        XSource                `json:"-"`
 }
-
 
 func NewInEnd(Type InEndType,
 	n string,
