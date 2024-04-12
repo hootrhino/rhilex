@@ -6,7 +6,7 @@ rulex-*
 .DS_Store
 *.out
 *.zip
-rulex.db
+rhilex.db
 rulex.exe
 *.db
 .idea

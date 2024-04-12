@@ -24,10 +24,10 @@ log() {
 
 install() {
     local source_dir="$PWD"
-    local service_file="/etc/init.d/rulex.service"
-    local executable="/usr/local/rulex"
-    local config_file="/usr/local/rulex.ini"
-    local db_file="/usr/local/rulex.db"
+    local service_file="/etc/init.d/rhilex.service"
+    local executable="/usr/local/rhilex"
+    local config_file="/usr/local/rhilex.ini"
+    local db_file="/usr/local/rhilex.db"
 
     cat > "$service_file" << EOL
 #!/bin/sh $service_file
@@ -56,21 +56,21 @@ restart() {
 }
 
 status() {
-    log INFO "Checking rulex status."
-    pid=\$(pgrep -x -n "rulex")
+    log INFO "Checking rhilex status."
+    pid=\$(pgrep -x -n "rhilex")
     if [ -n "\$pid" ]; then
-        log INFO "rulex is running with Pid:\${pid}"
+        log INFO "rhilex is running with Pid:\${pid}"
     else
-        log INFO "rulex is not running."
+        log INFO "rhilex is not running."
     fi
 }
 
 EOL
 
     mkdir -p "$WORKING_DIRECTORY/"
-    chmod +x "$source_dir/rulex"
-    cp -rfp "$source_dir/rulex" "$executable"
-    cp -rfp "$source_dir/rulex.ini" "$config_file"
+    chmod +x "$source_dir/rhilex"
+    cp -rfp "$source_dir/rhilex" "$executable"
+    cp -rfp "$source_dir/rhilex.ini" "$config_file"
     cp -rfp "$source_dir/license.lic" "$WORKING_DIRECTORY/"
     cp -rfp "$source_dir/license.key" "$WORKING_DIRECTORY/"
 
@@ -106,9 +106,9 @@ uninstall() {
         $service_file disable
     fi
     __remove_files $service_file
-    __remove_files "$WORKING_DIRECTORY/rulex"
-    __remove_files "$WORKING_DIRECTORY/rulex.ini"
-    __remove_files "$WORKING_DIRECTORY/rulex.db"
+    __remove_files "$WORKING_DIRECTORY/rhilex"
+    __remove_files "$WORKING_DIRECTORY/rhilex.ini"
+    __remove_files "$WORKING_DIRECTORY/rhilex.db"
     __remove_files "$WORKING_DIRECTORY/license.lic"
     __remove_files "$WORKING_DIRECTORY/license.key"
     __remove_files "$WORKING_DIRECTORY/rulex_internal_datacenter.db"

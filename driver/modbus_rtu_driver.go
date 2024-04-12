@@ -23,7 +23,6 @@ type modBusRtuDriver struct {
 	RuleEngine typex.RuleX
 	Registers  map[string]*common.RegisterRW
 	device     *typex.Device
-	frequency  int64
 }
 
 func NewModBusRtuDriver(

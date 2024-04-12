@@ -79,7 +79,7 @@ func main() {
 					&cli.StringFlag{
 						Name:  "db",
 						Usage: "Database of rulex",
-						Value: "rulex.db",
+						Value: "rhilex.db",
 					},
 					&cli.StringFlag{
 						Name:  "config",

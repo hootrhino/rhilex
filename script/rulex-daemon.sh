@@ -1,14 +1,14 @@
 #!/bin/bash
 
-SERVICE_NAME="rulex"
+SERVICE_NAME="rhilex"
 WORKING_DIRECTORY="/usr/local"
 EXECUTABLE_PATH="$WORKING_DIRECTORY/$SERVICE_NAME"
 CONFIG_PATH="$WORKING_DIRECTORY/$SERVICE_NAME.ini"
 
 SERVICE_FILE="/etc/init.d/$SERVICE_NAME.service"
 
-STOP_SIGNAL="/var/run/rulex-stop.sinal"
-UPGRADE_SIGNAL="/var/run/rulex-upgrade.lock"
+STOP_SIGNAL="/var/run/rhilex-stop.sinal"
+UPGRADE_SIGNAL="/var/run/rhilex-upgrade.lock"
 
 SOURCE_DIR="$PWD"
 
@@ -26,7 +26,7 @@ cat > "$SERVICE_FILE" << EOL
 export PATH=\$PATH:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/sbin
 
 ### BEGIN INIT INFO
-# Provides:          rulex
+# Provides:          rhilex
 # Required-Start:    \$network \$local_fs \$remote_fs
 # Required-Stop:     \$network \$local_fs \$remote_fs
 # Default-Start:     2 3 4 5
@@ -38,8 +38,8 @@ export PATH=\$PATH:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/sbin
 #
 # Create Time: $(date +'%Y-%m-%d %H:%M:%S')
 #
-EXECUTABLE_PATH="$WORKING_DIRECTORY/rulex"
-CONFIG_PATH="$WORKING_DIRECTORY/rulex.ini"
+EXECUTABLE_PATH="$WORKING_DIRECTORY/rhilex"
+CONFIG_PATH="$WORKING_DIRECTORY/rhilex.ini"
 
 log() {
     local level=\$1
@@ -52,7 +52,7 @@ start() {
     rm -f $STOP_SIGNAL
     pid=\$(pgrep -x -n -f "$EXECUTABLE_PATH run -config=$CONFIG_PATH")
     if [ -n "\$pid" ]; then
-        log INFO "rulex is running with Pid:\${pid}"
+        log INFO "rhilex is running with Pid:\${pid}"
         exit 0
     fi
     cd $WORKING_DIRECTORY
@@ -61,12 +61,12 @@ start() {
 
 stop() {
     echo "1" > $STOP_SIGNAL
-    if pgrep -x "rulex" > /dev/null; then
-        log INFO "rulex process is running. Killing it..."
-        pkill -x "rulex"
-        log INFO "rulex process has been killed."
+    if pgrep -x "rhilex" > /dev/null; then
+        log INFO "rhilex process is running. Killing it..."
+        pkill -x "rhilex"
+        log INFO "rhilex process has been killed."
     else
-        log WARNING "rulex process is not running."
+        log WARNING "rhilex process is not running."
     fi
 }
 
@@ -77,23 +77,23 @@ restart() {
 }
 
 status() {
-    log INFO "Checking rulex status."
-    pid=\$(pgrep -x -n "rulex")
+    log INFO "Checking rhilex status."
+    pid=\$(pgrep -x -n "rhilex")
     if [ -n "\$pid" ]; then
-        log INFO "rulex is running with Pid:\${pid}"
+        log INFO "rhilex is running with Pid:\${pid}"
     else
-        log INFO "rulex is not running."
+        log INFO "rhilex is not running."
     fi
 }
 
 daemon() {
     while true; do
-        if pgrep -x "rulex" > /dev/null; then
-            log INFO "rulex process exists"
+        if pgrep -x "rhilex" > /dev/null; then
+            log INFO "rhilex process exists"
             sleep 3
             continue
         fi
-        if ! pgrep -x "rulex" > /dev/null; then
+        if ! pgrep -x "rhilex" > /dev/null; then
             if [ -e "$UPGRADE_SIGNAL" ]; then
                 log INFO "File $UPGRADE_SIGNAL exists. May upgrade now."
                 sleep 2
@@ -102,10 +102,10 @@ daemon() {
                 log INFO "$STOP_SIGNAL file found. Exiting."
                 exit 0
             else
-                log WARNING "Detected that rulex process is interrupted. Restarting..."
+                log WARNING "Detected that rhilex process is interrupted. Restarting..."
                 cd $WORKING_DIRECTORY
                 $EXECUTABLE_PATH run -config=$CONFIG_PATH
-                log WARNING "Detected that rulex process has Restarted."
+                log WARNING "Detected that rhilex process has Restarted."
             fi
         fi
         sleep 4
@@ -134,12 +134,12 @@ esac
 EOL
 
     mkdir -p $WORKING_DIRECTORY
-    chmod +x $SOURCE_DIR/rulex
-    log INFO "Copy rulex to $WORKING_DIRECTORY"
-    cp -rfp "$SOURCE_DIR/rulex" "$EXECUTABLE_PATH"
+    chmod +x $SOURCE_DIR/rhilex
+    log INFO "Copy rhilex to $WORKING_DIRECTORY"
+    cp -rfp "$SOURCE_DIR/rhilex" "$EXECUTABLE_PATH"
 
-    log INFO "Copy rulex.ini to $WORKING_DIRECTORY"
-    cp -rfp "$SOURCE_DIR/rulex.ini" "$CONFIG_PATH"
+    log INFO "Copy rhilex.ini to $WORKING_DIRECTORY"
+    cp -rfp "$SOURCE_DIR/rhilex.ini" "$CONFIG_PATH"
 
     log INFO "Copy license.lic to $WORKING_DIRECTORY"
     cp -rfp "$SOURCE_DIR/license.lic" "$WORKING_DIRECTORY/"
@@ -175,17 +175,17 @@ uninstall(){
         $SERVICE_FILE stop
     fi
     __remove_files "$SERVICE_FILE"
-    __remove_files "$WORKING_DIRECTORY/rulex"
-    __remove_files "$WORKING_DIRECTORY/rulex.ini"
-    __remove_files "$WORKING_DIRECTORY/rulex.db"
+    __remove_files "$WORKING_DIRECTORY/rhilex"
+    __remove_files "$WORKING_DIRECTORY/rhilex.ini"
+    __remove_files "$WORKING_DIRECTORY/rhilex.db"
     __remove_files "$WORKING_DIRECTORY/license.lic"
     __remove_files "$WORKING_DIRECTORY/license.key"
     __remove_files "$WORKING_DIRECTORY/rulex_internal_datacenter.db"
     __remove_files "$WORKING_DIRECTORY/upload/"
     __remove_files "$WORKING_DIRECTORY/rulexlog.txt"
-    __remove_files "$WORKING_DIRECTORY/rulex-daemon-log.txt"
-    __remove_files "$WORKING_DIRECTORY/rulex-recover-log.txt"
-    __remove_files "$WORKING_DIRECTORY/rulex-upgrade-log.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilex-daemon-log.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilex-recover-log.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilex-upgrade-log.txt"
     __remove_files "$WORKING_DIRECTORY/rulexlog-*.txt.gz"
     log INFO "Rulex has been uninstalled."
 }

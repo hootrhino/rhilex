@@ -58,7 +58,7 @@ import (
  */
 var __DefaultRuleEngine typex.RuleX
 
-const __DEFAULT_DB_PATH string = "./rulex.db"
+const __DEFAULT_DB_PATH string = "./rhilex.db"
 
 // 规则引擎
 type RuleEngine struct {
