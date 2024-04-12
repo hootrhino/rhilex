@@ -231,11 +231,11 @@ func (S StringRule) Validate(Value interface{}) error {
 	case string:
 		L := len(SV)
 		if L >= S.MaxLength {
-			return fmt.Errorf("Value exceed Max Length:", L)
+			return fmt.Errorf("Value exceed Max Length:%v", L)
 		}
 	default:
 		{
-			return fmt.Errorf("Invalid Value type, Expect UTF8 string:", SV)
+			return fmt.Errorf("Invalid Value type, Expect UTF8 string:%v", SV)
 		}
 	}
 	return nil

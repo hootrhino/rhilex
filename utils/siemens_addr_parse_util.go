@@ -123,7 +123,7 @@ func _ParseDB_DX(s string) (AddressInfo, error) {
 		case 'X': // DBX: 1字节
 			AddressInfo.DataBlockSize = 1
 		default:
-			return AddressInfo, fmt.Errorf("Invalid Element Type:%s", parts[1][2])
+			return AddressInfo, fmt.Errorf("Invalid Element Type:%c", parts[1][2])
 		}
 		AddressInfo.ElementNumber = ElementNumber
 	}

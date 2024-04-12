@@ -120,7 +120,7 @@ func (m *CronManager) DeleteTask(id string) {
 	}
 	err := m.processManager.KillProcess(id)
 	if err != nil {
-		glogger.GLogger.Error("kill process failed, err=%+v", err)
+		glogger.GLogger.Error("kill process failed, err=", err)
 		return
 	}
 	m.cronEngine.Remove(entryID)

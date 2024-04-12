@@ -100,7 +100,7 @@ func (sd *snmpDriver) Stop() error {
 func (sd *snmpDriver) connect() error {
 	err1 := sd.client.Connect()
 	if err1 != nil {
-		glogger.GLogger.Error("Connect() err: %v", err1)
+		glogger.GLogger.Error("Connect() err:", err1)
 		sd.state = typex.DRIVER_DOWN
 		return err1
 	}
