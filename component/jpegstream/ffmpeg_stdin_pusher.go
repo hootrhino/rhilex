@@ -82,24 +82,24 @@ func (p *StreamPusher) Close() error {
 	return nil
 }
 
-func test() {
-	// 假设 RTMP 服务器的 URL 为 "rtmp://example.com/live/stream"
-	rtmpURL := "rtmp://example.com/live/stream"
+// func test() {
+// 	// 假设 RTMP 服务器的 URL 为 "rtmp://example.com/live/stream"
+// 	rtmpURL := "rtmp://example.com/live/stream"
 
-	// 创建一个新的推流器
-	pusher, err := NewStreamPusher(rtmpURL)
-	if err != nil {
-		fmt.Printf("Error creating stream pusher: %v\n", err)
-		return
-	}
-	defer pusher.Close()
+// 	// 创建一个新的推流器
+// 	pusher, err := NewStreamPusher(rtmpURL)
+// 	if err != nil {
+// 		fmt.Printf("Error creating stream pusher: %v\n", err)
+// 		return
+// 	}
+// 	defer pusher.Close()
 
-	// 向推流器的标准输入写入 H264 流数据
-	// 这里只是一个示例，实际应用中应该从视频源获取 H264 数据
-	// 比如从摄像头、视频文件或网络流中读取
-	h264Data := []byte{} // 假设的 H264 数据
-	if _, err := pusher.Stdin.Write(h264Data); err != nil {
-		fmt.Printf("Error writing to stream pusher: %v\n", err)
-		return
-	}
-}
+// 	// 向推流器的标准输入写入 H264 流数据
+// 	// 这里只是一个示例，实际应用中应该从视频源获取 H264 数据
+// 	// 比如从摄像头、视频文件或网络流中读取
+// 	h264Data := []byte{} // 假设的 H264 数据
+// 	if _, err := pusher.Stdin.Write(h264Data); err != nil {
+// 		fmt.Printf("Error writing to stream pusher: %v\n", err)
+// 		return
+// 	}
+// }

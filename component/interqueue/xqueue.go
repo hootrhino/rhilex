@@ -112,12 +112,7 @@ func processQueueData(xQueue XQueue) {
 		// 马上废弃
 	}
 }
-func runCallbacksIfNotNull(entity interface{}, e typex.RuleX,
-	data interface{}, callback func(interface{}, interface{})) {
-	if entity != nil {
-		callback(entity, data)
-	}
-}
+
 func processOutQueueData(qd QueueData, e typex.RuleX) {
 	if qd.O != nil {
 		v, ok := e.AllOutEnds().Load(qd.O.UUID)

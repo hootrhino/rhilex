@@ -105,8 +105,6 @@ func InitRuleEngine(config typex.RulexConfig) typex.RuleX {
 	kdncnc.InitKdnCnCPointCache(__DefaultRuleEngine)
 	// Internal Bus
 	internotify.InitInternalEventBus(__DefaultRuleEngine, core.GlobalConfig.MaxQueueSize)
-	// 前后交互组件
-	interqueue.InitInteractQueue(__DefaultRuleEngine, core.GlobalConfig.MaxQueueSize)
 	// Internal Schema
 	dataschema.InitIotSchemaCache(__DefaultRuleEngine)
 	// Load hardware Port Manager

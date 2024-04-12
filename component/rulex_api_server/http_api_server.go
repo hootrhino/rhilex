@@ -327,6 +327,7 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		deviceApi.GET(("/detail"), server.AddRoute(apis.DeviceDetail))
 		deviceApi.GET("/group", server.AddRoute(apis.ListDeviceGroup))
 		deviceApi.GET("/listByGroup", server.AddRoute(apis.ListDeviceByGroup))
+		deviceApi.GET("/list", server.AddRoute(apis.ListDevice))
 		deviceApi.PUT("/restart", server.AddRoute(apis.RestartDevice))
 		deviceApi.GET("/properties", server.AddRoute(apis.DevicePropertiesPage))
 		deviceApi.GET("/deviceErrMsg", server.AddRoute(apis.GetDeviceErrorMsg))

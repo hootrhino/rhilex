@@ -119,7 +119,7 @@ func (M *Hnc8CnCPointCache) Size() uint64 {
 }
 func (M *Hnc8CnCPointCache) Flush() {
 	for slotName, slot := range M.Slots {
-		for k, _ := range slot {
+		for k := range slot {
 			delete(slot, k)
 		}
 		delete(M.Slots, slotName)

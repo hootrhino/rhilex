@@ -102,7 +102,7 @@ func UpgradeFirmWare(c *gin.Context, ruleEngine typex.RuleX) {
 		c.JSON(common.HTTP_OK, common.Error("invalid sum md5!"))
 		return
 	}
-	if err3 := os.RemoveAll(tempPath); err != nil {
+	if err3 := os.RemoveAll(tempPath); err3 != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err3))
 		return
 	}

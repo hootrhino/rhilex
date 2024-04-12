@@ -12,10 +12,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-var _ typex.XPlugin = (*Telemetry)(nil)
-
 type Telemetry struct {
-	uuid string
 }
 
 type TelemetryConfig struct {

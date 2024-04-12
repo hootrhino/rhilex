@@ -50,7 +50,6 @@ func LoadRuleLibGroup(r *typex.Rule, e typex.RuleX) {
 			"ToTcp":      rulexlib.DataToTcp(e),
 			"ToTdEngine": rulexlib.DataToTdEngine(e),
 			"ToMongo":    rulexlib.DataToMongo(e),
-			"ToScreen":   rulexlib.DataToUiComponent(e),
 		}
 		AddRuleLibToGroup(r, e, "data", Funcs)
 	}

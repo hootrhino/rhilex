@@ -63,6 +63,48 @@ func DeviceDetail(c *gin.Context, ruleEngine typex.RuleX) {
 
 /*
 *
+* 新版本的Dashboard设备不分组列表
+*
+ */
+func ListDevice(c *gin.Context, ruleEngine typex.RuleX) {
+	pager, err := service.ReadPageRequest(c)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	count, MDevices := service.PageDevice(pager.Current, pager.Size)
+	err1 := interdb.DB().Model(&model.MDevice{}).Count(&count).Error
+	if err1 != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err1))
+	}
+	devices := []DeviceVo{}
+	for _, mdev := range MDevices {
+		DeviceVo := DeviceVo{}
+		DeviceVo.UUID = mdev.UUID
+		DeviceVo.Name = mdev.Name
+		DeviceVo.Type = mdev.Type
+		DeviceVo.SchemaId = mdev.SchemaId
+		DeviceVo.Description = mdev.Description
+		DeviceVo.Config = mdev.GetConfig()
+		//
+		device := ruleEngine.GetDevice(mdev.UUID)
+		if device == nil {
+			DeviceVo.State = int(typex.DEV_STOP)
+		} else {
+			DeviceVo.State = int(device.Device.Status())
+		}
+		Group := service.GetVisualGroup(mdev.UUID)
+		DeviceVo.Gid = Group.UUID
+
+		devices = append(devices, DeviceVo)
+	}
+
+	Result := service.WrapPageResult(*pager, devices, count)
+	c.JSON(common.HTTP_OK, common.OkWithData(Result))
+}
+
+/*
+*
 * 分组查看
 *
  */

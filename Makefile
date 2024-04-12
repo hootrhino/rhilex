@@ -91,6 +91,14 @@ test:
 cover:
 	go test ${APP}/test -v -cover
 
+.PHONY: vet
+vet:
+	go vet ./...
+
+.PHONY: staticcheck
+staticcheck:
+	staticcheck ./...
+
 .PHONY: clean
 clean:
 	go clean

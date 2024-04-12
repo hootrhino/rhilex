@@ -54,6 +54,15 @@ WHERE uuid IN (
 	return m
 
 }
+func PageDevice(current, size int) (int64, []model.MDevice) {
+	sql := `SELECT * FROM m_devices ORDER BY created_at DESC limit ? offset ?;`
+	MDevices := []model.MDevice{}
+	offset := (current - 1) * size
+	interdb.DB().Raw(sql, size, offset).Find(&MDevices)
+	var count int64
+	interdb.DB().Model(&model.MDevice{}).Count(&count)
+	return count, MDevices
+}
 
 /*
 *

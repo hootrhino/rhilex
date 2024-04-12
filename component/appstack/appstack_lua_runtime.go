@@ -76,7 +76,6 @@ func LoadAppLibGroup(app *Application, e typex.RuleX) {
 			"ToTcp":      rulexlib.DataToTcp(e),
 			"ToTdEngine": rulexlib.DataToTdEngine(e),
 			"ToMongo":    rulexlib.DataToMongo(e),
-			"ToScreen":   rulexlib.DataToUiComponent(e),
 		}
 		AddAppLibToGroup(app, e, "data", Funcs)
 	}

@@ -9,7 +9,6 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -191,22 +190,23 @@ func RemoveUnzipPath(dir string) error {
 	}
 	return nil
 }
-func __test() {
-	// 压缩文件
-	if err := Zip(
-		[]string{"manifest-native.json",
-			"./app1.exe"}, "app-native.zip"); err != nil {
-		fmt.Println("Error compressing file:", err)
-		return
-	}
 
-	fmt.Println("File compressed successfully")
+// func __test() {
+// 	// 压缩文件
+// 	if err := Zip(
+// 		[]string{"manifest-native.json",
+// 			"./app1.exe"}, "app-native.zip"); err != nil {
+// 		fmt.Println("Error compressing file:", err)
+// 		return
+// 	}
 
-	// 解压文件
-	if err := Unzip("./app-native.zip", "./app-native"); err != nil {
-		fmt.Println("Error decompressing file:", err)
-		return
-	}
+// 	fmt.Println("File compressed successfully")
 
-	fmt.Println("File decompressed successfully")
-}
+// 	// 解压文件
+// 	if err := Unzip("./app-native.zip", "./app-native"); err != nil {
+// 		fmt.Println("Error decompressing file:", err)
+// 		return
+// 	}
+
+// 	fmt.Println("File decompressed successfully")
+// }
