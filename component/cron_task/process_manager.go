@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/glogger"
 )
 
 // ProcessManager

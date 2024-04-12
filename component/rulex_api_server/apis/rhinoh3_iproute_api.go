@@ -25,12 +25,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	leases "github.com/hootrhino/go-dhcpd-leases"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/ossupport"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 /*

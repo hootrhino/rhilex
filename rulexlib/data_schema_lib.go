@@ -20,8 +20,8 @@ import (
 	"time"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/component/dataschema"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/dataschema"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

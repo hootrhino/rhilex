@@ -27,16 +27,16 @@ import (
 
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/component/dataschema"
-	"github.com/hootrhino/rulex/component/hwportmanager"
-	modbuscache "github.com/hootrhino/rulex/component/intercache/modbus"
-	"github.com/hootrhino/rulex/component/interdb"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/component/dataschema"
+	"github.com/hootrhino/rhilex/component/hwportmanager"
+	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
+	"github.com/hootrhino/rhilex/component/interdb"
 
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	modbus "github.com/wwhai/gomodbus"
 )
 

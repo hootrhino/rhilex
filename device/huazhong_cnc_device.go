@@ -19,12 +19,12 @@ import (
 	"context"
 	"time"
 
-	hnc8cache "github.com/hootrhino/rulex/component/intercache/hnccnc"
-	"github.com/hootrhino/rulex/component/interdb"
+	hnc8cache "github.com/hootrhino/rhilex/component/intercache/hnccnc"
+	"github.com/hootrhino/rhilex/component/interdb"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 /*
@@ -160,7 +160,6 @@ func (hnc8Cnc *HNC8_CNC) Stop() {
 	}
 	hnc8cache.UnRegisterSlot(hnc8Cnc.PointId)
 }
-
 
 // 真实设备
 func (hnc8Cnc *HNC8_CNC) Details() *typex.Device {

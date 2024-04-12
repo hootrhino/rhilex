@@ -19,7 +19,7 @@ import (
 	"math"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func truncateFloat(number float64, decimalPlaces int) float64 {

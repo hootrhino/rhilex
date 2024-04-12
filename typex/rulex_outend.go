@@ -1,7 +1,7 @@
 package typex
 
 import (
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type OutEnd struct {
@@ -14,7 +14,6 @@ type OutEnd struct {
 	Config map[string]interface{} `json:"config"`
 	Target XTarget                `json:"-"`
 }
-
 
 func NewOutEnd(t TargetType,
 	n string,

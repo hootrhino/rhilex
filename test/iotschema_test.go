@@ -19,8 +19,7 @@ import (
 	"testing"
 )
 
-
-// go test -timeout 30s -run ^Test_IoTSchema_gen github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_IoTSchema_gen github.com/hootrhino/rhilex/test -v -count=1
 func Test_IoTSchema_gen(t *testing.T) {
 
 }

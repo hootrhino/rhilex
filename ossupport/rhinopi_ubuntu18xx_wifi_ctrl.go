@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 )
 
 /*

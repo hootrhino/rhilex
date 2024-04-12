@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-// go test -timeout 30s -run ^Test_Binary_to_Float github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Binary_to_Float github.com/hootrhino/rhilex/test -v -count=1
 func Test_Binary_to_Float(t *testing.T) {
 	// Hex 40 49 0E 56 = D3.141
 	dBytes, _ := hex.DecodeString("40490E56")

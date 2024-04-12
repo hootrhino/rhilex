@@ -3,7 +3,7 @@ package test
 import (
 	"encoding/json"
 
-	"github.com/hootrhino/rulex/rulexlib"
+	"github.com/hootrhino/rhilex/rulexlib"
 
 	"testing"
 

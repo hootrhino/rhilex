@@ -18,7 +18,7 @@ package modbusscanner
 import (
 	"context"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/ini.v1"
 )
 

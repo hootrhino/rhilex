@@ -7,11 +7,11 @@ import (
 	"net"
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type _IcmpSenderCommonConfig struct {
@@ -122,7 +122,6 @@ func (sender *IcmpSender) Stop() {
 	sender.status = typex.DEV_DOWN
 	sender.CancelCTX()
 }
-
 
 // 真实设备
 func (sender *IcmpSender) Details() *typex.Device {

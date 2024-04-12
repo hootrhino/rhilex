@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/ini.v1"
 )
 

@@ -2,8 +2,8 @@ package rulexlib
 
 import (
 	"github.com/adrianmo/go-nmea"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 
 	lua "github.com/hootrhino/gopher-lua"
 )

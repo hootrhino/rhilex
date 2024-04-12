@@ -2,8 +2,8 @@ package rulexlib
 
 import (
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/vendor3rd"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/vendor3rd"
 )
 
 /*

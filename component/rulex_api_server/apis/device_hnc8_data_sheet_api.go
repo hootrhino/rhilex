@@ -18,20 +18,20 @@ package apis
 import (
 	"errors"
 	"fmt"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 	"io"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	hnccnc "github.com/hootrhino/rulex/component/intercache/hnccnc"
-	"github.com/hootrhino/rulex/component/interdb"
+	hnccnc "github.com/hootrhino/rhilex/component/intercache/hnccnc"
+	"github.com/hootrhino/rhilex/component/interdb"
 
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/xuri/excelize/v2"
 )
 

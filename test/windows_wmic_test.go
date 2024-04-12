@@ -17,10 +17,10 @@ package test
 import (
 	"testing"
 
-	"github.com/hootrhino/rulex/ossupport"
+	"github.com/hootrhino/rhilex/ossupport"
 )
 
-// go test -timeout 30s -run ^Test_GetWindowsVideos github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_GetWindowsVideos github.com/hootrhino/rhilex/test -v -count=1
 func Test_GetWindowsVideos(t *testing.T) {
 	t.Log(ossupport.GetWindowsVideos())
 }

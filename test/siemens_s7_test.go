@@ -6,7 +6,7 @@ import (
 	"time"
 
 	profinet "github.com/Kowiste/ProfinetServer"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/robinson/gos7"
 )
 
@@ -85,7 +85,7 @@ func Test_gen_db_json(t *testing.T) {
 	t.Log(blocks2[0].Value)
 }
 
-// go test -timeout 30s -run ^Test_gen_point github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_gen_point github.com/hootrhino/rhilex/test -v -count=1
 func Test_gen_point(t *testing.T) {
 	type SiemensDataPoint struct {
 		UUID           string `json:"uuid"`

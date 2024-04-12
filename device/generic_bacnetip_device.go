@@ -9,10 +9,10 @@ import (
 
 	"github.com/BeatTime/bacnet"
 	"github.com/BeatTime/bacnet/btypes"
-	
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type bacnetIpCommonConfig struct {
@@ -188,8 +188,6 @@ func (dev *GenericBacnetIpDevice) Stop() {
 		dev.bacnetClient.Close()
 	}
 }
-
-
 
 func (dev *GenericBacnetIpDevice) Details() *typex.Device {
 	return dev.RuleEngine.GetDevice(dev.PointId)

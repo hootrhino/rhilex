@@ -4,9 +4,9 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/square/go-jose.v2/json"
 )
 

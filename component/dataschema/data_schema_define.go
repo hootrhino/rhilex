@@ -18,7 +18,7 @@ package dataschema
 import (
 	"fmt"
 
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type IoTPropertyType string

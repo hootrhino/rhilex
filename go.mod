@@ -1,4 +1,4 @@
-module github.com/hootrhino/rulex
+module github.com/hootrhino/rhilex
 
 go 1.18
 

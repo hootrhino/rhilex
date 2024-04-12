@@ -25,8 +25,8 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/ini.v1"
 )
 

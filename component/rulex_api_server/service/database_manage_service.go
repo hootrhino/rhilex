@@ -18,7 +18,7 @@ package service
 import (
 	"os"
 
-	"github.com/hootrhino/rulex/component/interdb"
+	"github.com/hootrhino/rhilex/component/interdb"
 )
 
 /*

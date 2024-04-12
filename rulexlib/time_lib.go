@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 
 	"github.com/wwhai/ntp"
 

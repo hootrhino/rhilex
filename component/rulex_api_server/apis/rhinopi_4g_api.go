@@ -19,9 +19,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	archsupport "github.com/hootrhino/rulex/bspsupport"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/typex"
+	archsupport "github.com/hootrhino/rhilex/bspsupport"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

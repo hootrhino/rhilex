@@ -1,7 +1,7 @@
 package mqttserver
 
 import (
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

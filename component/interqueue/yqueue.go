@@ -18,7 +18,7 @@ package interqueue
 import (
 	"encoding/json"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // Default InteractQueue

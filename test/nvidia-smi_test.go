@@ -18,21 +18,21 @@ package test
 import (
 	"testing"
 
-	archsupport "github.com/hootrhino/rulex/bspsupport"
+	archsupport "github.com/hootrhino/rhilex/bspsupport"
 )
 
-// go test -timeout 30s -run ^Test_Nvidia_SMI1 github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Nvidia_SMI1 github.com/hootrhino/rhilex/test -v -count=1
 
 func Test_Nvidia_SMI1(t *testing.T) {
 	t.Log(archsupport.GetGpuInfoWithNvidiaSmi())
 }
 
-// go test -timeout 30s -run ^Test_GetCpu_win11 github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_GetCpu_win11 github.com/hootrhino/rhilex/test -v -count=1
 func Test_GetCpu_win11(t *testing.T) {
 	t.Log(archsupport.GetWindowsCPUName())
 }
 
-// go test -timeout 30s -run ^Test_GetCpu_linux github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_GetCpu_linux github.com/hootrhino/rhilex/test -v -count=1
 func Test_GetCpu_linux(t *testing.T) {
 	t.Log(archsupport.GetLinuxCPUName())
 }

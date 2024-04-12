@@ -17,8 +17,8 @@ package hnccnc
 import (
 	"sync"
 
-	"github.com/hootrhino/rulex/component/intercache"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/intercache"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // 点位表

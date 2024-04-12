@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
-	"github.com/hootrhino/rulex/component/trailer"
-	"github.com/hootrhino/rulex/glogger"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/component/trailer"
+	"github.com/hootrhino/rhilex/glogger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -20,7 +20,7 @@ import (
 * 建议试试这个脚本: https://github.com/hootrhino/trailer-demo-app.git
 *
  */
-//  go test -timeout 30s -run ^Test_Trailer_load github.com/hootrhino/rulex/test -v -count=1
+//  go test -timeout 30s -run ^Test_Trailer_load github.com/hootrhino/rhilex/test -v -count=1
 //
 func Test_Trailer_load(t *testing.T) {
 	engine := RunTestEngine()

@@ -7,12 +7,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	
-	"github.com/hootrhino/rulex/driver"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+
+	"github.com/hootrhino/rhilex/driver"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	serial "github.com/wwhai/goserial"
 )
 
@@ -159,7 +159,6 @@ func (uart *genericUartDevice) Stop() {
 		uart.driver = nil
 	}
 }
-
 
 // 真实设备
 func (uart *genericUartDevice) Details() *typex.Device {

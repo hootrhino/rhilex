@@ -19,9 +19,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/hootrhino/rulex/component/trailer"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/trailer"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

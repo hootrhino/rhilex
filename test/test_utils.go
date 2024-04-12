@@ -10,12 +10,12 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
 
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/engine"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/engine"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func HttpPost(data map[string]interface{}, url string) string {

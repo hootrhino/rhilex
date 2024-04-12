@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/go-playground/assert/v2"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
 )
 
 /*
@@ -20,7 +20,7 @@ import (
 *
  */
 
-// go test -timeout 30s -run ^Test_CURD_Device github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_CURD_Device github.com/hootrhino/rhilex/test -v -count=1
 func Test_CURD_Device(t *testing.T) {
 	RmUnitTestDbFile(t)
 	StartTestServer(t)

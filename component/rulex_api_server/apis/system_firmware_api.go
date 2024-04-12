@@ -25,11 +25,11 @@ import (
 	"runtime"
 
 	"github.com/gin-gonic/gin"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/component/trailer"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/ossupport"
-	"github.com/hootrhino/rulex/typex"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/component/trailer"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

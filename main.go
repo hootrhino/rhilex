@@ -24,10 +24,10 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/hootrhino/rulex/engine"
-	"github.com/hootrhino/rulex/ossupport"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/engine"
+	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/urfave/cli/v2"
 )
 

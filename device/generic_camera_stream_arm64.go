@@ -19,9 +19,7 @@
 package device
 
 import (
-	
-
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 type videoCamera struct {
@@ -73,8 +71,6 @@ func (hd *videoCamera) Stop() {
 	hd.status = typex.DEV_DOWN
 	hd.CancelCTX()
 }
-
-
 
 // 真实设备
 func (hd *videoCamera) Details() *typex.Device {

@@ -19,8 +19,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 func (e *RuleEngine) LoadOutEndWithCtx(in *typex.OutEnd, ctx context.Context,

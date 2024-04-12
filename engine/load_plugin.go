@@ -18,10 +18,10 @@ package engine
 import (
 	"errors"
 
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 // ┌──────┐    ┌──────┐    ┌──────┐

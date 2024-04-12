@@ -24,7 +24,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// go test -timeout 30s -run ^TestApp_Hot_update github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^TestApp_Hot_update github.com/hootrhino/rhilex/test -v -count=1
 func TestApp_Hot_update(t *testing.T) {
 	fmt.Println(os.Args[0])
 	s := gin.Default()

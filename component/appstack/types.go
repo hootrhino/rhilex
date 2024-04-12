@@ -18,7 +18,7 @@ package appstack
 import (
 	"sync"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

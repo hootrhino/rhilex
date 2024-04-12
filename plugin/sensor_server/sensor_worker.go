@@ -5,8 +5,8 @@ import (
 
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/glogger"
 )
 
 /*

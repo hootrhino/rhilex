@@ -7,10 +7,10 @@ import (
 	"time"
 	"unicode/utf8"
 
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/typex"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/typex"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"

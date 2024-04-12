@@ -7,7 +7,7 @@ import (
 	"github.com/blastrain/vitess-sqlparser/sqlparser"
 )
 
-// go test -timeout 30s -run ^Test_sqlparser github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_sqlparser github.com/hootrhino/rhilex/test -v -count=1
 
 func Test_sqlparser(t *testing.T) {
 	sql := `

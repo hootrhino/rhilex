@@ -4,12 +4,12 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hootrhino/rulex/component/cron_task"
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/component/rulex_api_server/dto"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component/cron_task"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/dto"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // 参考 https://blog.csdn.net/newbieJ/article/details/127125140

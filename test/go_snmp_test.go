@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/gosnmp/gosnmp"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 )
 
 // https://www.alvestrand.no/objectid/top.html

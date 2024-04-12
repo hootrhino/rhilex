@@ -3,7 +3,7 @@ package usbmonitor
 import (
 	"errors"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 
 	"gopkg.in/ini.v1"
 )
@@ -40,8 +40,8 @@ func (usbm *usbMonitor) PluginMetaInfo() typex.XPluginMetaInfo {
 		UUID:     usbm.uuid,
 		Name:     "USB Monitor",
 		Version:  "v0.0.1",
-		Homepage: "https://github.com/hootrhino/rulex.git",
-		HelpLink: "https://github.com/hootrhino/rulex.git",
+		Homepage: "https://github.com/hootrhino/rhilex.git",
+		HelpLink: "https://github.com/hootrhino/rhilex.git",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
 		License:  "AGPL",

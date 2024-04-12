@@ -18,10 +18,10 @@ package target
 import (
 	"fmt"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/component/rulexrpc"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/component/rulexrpc"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -70,7 +70,6 @@ func (ct *codecTarget) Start(cctx typex.CCTX) error {
 	return nil
 
 }
-
 
 // 获取资源状态
 func (ct *codecTarget) Status() typex.SourceState {

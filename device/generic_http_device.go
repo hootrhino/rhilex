@@ -8,11 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 type __HttpCommonConfig struct {
@@ -120,7 +120,6 @@ func (hd *GenericHttpDevice) Stop() {
 		hd.CancelCTX()
 	}
 }
-
 
 // 真实设备
 func (hd *GenericHttpDevice) Details() *typex.Device {

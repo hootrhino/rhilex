@@ -19,7 +19,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var __DefaultSuperVisorAdmin *SuperVisorAdmin

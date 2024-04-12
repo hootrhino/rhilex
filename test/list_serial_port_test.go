@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/hootrhino/rulex/ossupport"
+	"github.com/hootrhino/rhilex/ossupport"
 	"go.bug.st/serial"
 )
 

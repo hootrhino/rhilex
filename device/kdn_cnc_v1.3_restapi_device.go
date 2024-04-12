@@ -22,10 +22,9 @@ import (
 	"net/http"
 	"time"
 
-	
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 /*
@@ -188,7 +187,6 @@ func (hd *KDN_CNC) Stop() {
 	hd.status = typex.DEV_DOWN
 	hd.CancelCTX()
 }
-
 
 // 真实设备
 func (hd *KDN_CNC) Details() *typex.Device {

@@ -20,10 +20,10 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

@@ -19,9 +19,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/hootrhino/rulex/component/internotify"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/component/internotify"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 /*

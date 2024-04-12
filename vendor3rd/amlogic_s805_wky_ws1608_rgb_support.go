@@ -1,6 +1,6 @@
 package vendor3rd
 
-import archsupport "github.com/hootrhino/rulex/bspsupport"
+import archsupport "github.com/hootrhino/rhilex/bspsupport"
 
 // R string = "red"
 // G string = "green"

@@ -22,7 +22,7 @@ import (
 	"github.com/hootrhino/go-dhcpd-leases"
 )
 
-// go test -timeout 30s -run ^Test_parse_linux_dhcp_leases github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_parse_linux_dhcp_leases github.com/hootrhino/rhilex/test -v -count=1
 func Test_parse_linux_dhcp_leases(t *testing.T) {
 	f, err := os.Open("./data/dhcp.leases")
 	if err != nil {

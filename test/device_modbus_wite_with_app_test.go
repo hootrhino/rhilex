@@ -3,13 +3,13 @@ package test
 import (
 	"time"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/component/appstack"
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/component/appstack"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
 
 	"testing"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // 读出来的字节缓冲默认大小
@@ -42,7 +42,7 @@ type _CustomProtocolConfig struct {
 * Test_IcmpSender_Device
 *
  */
-// go test -timeout 30s -run ^Test_Modbus_App_Write github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_Modbus_App_Write github.com/hootrhino/rhilex/test -v -count=1
 func Test_Modbus_App_Write(t *testing.T) {
 	engine := RunTestEngine()
 	engine.Start()

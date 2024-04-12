@@ -9,7 +9,7 @@ disk=$(shell df -h | awk '$$NF=="/"{printf "%s\n", $$2}')
 arch=$(shell uname -m)
 version=$(shell git describe --tags $(git rev-list --tags --max-count=1))
 
-XVersion=-X 'github.com/hootrhino/rulex/typex.MainVersion=$(version)'
+XVersion=-X 'github.com/hootrhino/rhilex/typex.MainVersion=$(version)'
 FLAGS="$(XVersion) -s -w -linkmode external -extldflags -static"
 TRIM_PATH=-gcflags=-trimpath=$$GOPATH -asmflags=-trimpath=$$GOPATH
 

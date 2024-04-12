@@ -27,7 +27,7 @@ jobs:
           mkdir ./component/rulex_api_server/server/www
           echo "hello">./component/rulex_api_server/server/www/index.html
           go get
-          go get -t github.com/hootrhino/rulex/test
+          go get -t github.com/hootrhino/rhilex/test
           git clone https://github.com/hybridgroup/gocv.git
           cd gocv
           make install

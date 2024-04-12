@@ -23,16 +23,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
-	modbuscache "github.com/hootrhino/rulex/component/intercache/modbus"
-	"github.com/hootrhino/rulex/component/interdb"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
+	"github.com/hootrhino/rhilex/component/interdb"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/xuri/excelize/v2"
 )
 

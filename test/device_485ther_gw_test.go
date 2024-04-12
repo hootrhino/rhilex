@@ -3,11 +3,11 @@ package test
 import (
 	"time"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
 
 	"testing"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

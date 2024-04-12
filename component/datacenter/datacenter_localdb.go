@@ -18,7 +18,7 @@ package datacenter
 import (
 	"strings"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 /*

@@ -30,7 +30,7 @@ import (
 // eth1             ethernet  connected  eth1
 // lo               loopback  unmanaged  --
 
-// go test -timeout 30s -run ^Test_parse_network_status github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_parse_network_status github.com/hootrhino/rhilex/test -v -count=1
 
 // NetworkDevice 表示网络设备
 type NetworkDevice struct {
@@ -105,7 +105,7 @@ type NetworkDeviceDetail struct {
 	IPv6Gateway string
 }
 
-// go test -timeout 30s -run ^Test_parse_nmcliDeviceShowOutput github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_parse_nmcliDeviceShowOutput github.com/hootrhino/rhilex/test -v -count=1
 func Test_parse_nmcliDeviceShowOutput(t *testing.T) {
 
 	// 替换为你的 nmcli 输出

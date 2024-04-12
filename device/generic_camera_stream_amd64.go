@@ -14,11 +14,10 @@ import (
 	"strings"
 	"syscall"
 
-	
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/ossupport"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 )
 
 const (
@@ -164,7 +163,6 @@ func (vc *videoCamera) Stop() {
 	}
 	vc.stopFFMPEGProcess()
 }
-
 
 func (vc *videoCamera) Details() *typex.Device {
 	return vc.RuleEngine.GetDevice(vc.PointId)

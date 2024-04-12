@@ -19,9 +19,7 @@
 package device
 
 import (
-	
-
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 type videoCamera struct {

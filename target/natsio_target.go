@@ -18,9 +18,9 @@ package target
 import (
 	"errors"
 	"fmt"
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 
 	"github.com/nats-io/nats.go"
 )

@@ -19,8 +19,8 @@ import (
 	"fmt"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rulex/rulexlib"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/rulexlib"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // 临时校验语法

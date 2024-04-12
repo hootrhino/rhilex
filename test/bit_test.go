@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/hootrhino/rulex/rulexlib"
+	"github.com/hootrhino/rhilex/rulexlib"
 
 	"github.com/go-playground/assert/v2"
 )

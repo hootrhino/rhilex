@@ -16,7 +16,7 @@
 package modbus_crc_tools
 
 import (
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/ini.v1"
 )
 

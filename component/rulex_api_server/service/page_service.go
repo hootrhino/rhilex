@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
 	"gorm.io/gorm"
 )
 

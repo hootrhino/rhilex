@@ -4,7 +4,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/glogger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 )

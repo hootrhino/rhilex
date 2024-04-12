@@ -15,7 +15,7 @@
 
 package service
 
-import "github.com/hootrhino/rulex/component/interdb"
+import "github.com/hootrhino/rhilex/component/interdb"
 
 /*
 *

@@ -8,13 +8,13 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rulex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
 
 	"github.com/adrianmo/go-nmea"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
-// go test -timeout 30s -run ^Test_AIS_SEND_PACKET github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_AIS_SEND_PACKET github.com/hootrhino/rhilex/test -v -count=1
 
 func Test_AIS_SEND_PACKET(t *testing.T) {
 	s1 := `\1G1:370208949,g:1,s:ABC,t:2320,c:1660780800,d:110*72\!ABVDM,1,1,5,B,H69EvShlTpID@TpMUG3COOL0000,2*14`
@@ -102,7 +102,7 @@ func Ais_sender_emulator_tcp() {
 	fmt.Println("Response from server:", response)
 }
 
-// go test -timeout 30s -run ^Test_generic_ais_txrx_device github.com/hootrhino/rulex/test -v -count=1
+// go test -timeout 30s -run ^Test_generic_ais_txrx_device github.com/hootrhino/rhilex/test -v -count=1
 func Test_generic_ais_txrx_device(t *testing.T) {
 	engine := RunTestEngine()
 	engine.Start()

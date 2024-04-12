@@ -20,7 +20,7 @@ import (
 	"log"
 	"os/exec"
 
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 type LinuxBashShell struct {

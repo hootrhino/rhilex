@@ -9,15 +9,15 @@ import (
 	"sync"
 	"time"
 
-	siemenscache "github.com/hootrhino/rulex/component/intercache/siemens"
+	siemenscache "github.com/hootrhino/rhilex/component/intercache/siemens"
 
 	"github.com/jinzhu/copier"
 
-	"github.com/hootrhino/rulex/common"
-	"github.com/hootrhino/rulex/component/interdb"
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/component/interdb"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/robinson/gos7"
 )
 

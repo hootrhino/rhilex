@@ -5,8 +5,8 @@ package jpegstream
 
 import (
 	"fmt"
-	"github.com/hootrhino/rulex/component"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/component"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 var __DefaultJpegStreamServer *JpegStreamServer

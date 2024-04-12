@@ -7,9 +7,8 @@ import (
 	"time"
 	"unsafe"
 
-	
-	"github.com/hootrhino/rulex/glogger"
-	"github.com/hootrhino/rulex/typex"
+	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 const __IR_DEV = "/dev/input/event1"
@@ -150,7 +149,6 @@ func (ird *IR) Stop() {
 	}
 
 }
-
 
 // 真实设备
 func (ird *IR) Details() *typex.Device {

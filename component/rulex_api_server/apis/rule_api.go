@@ -5,17 +5,17 @@ import (
 	"strings"
 
 	"github.com/hootrhino/beautiful-lua-go/parse"
-	"github.com/hootrhino/rulex/component/interqueue"
-	common "github.com/hootrhino/rulex/component/rulex_api_server/common"
-	"github.com/hootrhino/rulex/component/rulex_api_server/model"
-	"github.com/hootrhino/rulex/component/rulex_api_server/server"
-	"github.com/hootrhino/rulex/component/rulex_api_server/service"
-	"github.com/hootrhino/rulex/glogger"
+	"github.com/hootrhino/rhilex/component/interqueue"
+	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/server"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/glogger"
 	"github.com/sirupsen/logrus"
 
-	"github.com/hootrhino/rulex/core"
-	"github.com/hootrhino/rulex/typex"
-	"github.com/hootrhino/rulex/utils"
+	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 
 	"github.com/gin-gonic/gin"
 )
