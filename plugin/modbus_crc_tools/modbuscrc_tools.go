@@ -41,9 +41,9 @@ func (ms *modbusCRCCalculator) Stop() error {
 	return nil
 }
 
-func (hh *modbusCRCCalculator) PluginMetaInfo() typex.XPluginMetaInfo {
+func (ms *modbusCRCCalculator) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     ms.uuid,
 		Name:     "Modbus CRC Calculator",
 		Version:  "v0.0.1",
 		Homepage: "/",

@@ -23,7 +23,7 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 )
 
-func (mc *modbusCRCCalculator) Service(arg typex.ServiceArg) typex.ServiceResult {
+func (ms *modbusCRCCalculator) Service(arg typex.ServiceArg) typex.ServiceResult {
 	// 大端
 	if arg.Name == "crc16big" {
 		switch s := arg.Args.(type) {
@@ -93,7 +93,7 @@ func uint16ToBytes(val uint16) [2]byte {
 	return bytes
 }
 func stringReverse(in string) string {
-	var bytes []byte = []byte(in)
+	bytes := []byte(in)
 	for i := 0; i < len(in)/2; i++ {
 		tmp := bytes[len(in)-i-1]
 		bytes[len(in)-i-1] = bytes[i]

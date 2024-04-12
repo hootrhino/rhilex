@@ -58,7 +58,7 @@ func NewLicenseManager(r typex.RuleX) *LicenseManager {
 	}
 }
 
-func (l *LicenseManager) Init(section *ini.Section) error {
+func (dm *LicenseManager) Init(section *ini.Section) error {
 	license_path, err1 := section.GetKey("license_path")
 	errMsg := "License loading failed. Your License may not be compliant."
 	if err1 != nil {
@@ -97,7 +97,7 @@ func (l *LicenseManager) Init(section *ini.Section) error {
 	}
 
 	LocalLicense.License = string(licBytesB64)
-	l.localLicense = LocalLicense
+	dm.localLicense = LocalLicense
 	T1 := time.Unix(LocalLicense.BeginAuthorize, 0)
 	T2 := time.Unix(LocalLicense.EndAuthorize, 0)
 	T1s := T1.Format("2006-01-02 15:04:05")
@@ -143,7 +143,7 @@ func (dm *LicenseManager) Stop() error {
 	return nil
 }
 
-func (hh *LicenseManager) PluginMetaInfo() typex.XPluginMetaInfo {
+func (dm *LicenseManager) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
 		UUID:     "LicenseManager",
 		Name:     "LicenseManager",

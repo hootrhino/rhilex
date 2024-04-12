@@ -5,7 +5,7 @@ const (
 	CRON_TASK_TYPE_LINUX_SHELL = "LINUX_SHELL"
 )
 
-// CRON
+// LINUX_SHELL Linux脚本执行器
 const LINUX_SHELL = "/bin/bash"
 
 const PERM_0777 = 0777

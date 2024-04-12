@@ -169,9 +169,9 @@ func calculateCpuPercent(cpus []float64) float64 {
 	return acc / float64(len(cpus))
 }
 
-func (hh *NetDiscover) PluginMetaInfo() typex.XPluginMetaInfo {
+func (dm *NetDiscover) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     dm.uuid,
 		Name:     "NetDiscover",
 		Version:  "v0.0.1",
 		Homepage: "/",
@@ -187,6 +187,6 @@ func (hh *NetDiscover) PluginMetaInfo() typex.XPluginMetaInfo {
 * 服务调用接口
 *
  */
-func (cs *NetDiscover) Service(arg typex.ServiceArg) typex.ServiceResult {
+func (dm *NetDiscover) Service(arg typex.ServiceArg) typex.ServiceResult {
 	return typex.ServiceResult{}
 }

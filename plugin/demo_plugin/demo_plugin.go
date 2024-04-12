@@ -26,9 +26,9 @@ func (dm *DemoPlugin) Stop() error {
 	return nil
 }
 
-func (hh *DemoPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
+func (dm *DemoPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     dm.uuid,
 		Name:     "DemoPlugin",
 		Version:  "v0.0.1",
 		Homepage: "/",
@@ -44,6 +44,6 @@ func (hh *DemoPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
 * 服务调用接口
 *
  */
-func (cs *DemoPlugin) Service(arg typex.ServiceArg) typex.ServiceResult {
+func (dm *DemoPlugin) Service(arg typex.ServiceArg) typex.ServiceResult {
 	return typex.ServiceResult{}
 }

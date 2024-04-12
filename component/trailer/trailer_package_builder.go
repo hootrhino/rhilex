@@ -26,11 +26,7 @@ type AppManifest struct {
 	Env        []string `json:"env"`
 }
 
-/*
-*
-* 针对脚本语言
-*
- */
+// ExecuteType 针对脚本语言
 var ExecuteType = map[string]string{
 	".jar": "JAVA",
 	".exe": "EXE",

@@ -11,9 +11,8 @@ const _VM_Registry_Size int = 1024 * 1024    // 默认堆栈大小
 const _VM_Registry_MaxSize int = 1024 * 1024 // 默认最大堆栈
 const _VM_Registry_GrowStep int = 32         // 默认CPU消耗
 
-// 规则状态：
-// 0: 停止
-// 1: 运行中
+// RULE_STOP 0: 停止
+// RULE_RUNNING 1: 运行中
 const RULE_STOP RuleStatus = 0
 const RULE_RUNNING RuleStatus = 1
 

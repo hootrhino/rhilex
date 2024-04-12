@@ -50,9 +50,9 @@ func (dog *genericWatchDog) Stop() error {
 	return nil
 }
 
-func (hh *genericWatchDog) PluginMetaInfo() typex.XPluginMetaInfo {
+func (dog *genericWatchDog) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     dog.uuid,
 		Name:     "Soft WatchDog",
 		Version:  "v0.0.1",
 		Homepage: "/",
@@ -68,6 +68,6 @@ func (hh *genericWatchDog) PluginMetaInfo() typex.XPluginMetaInfo {
 * 服务调用接口
 *
  */
-func (cs *genericWatchDog) Service(arg typex.ServiceArg) typex.ServiceResult {
+func (dog *genericWatchDog) Service(arg typex.ServiceArg) typex.ServiceResult {
 	return typex.ServiceResult{}
 }

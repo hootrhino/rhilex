@@ -135,8 +135,8 @@ func (I *IoTProperty) BoolValue() bool {
 * 验证类型
 *
  */
-func (V IoTProperty) ValidateFields() error {
-	if utils.SContains([]string{"R", "W", "RW"}, V.Rw) {
+func (I IoTProperty) ValidateFields() error {
+	if utils.SContains([]string{"R", "W", "RW"}, I.Rw) {
 		return fmt.Errorf("RW Value Only Support 'R' or 'W' or 'RW'")
 	}
 	return nil
@@ -148,8 +148,8 @@ func (V IoTProperty) ValidateFields() error {
 * 验证物模型本身是否合法, 包含了 IoTPropertyType，Rule 的对应关系
 *
  */
-func (V IoTProperty) ValidateRule() error {
-	switch V.Type {
+func (I IoTProperty) ValidateRule() error {
+	switch I.Type {
 	case IoTPropertyTypeString:
 		{
 			return nil // TODO
@@ -171,7 +171,7 @@ func (V IoTProperty) ValidateRule() error {
 			return nil // TODO
 		}
 	default:
-		return fmt.Errorf("Unknown And Invalid IoT Property Type:%v", V.Type)
+		return fmt.Errorf("Unknown And Invalid IoT Property Type:%v", I.Type)
 	}
 }
 
@@ -180,8 +180,8 @@ func (V IoTProperty) ValidateRule() error {
 * 验证数据类型
 *
  */
-func (V IoTProperty) ValidateType() error {
-	switch V.Type {
+func (I IoTProperty) ValidateType() error {
+	switch I.Type {
 	case IoTPropertyTypeString:
 		{
 			return nil // TODO
@@ -203,7 +203,7 @@ func (V IoTProperty) ValidateType() error {
 			return nil // TODO
 		}
 	default:
-		return fmt.Errorf("Unknown And Invalid IoT Property Type:%v", V.Type)
+		return fmt.Errorf("Unknown And Invalid IoT Property Type:%v", I.Type)
 	}
 }
 

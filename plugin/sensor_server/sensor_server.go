@@ -41,9 +41,9 @@ func (dm *SensorServer) Stop() error {
 	return nil
 }
 
-func (hh *SensorServer) PluginMetaInfo() typex.XPluginMetaInfo {
+func (dm *SensorServer) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     dm.uuid,
 		Name:     "GenericSensorServer",
 		Version:  "v0.0.1",
 		Homepage: "/",
@@ -59,7 +59,7 @@ func (hh *SensorServer) PluginMetaInfo() typex.XPluginMetaInfo {
 * 服务调用接口
 *
  */
-func (cs *SensorServer) Service(arg typex.ServiceArg) typex.ServiceResult {
+func (dm *SensorServer) Service(arg typex.ServiceArg) typex.ServiceResult {
 	return typex.ServiceResult{}
 }
 
@@ -69,11 +69,11 @@ func (cs *SensorServer) Service(arg typex.ServiceArg) typex.ServiceResult {
 func formatUrl(v int) string {
 	return fmt.Sprintf("0.0.0.0:%d", v)
 }
-func (hh *SensorServer) startSServer(ctxMain context.Context, cancelMain context.CancelFunc) error {
+func (dm *SensorServer) startSServer(ctxMain context.Context, cancelMain context.CancelFunc) error {
 	var listener net.Listener
 
 	var err error
-	listener, err = net.Listen("tcp", formatUrl(hh.tcpPort))
+	listener, err = net.Listen("tcp", formatUrl(dm.tcpPort))
 	if err != nil {
 		glogger.GLogger.Fatal("Error listening:", err)
 		return err

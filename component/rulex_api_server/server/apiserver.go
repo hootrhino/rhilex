@@ -33,7 +33,7 @@ func ContextUrl(path string) string {
 
 const API_V1_ROOT string = "/api/v1/"
 
-// 全局API Server
+// DefaultApiServer 全局API Server
 var DefaultApiServer *RulexApiServer
 
 /*

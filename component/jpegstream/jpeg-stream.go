@@ -31,9 +31,9 @@ type JpegStream struct {
 	Resolution    utils.Resolution
 }
 
-func (S JpegStream) String() string {
+func (s JpegStream) String() string {
 	return fmt.Sprintf(`{"liveId":%s,"pulled":%v,"resolution":%s}`,
-		S.LiveId, S.Pulled, S.Resolution.String())
+		s.LiveId, s.Pulled, s.Resolution.String())
 }
 func (s *JpegStream) GetWebJpegFrame() []byte {
 	b := s.frame[:s.frameSize]

@@ -29,14 +29,14 @@ type GoodsInfo struct {
 	KilledBy string // 进程被谁干死的, 一般用来处理要不要抢救进程
 }
 
-func (g GoodsProcess) String() string {
+func (goodsProcess GoodsProcess) String() string {
 	return fmt.Sprintf("^Pid:%v, UUID:%v, LocalPath:%v, args:%v, GoodsType:%v, ExecuteType:%v",
-		g.cmd.Process.Pid,
-		g.Info.UUID,
-		g.Info.LocalPath,
-		g.Info.Args,
-		g.Info.GoodsType,
-		g.Info.ExecuteType,
+		goodsProcess.cmd.Process.Pid,
+		goodsProcess.Info.UUID,
+		goodsProcess.Info.LocalPath,
+		goodsProcess.Info.Args,
+		goodsProcess.Info.GoodsType,
+		goodsProcess.Info.ExecuteType,
 	)
 }
 
@@ -81,24 +81,24 @@ func (goodsProcess *GoodsProcess) ConnectToRpc() (TrailerClient, error) {
 	return goodsProcess.trailerClient, nil
 }
 
-func (goodsPs *GoodsProcess) StopBy(r string) {
-	goodsPs.Info.KilledBy = r
-	if goodsPs.cmd != nil {
-		if goodsPs.cmd.Process != nil {
-			goodsPs.cmd.Process.Kill()
-			goodsPs.cmd.Process.Signal(syscall.SIGTERM)
+func (goodsProcess *GoodsProcess) StopBy(r string) {
+	goodsProcess.Info.KilledBy = r
+	if goodsProcess.cmd != nil {
+		if goodsProcess.cmd.Process != nil {
+			goodsProcess.cmd.Process.Kill()
+			goodsProcess.cmd.Process.Signal(syscall.SIGTERM)
 		}
 	}
-	goodsPs.cancel()
+	goodsProcess.cancel()
 }
-func (goodsPs *GoodsProcess) Stop() {
-	if goodsPs.cmd != nil {
-		if goodsPs.cmd.Process != nil {
-			goodsPs.cmd.Process.Kill()
-			goodsPs.cmd.Process.Signal(syscall.SIGTERM)
+func (goodsProcess *GoodsProcess) Stop() {
+	if goodsProcess.cmd != nil {
+		if goodsProcess.cmd.Process != nil {
+			goodsProcess.cmd.Process.Kill()
+			goodsProcess.cmd.Process.Signal(syscall.SIGTERM)
 		}
 	}
-	goodsPs.cancel()
+	goodsProcess.cancel()
 }
 
 func NewGoodsProcess() *GoodsProcess {

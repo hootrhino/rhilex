@@ -53,9 +53,9 @@ func (ms *modbusScanner) Stop() error {
 	return nil
 }
 
-func (hh *modbusScanner) PluginMetaInfo() typex.XPluginMetaInfo {
+func (ms *modbusScanner) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     ms.uuid,
 		Name:     "Modbus Device Scanner",
 		Version:  "v0.0.1",
 		Homepage: "/",

@@ -125,7 +125,7 @@ type event struct {
 * 从内部总线拿数据
 *
  */
-func (ie *InternalEventSource) startInternalEventQueue() {
+func (u *InternalEventSource) startInternalEventQueue() {
 	go func(ctx context.Context) {
 		internotify.AddSource()
 		defer internotify.RemoveSource()
@@ -134,27 +134,27 @@ func (ie *InternalEventSource) startInternalEventQueue() {
 			case <-ctx.Done():
 				return
 			case Event := <-internotify.GetQueue():
-				if ie.mainConfig.Type == "ALL" {
+				if u.mainConfig.Type == "ALL" {
 					bytes, _ := json.Marshal(event{
 						Type:  Event.Type,
 						Event: Event.Event,
 						Ts:    Event.Ts,
 						Info:  Event.Info,
 					})
-					ie.RuleEngine.WorkInEnd(ie.RuleEngine.GetInEnd(ie.PointId), string(bytes))
+					u.RuleEngine.WorkInEnd(u.RuleEngine.GetInEnd(u.PointId), string(bytes))
 					continue
 				}
-				if ie.mainConfig.Type == Event.Type {
+				if u.mainConfig.Type == Event.Type {
 					bytes, _ := json.Marshal(event{
 						Type:  Event.Type,
 						Event: Event.Event,
 						Ts:    Event.Ts,
 						Info:  Event.Info,
 					})
-					ie.RuleEngine.WorkInEnd(ie.RuleEngine.GetInEnd(ie.PointId), string(bytes))
+					u.RuleEngine.WorkInEnd(u.RuleEngine.GetInEnd(u.PointId), string(bytes))
 					continue
 				}
 			}
 		}
-	}(ie.Ctx)
+	}(u.Ctx)
 }

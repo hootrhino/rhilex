@@ -33,9 +33,9 @@ func (dm *ICMPSender) Stop() error {
 	return nil
 }
 
-func (hh *ICMPSender) PluginMetaInfo() typex.XPluginMetaInfo {
+func (dm *ICMPSender) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:     hh.uuid,
+		UUID:     dm.uuid,
 		Name:     "ICMP Sender",
 		Version:  "v1.0.0",
 		Homepage: "/",
@@ -51,18 +51,18 @@ func (hh *ICMPSender) PluginMetaInfo() typex.XPluginMetaInfo {
 * 服务调用接口
 *
  */
-func (icmp *ICMPSender) Service(arg typex.ServiceArg) typex.ServiceResult {
+func (dm *ICMPSender) Service(arg typex.ServiceArg) typex.ServiceResult {
 	// ping 8.8.8.8
 	Fields := logrus.Fields{
 		"topic": "plugin/ICMPSenderPing/ICMPSender",
 	}
 	out := typex.ServiceResult{Out: []map[string]interface{}{}}
-	if icmp.pinging {
+	if dm.pinging {
 		glogger.GLogger.WithFields(Fields).Info("ICMPSender pinging now:", arg.Args)
 		return out
 	}
 	if arg.Name == "ping" {
-		icmp.pinging = true
+		dm.pinging = true
 		go func(cs *ICMPSender) {
 			defer func() {
 				cs.pinging = false
@@ -101,7 +101,7 @@ func (icmp *ICMPSender) Service(arg typex.ServiceArg) typex.ServiceResult {
 					glogger.GLogger.WithFields(Fields).Info("Unknown service name:", arg.Name)
 				}
 			}
-		}(icmp)
+		}(dm)
 
 	}
 	return out

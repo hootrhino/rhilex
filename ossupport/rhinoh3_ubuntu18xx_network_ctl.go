@@ -38,8 +38,8 @@ type EtcNetworkConfig struct {
 	DHCPEnabled bool     `json:"dhcp_enabled"`
 }
 
-func (nc *EtcNetworkConfig) JsonString() string {
-	b, _ := json.Marshal(nc)
+func (iface *EtcNetworkConfig) JsonString() string {
+	b, _ := json.Marshal(iface)
 	return string(b)
 }
 

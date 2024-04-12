@@ -194,7 +194,7 @@ func ParseUSignedValue(DataBlockType string, DataBlockOrder string,
 }
 
 func stringReverse(str string) string {
-	var bytes []byte = []byte(str)
+	bytes := []byte(str)
 	for i := 0; i < len(str)/2; i++ {
 		tmp := bytes[len(str)-i-1]
 		bytes[len(str)-i-1] = bytes[i]

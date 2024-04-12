@@ -97,14 +97,14 @@ func NewGenericOpcuaDevice(e typex.RuleX) typex.XDevice {
 	opc.status = typex.DEV_DOWN
 	return opc
 }
-func (sd *genericOpcuaDevice) OnCtrl(cmd []byte, args []byte) ([]byte, error) {
+func (opcDev *genericOpcuaDevice) OnCtrl(cmd []byte, args []byte) ([]byte, error) {
 	return []byte{}, nil
 }
 
 // 初始化配置文件
-func (sd *genericOpcuaDevice) Init(devId string, configMap map[string]interface{}) error {
-	sd.PointId = devId
-	if err := utils.BindSourceConfig(configMap, &sd.mainConfig); err != nil {
+func (opcDev *genericOpcuaDevice) Init(devId string, configMap map[string]interface{}) error {
+	opcDev.PointId = devId
+	if err := utils.BindSourceConfig(configMap, &opcDev.mainConfig); err != nil {
 		return err
 	}
 	return nil
@@ -281,55 +281,55 @@ func interfaceToString(value interface{}) (string, error) {
 	}
 }
 
-func (sd *genericOpcuaDevice) OnWrite(cmd []byte, data []byte) (int, error) {
-	n, err := sd.driver.Write(cmd, data)
+func (opcDev *genericOpcuaDevice) OnWrite(cmd []byte, data []byte) (int, error) {
+	n, err := opcDev.driver.Write(cmd, data)
 	//opc 协议写数据 待完善
 	if err != nil {
 		glogger.GLogger.Error(err)
-		sd.status = typex.DEV_DOWN
+		opcDev.status = typex.DEV_DOWN
 	}
 	return n, err
 }
 
 // 设备当前状态
-func (sd *genericOpcuaDevice) Status() typex.DeviceState {
-	if sd.mainConfig.OpcuaCommonConfig.RetryTime == 0 {
-		sd.status = typex.DEV_UP
+func (opcDev *genericOpcuaDevice) Status() typex.DeviceState {
+	if opcDev.mainConfig.OpcuaCommonConfig.RetryTime == 0 {
+		opcDev.status = typex.DEV_UP
 	}
-	if sd.mainConfig.OpcuaCommonConfig.RetryTime > 0 {
-		if sd.errorCount >= sd.mainConfig.OpcuaCommonConfig.RetryTime {
-			sd.status = typex.DEV_DOWN
+	if opcDev.mainConfig.OpcuaCommonConfig.RetryTime > 0 {
+		if opcDev.errorCount >= opcDev.mainConfig.OpcuaCommonConfig.RetryTime {
+			opcDev.status = typex.DEV_DOWN
 		}
 	}
-	return sd.status
+	return opcDev.status
 }
 
 // 停止设备
-func (sd *genericOpcuaDevice) Stop() {
-	sd.status = typex.DEV_DOWN
-	sd.CancelCTX()
-	if sd.driver != nil {
-		sd.client.Close(sd.Ctx)
-		sd.driver.Stop()
+func (opcDev *genericOpcuaDevice) Stop() {
+	opcDev.status = typex.DEV_DOWN
+	opcDev.CancelCTX()
+	if opcDev.driver != nil {
+		opcDev.client.Close(opcDev.Ctx)
+		opcDev.driver.Stop()
 	}
 }
 
 // 真实设备
-func (sd *genericOpcuaDevice) Details() *typex.Device {
-	return sd.RuleEngine.GetDevice(sd.PointId)
+func (opcDev *genericOpcuaDevice) Details() *typex.Device {
+	return opcDev.RuleEngine.GetDevice(opcDev.PointId)
 }
 
 // 状态
-func (sd *genericOpcuaDevice) SetState(status typex.DeviceState) {
-	sd.status = status
+func (opcDev *genericOpcuaDevice) SetState(status typex.DeviceState) {
+	opcDev.status = status
 
 }
 
 // 驱动
-func (sd *genericOpcuaDevice) Driver() typex.XExternalDriver {
-	return sd.driver
+func (opcDev *genericOpcuaDevice) Driver() typex.XExternalDriver {
+	return opcDev.driver
 }
 
-func (sd *genericOpcuaDevice) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {
+func (opcDev *genericOpcuaDevice) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {
 	return typex.DCAResult{}
 }

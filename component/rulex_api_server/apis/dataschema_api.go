@@ -90,22 +90,22 @@ func (O IoTPropertyRuleVo) IoTPropertyRuleFromString(s string) error {
 * 从数据库保存的String字符串反解析规则
 *
  */
-func (P *IoTPropertyRuleVo) ParseRuleFromModel(s string) error {
-	if P.Max == nil {
-		P.Max = new(int)
+func (O *IoTPropertyRuleVo) ParseRuleFromModel(s string) error {
+	if O.Max == nil {
+		O.Max = new(int)
 	}
-	if P.Min == nil {
-		P.Min = new(int)
+	if O.Min == nil {
+		O.Min = new(int)
 	}
-	if P.Round == nil {
-		P.Round = new(int)
-	}
-
-	if P.DefaultValue == nil {
-		P.DefaultValue = ""
+	if O.Round == nil {
+		O.Round = new(int)
 	}
 
-	if err := json.Unmarshal([]byte(s), &P); err != nil {
+	if O.DefaultValue == nil {
+		O.DefaultValue = ""
+	}
+
+	if err := json.Unmarshal([]byte(s), &O); err != nil {
 		return err
 	} else {
 		return nil
