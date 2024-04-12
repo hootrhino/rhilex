@@ -1,13 +1,13 @@
 *.log
 *_bin
 .vscode/
-rulex
-rulex-*
+rhilex
+rhilex-*
 .DS_Store
 *.out
 *.zip
 rhilex.db
-rulex.exe
+rhilex.exe
 *.db
 .idea
 *.exe
