@@ -164,6 +164,10 @@ type RuleX interface {
 	// 重启设备
 	//
 	RestartDevice(uuid string) error
+	//
+	SetDeviceStatus(uuid string, s DeviceState)
+	//
+	SetSourceStatus(uuid string, s SourceState)
 }
 
 // 拓扑接入点，比如 modbus 检测点等

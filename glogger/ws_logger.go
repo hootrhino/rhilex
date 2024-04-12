@@ -130,8 +130,8 @@ func WsLogger(c *gin.Context) {
 		wsConn.Close()
 		return
 	}
-	private_GRealtimeLogger.Clients[wsConn.RemoteAddr().String()] = wsConn
 	private_GRealtimeLogger.locker.Lock()
+	private_GRealtimeLogger.Clients[wsConn.RemoteAddr().String()] = wsConn
 	wsConn.WriteMessage(websocket.TextMessage, []byte("Connected"))
 	private_GRealtimeLogger.locker.Unlock()
 	GLogger.Info("WebSocket Terminal connected:" + wsConn.RemoteAddr().String())

@@ -63,10 +63,10 @@ import (
 //	    }
 //	}
 type _GMODCommonConfig struct {
-	Mode           string `json:"mode"`
-	AutoRequest    *bool  `json:"autoRequest"`
-	EnableOptimize *bool  `json:"enableOptimize"`
-	MaxRegNum      uint16 `json:"maxRegNum"`
+	Mode           string `json:"mode" validate:"required"`
+	AutoRequest    *bool  `json:"autoRequest" validate:"required"`
+	EnableOptimize *bool  `json:"enableOptimize" validate:"required"`
+	MaxRegNum      uint16 `json:"maxRegNum" validate:"required"`
 }
 type _GMODConfig struct {
 	CommonConfig _GMODCommonConfig `json:"commonConfig" validate:"required"`
