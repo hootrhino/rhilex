@@ -59,7 +59,7 @@ func LoadSystemSettingsAPI() {
 		timesApi.PUT("/ntp", server.AddRoute(UpdateTimeByNtp))
 	}
 	// 4g module
-	settings4GApi := server.RouteGroup(server.ContextUrl("/4g"))
+	settings4GApi := server.RouteGroup(server.ContextUrl("/mn4g"))
 	{
 		settings4GApi.GET("/info", server.AddRoute(Get4GBaseInfo))
 		settings4GApi.POST("/restart", server.AddRoute(RhinoPiRestart4G))
