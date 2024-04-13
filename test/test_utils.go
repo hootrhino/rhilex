@@ -64,7 +64,7 @@ func HttpGet(api string) string {
 *
  */
 func RunTestEngine() typex.RuleX {
-	mainConfig := core.InitGlobalConfig("conf/rulex.ini")
+	mainConfig := core.InitGlobalConfig("conf/rhilex.ini")
 	glogger.StartGLogger(
 		core.GlobalConfig.LogLevel,
 		mainConfig.EnableConsole,

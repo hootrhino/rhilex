@@ -1,16 +1,14 @@
 package test
 
 import (
-
 	"fmt"
 	"io"
 	"os"
 	"testing"
-
 )
 
 func Test_read_line(t *testing.T) {
-	t.Log(readLastLine("conf/rulex.ini"))
+	t.Log(readLastLine("conf/rhilex.ini"))
 }
 
 func readLastLine(filepath string) string {

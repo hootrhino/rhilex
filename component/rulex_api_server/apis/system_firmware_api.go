@@ -116,7 +116,7 @@ func UpgradeFirmWare(c *gin.Context, ruleEngine typex.RuleX) {
   - 检查包, 一般包里面会有一个可执行文件和 MD5 SUM 值。要对比一下。
     文件列表:
   - rulex
-  - rulex.ini
+  - rhilex.ini
   - md5.sum
 
 *

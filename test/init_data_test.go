@@ -15,7 +15,7 @@ import (
 
 // 初始化一些测试数据
 func TestInitData(t *testing.T) {
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rulex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
 	engine.Start()
 	hh := httpserver.NewHttpApiServer(engine)
 	// HttpApiServer loaded default

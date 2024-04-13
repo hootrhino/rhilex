@@ -74,7 +74,7 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:  "run",
-				Usage: "Start rulex, Must with config: -config=path/rulex.ini",
+				Usage: "Start rulex, Must with config: -config=path/rhilex.ini",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:  "db",
@@ -84,7 +84,7 @@ func main() {
 					&cli.StringFlag{
 						Name:  "config",
 						Usage: "Config of rulex",
-						Value: "rulex.ini",
+						Value: "rhilex.ini",
 					},
 				},
 				Action: func(c *cli.Context) error {

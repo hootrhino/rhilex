@@ -4,7 +4,7 @@
 WORKING_DIRECTORY="/usr/local"
 PID_FILE="/var/run/rulex.pid"
 EXECUTABLE_PATH="$WORKING_DIRECTORY/rulex"
-CONFIG_PATH="$WORKING_DIRECTORY/rulex.ini"
+CONFIG_PATH="$WORKING_DIRECTORY/rhilex.ini"
 
 log() {
     local level=$1
@@ -14,7 +14,7 @@ log() {
 
 start() {
     rm -f /var/run/rulex-stop.sinal
-    pid=$(pgrep -x -n -f "/usr/local/rulex run -config=/usr/local/rulex.ini")
+    pid=$(pgrep -x -n -f "/usr/local/rulex run -config=/usr/local/rhilex.ini")
     if [ -n "$pid" ]; then
         log INFO "rulex is running with Pid:${pid}"
         exit 0
@@ -66,7 +66,7 @@ daemon() {
                 exit 0
             else
                 log WARNING "Detected that rulex process is interrupted. Restarting..."
-                /usr/local/rulex run -config=/usr/local/rulex.ini
+                /usr/local/rulex run -config=/usr/local/rhilex.ini
                 log WARNING "Detected that rulex process has Restarted."
             fi
         fi
