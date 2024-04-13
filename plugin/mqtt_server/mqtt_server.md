@@ -24,3 +24,31 @@ port = 1883
 ### 参数说明
 - enable: 是否开启
 - port：监听端口
+
+## Service
+
+### 列表
+```go
+type PageRequest struct {
+	Current int `json:"current,omitempty"`
+	Size    int `json:"size,omitempty"`
+}
+
+type PageResult struct {
+	Current int      `json:"current"`
+	Size    int      `json:"size"`
+	Total   int      `json:"total"`
+	Records []Client `json:"records"`
+}
+```
+
+### 踢下线
+直接发送：`kickout` 指令，参数是`[]string{}`。
+
+```json
+{
+    "uuid": "ICMPSender",
+    "name": "kickout",
+    "args": []
+}
+```

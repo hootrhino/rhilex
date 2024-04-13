@@ -2,7 +2,6 @@ package mqttserver
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
@@ -19,16 +18,12 @@ type _serverConfig struct {
 	Host   string `ini:"host"`
 	Port   int    `ini:"port"`
 }
-type _topic struct {
-	Topic string
-}
+
 type MqttServer struct {
 	Enable     bool
 	Host       string
 	Port       int
 	mqttServer *mqtt.Server
-	clients    map[string]*mqtt.Client
-	locker     sync.Mutex
 	topics     map[string][]_topic // Topic 订阅表
 	ruleEngine typex.RuleX
 	uuid       string
@@ -36,12 +31,10 @@ type MqttServer struct {
 
 func NewMqttServer() typex.XPlugin {
 	return &MqttServer{
-		Host:    "127.0.0.1",
-		Port:    1884,
-		clients: map[string]*mqtt.Client{},
-		topics:  map[string][]_topic{},
-		uuid:    "RULEX-MqttServer",
-		locker:  sync.Mutex{},
+		Host:   "127.0.0.1",
+		Port:   1884,
+		topics: map[string][]_topic{},
+		uuid:   "RULEX-MqttServer",
 	}
 }
 
@@ -107,8 +100,6 @@ func (s *MqttServer) PluginMetaInfo() typex.XPluginMetaInfo {
 
 type mHooks struct {
 	mqtt.HookBase
-	s      *MqttServer
-	locker sync.Mutex
 }
 
 func (h *mHooks) ID() string {
@@ -120,21 +111,12 @@ func (h *mHooks) Provides(b byte) bool {
 }
 
 func (h *mHooks) OnConnect(client *mqtt.Client, pk packets.Packet) error {
-	h.locker.Lock()
-	h.s.clients[client.ID] = client
-	h.locker.Unlock()
-	glogger.GLogger.Debugf("client OnConnect:[%v] %v", client.ID, string(client.Properties.Username))
+	glogger.GLogger.Debugf("Client OnConnect:%s", client.ID)
 	return nil
 }
 
 func (h *mHooks) OnDisconnect(client *mqtt.Client, err error, expire bool) {
-	if h.s.clients[client.ID] != nil {
-		h.locker.Lock()
-		delete(h.s.clients, client.ID)
-		delete(h.s.topics, client.ID)
-		h.locker.Unlock()
-		glogger.GLogger.Debugf("Client disconnected:%s", client.ID)
-	}
+	glogger.GLogger.Debugf("Client disconnected:%s", client.ID)
 }
 
 func (h *mHooks) OnPublish(cl *mqtt.Client, pk packets.Packet) (packets.Packet, error) {
