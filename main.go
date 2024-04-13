@@ -24,6 +24,7 @@ import (
 	"runtime"
 	"time"
 
+	archsupport "github.com/hootrhino/rhilex/bspsupport"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/ossupport"
 	"github.com/hootrhino/rhilex/typex"
@@ -45,16 +46,7 @@ func init() {
 		}
 	}()
 	env := os.Getenv("ARCHSUPPORT")
-	if utils.SContains([]string{
-		"EEKITH3",
-		"EEKITT507",
-		"WKYS805",
-		"RPI4B",
-		"EN6400",
-	}, env) {
-		typex.DefaultVersionInfo.Product = env
-	}
-
+	typex.DefaultVersionInfo.Product = archsupport.CheckVendor(env)
 	dist, err := utils.GetOSDistribution()
 	if err != nil {
 		utils.CLog("Failed to Get OS Distribution:%s", err)
