@@ -248,7 +248,7 @@ func CreateDevice(c *gin.Context, ruleEngine typex.RuleX) {
 		return
 	}
 	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("Device Name Invalid, Must Between 6-12 characters"))
+		c.JSON(common.HTTP_OK, common.Error("Device Name Invalid, Must Between 6-14 characters"))
 		return
 	}
 	isSingle := false
@@ -309,7 +309,7 @@ func UpdateDevice(c *gin.Context, ruleEngine typex.RuleX) {
 		return
 	}
 	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("Device Name Invalid, Must Between 6-12 characters"))
+		c.JSON(common.HTTP_OK, common.Error("Device Name Invalid, Must Between 6-14 characters"))
 		return
 	}
 	//
