@@ -28,12 +28,12 @@ var __AisCodec = aislib.CodecNew(false, false, false)
 // 把AIS包里面的几个结构体拿出来了，主要是适配JSON格式, 下面这些结构体和AIS包里面的完全一样
 // --------------------------------------------------------------------------------------------------
 type _AISCommonConfig struct {
-	Mode     string `json:"mode" title:"工作模式" info:"UART/TCP"`
-	ParseAis *bool  `json:"parseAis"`
-	GwSN     string `json:"gwsn"`
+	Mode     string `json:"mode" validate:"required"`
+	ParseAis *bool  `json:"parseAis" validate:"required"`
+	GwSN     string `json:"gwsn" validate:"required"`
 }
 type _AISDeviceMasterConfig struct {
-	CommonConfig _AISCommonConfig  `json:"commonConfig"`
+	CommonConfig _AISCommonConfig  `json:"commonConfig" validate:"required"`
 	HostConfig   common.HostConfig `json:"hostConfig"`
 	PortUuid     string            `json:"portUuid"`
 }
