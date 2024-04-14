@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -49,7 +50,11 @@ type RtspServer struct {
 
 // NewRouter Gin 路由配置
 func InitRtspServer(rulex typex.RuleX) *RtspServer {
-	gin.SetMode(gin.ReleaseMode)
+	if core.GlobalConfig.AppDebugMode {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	__DefaultRtspServer = &RtspServer{
 		webServer:   gin.New(),
 		RtspStreams: map[string]*FlvStream{},

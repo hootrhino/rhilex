@@ -59,7 +59,11 @@ var err1crash = errors.New("http server crash, try to recovery")
 *
  */
 func StartRulexApiServer(ruleEngine typex.RuleX, port int) {
-	gin.SetMode(gin.ReleaseMode)
+	if core.GlobalConfig.AppDebugMode {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	server := RulexApiServer{
 		ginEngine:  gin.New(),
 		ruleEngine: ruleEngine,

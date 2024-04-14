@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/hootrhino/rhilex/common"
+	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -22,7 +23,11 @@ type httpInEndSource struct {
 
 func NewHttpInEndSource(e typex.RuleX) typex.XSource {
 	h := httpInEndSource{}
-	gin.SetMode(gin.ReleaseMode)
+	if core.GlobalConfig.AppDebugMode {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	h.engine = gin.New()
 	h.RuleEngine = e
 	return &h

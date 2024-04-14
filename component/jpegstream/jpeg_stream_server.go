@@ -14,6 +14,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hootrhino/rhilex/component"
+	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -34,7 +35,11 @@ type JpegStreamServer struct {
 *
  */
 func InitJpegStreamServer(rulex typex.RuleX) {
-	gin.SetMode(gin.ReleaseMode)
+	if core.GlobalConfig.AppDebugMode {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	__DefaultJpegStreamServer = &JpegStreamServer{
 		webServer:   gin.New(),
 		JpegStreams: map[string]*JpegStream{},
