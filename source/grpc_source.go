@@ -76,7 +76,7 @@ func (g *grpcInEndSource) Start(cctx typex.CCTX) error {
 }
 
 func (g *grpcInEndSource) DataModels() []typex.XDataModel {
-	return g.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (g *grpcInEndSource) Stop() {

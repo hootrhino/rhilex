@@ -23,13 +23,12 @@ const (
 
 // XStatus for source status
 type XStatus struct {
-	PointId     string             // Input: Source; Output: Target
-	Enable      bool               // 是否开启
-	Ctx         context.Context    // context
-	CancelCTX   context.CancelFunc // cancel
-	XDataModels []XDataModel       // 数据模型
-	RuleEngine  RuleX              // rulex
-	Busy        bool               // 是否处于忙碌状态, 防止请求拥挤
+	PointId    string             // Input: Source; Output: Target
+	Enable     bool               // 是否开启
+	Ctx        context.Context    // context
+	CancelCTX  context.CancelFunc // cancel
+	RuleEngine RuleX              // rulex
+	Busy       bool               // 是否处于忙碌状态, 防止请求拥挤
 }
 
 // XSource: 终端资源, 比如实际上的 MQTT 客户端

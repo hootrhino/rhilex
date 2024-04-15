@@ -68,7 +68,7 @@ func (u *InternalEventSource) Start(cctx typex.CCTX) error {
 
 }
 func (u *InternalEventSource) DataModels() []typex.XDataModel {
-	return u.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (u *InternalEventSource) Status() typex.SourceState {

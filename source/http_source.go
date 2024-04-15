@@ -78,7 +78,7 @@ func (hh *httpInEndSource) Start(cctx typex.CCTX) error {
 }
 
 func (hh *httpInEndSource) DataModels() []typex.XDataModel {
-	return hh.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (hh *httpInEndSource) Stop() {

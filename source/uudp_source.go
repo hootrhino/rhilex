@@ -90,7 +90,7 @@ func (u *udpSource) Init(inEndId string, configMap map[string]interface{}) error
 }
 
 func (u *udpSource) DataModels() []typex.XDataModel {
-	return u.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (u *udpSource) Status() typex.SourceState {

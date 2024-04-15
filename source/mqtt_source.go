@@ -89,7 +89,7 @@ func (mm *mqttInEndSource) Start(cctx typex.CCTX) error {
 }
 
 func (mm *mqttInEndSource) DataModels() []typex.XDataModel {
-	return mm.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (mm *mqttInEndSource) Stop() {

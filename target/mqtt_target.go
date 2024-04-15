@@ -92,7 +92,7 @@ func (mq *mqttOutEndTarget) Start(cctx typex.CCTX) error {
 }
 
 func (mq *mqttOutEndTarget) DataModels() []typex.XDataModel {
-	return mq.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (mq *mqttOutEndTarget) Stop() {

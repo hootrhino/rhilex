@@ -256,7 +256,7 @@ func (tc *iothub) Start(cctx typex.CCTX) error {
 }
 
 func (tc *iothub) DataModels() []typex.XDataModel {
-	return tc.XDataModels
+	return []typex.XDataModel{}
 }
 
 func (tc *iothub) Stop() {

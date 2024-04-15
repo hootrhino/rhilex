@@ -99,7 +99,7 @@ func (td *tdEngineTarget) Start(cctx typex.CCTX) error {
 
 // 数据模型, 用来描述该资源支持的数据, 对应的是云平台的物模型
 func (td *tdEngineTarget) DataModels() []typex.XDataModel {
-	return td.XDataModels
+	return []typex.XDataModel{}
 }
 
 // 获取资源状态

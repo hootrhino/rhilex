@@ -110,7 +110,7 @@ func (nt *natsSource) Stop() {
 }
 
 func (nt *natsSource) DataModels() []typex.XDataModel {
-	return nt.XDataModels
+	return []typex.XDataModel{}
 }
 func (nt *natsSource) Driver() typex.XExternalDriver {
 	return nil
