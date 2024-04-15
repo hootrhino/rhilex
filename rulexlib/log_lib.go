@@ -7,12 +7,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Topic
-// app:         app/console/$uuid
-// rule:        rule/$uuid
-// Test device: device/rule/test/$uuid
-// Test inend:  inend/rule/test/$uuid
-// Test outend: outend/rule/test/$uuid
+// | Ws log topic                     | 用途               |
+// | -------------------------------- | ------------------ |
+// | plugin/ICMPSenderPing/ICMPSender | 网络测速插件的日志 |
+// | rule/test/${uuid}                | 规则测试日志       |
+// | rule/log/${uuid}                 | 规则运行时的日志   |
+// | app/console/${uuid}              | app                |
+// | device/rule/test/${uuid}         | Test device        |
+// | inend/rule/test/${uuid}          | Test inend         |
+// | outend/rule/test/${uuid}         | Test outend        |
+
 /*
 *
 * APP debug输出, Debug(".....")

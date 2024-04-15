@@ -41,12 +41,17 @@ $$
 
 ### 常见Topic
 
-| Ws log topic                     | 用途                 |
-| -------------------------------- | -------------------- |
-| plugin/ICMPSenderPing/ICMPSender | 网络测速插件的日志   |
-| rule/test/$UUID                  | 某个规则测试日志     |
-| rule/log/$UUID                   | 某个规则运行时的日志 |
-| app/console/$UUID                | 某个轻量应用运行日志 |
+| Ws log topic                     | 用途               |
+| -------------------------------- | ------------------ |
+| plugin/ICMPSenderPing/ICMPSender | 网络测速插件的日志 |
+| rule/test/${uuid}                | 规则测试日志       |
+| rule/log/${uuid}                 | 规则运行时的日志   |
+| app/console/${uuid}              | app                |
+| device/rule/test/${uuid}         | Test device        |
+| inend/rule/test/${uuid}          | Test inend         |
+| outend/rule/test/${uuid}         | Test outend        |
+
+
 ### 常见日志示例
 1. 测速
     ```json
