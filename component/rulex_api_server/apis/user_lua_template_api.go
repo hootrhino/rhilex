@@ -119,7 +119,7 @@ func UpdateUserLuaTemplate(c *gin.Context, ruleEngine typex.RuleX) {
 func DeleteUserLuaTemplate(c *gin.Context, ruleEngine typex.RuleX) {
 	uuid, _ := c.GetQuery("uuid")
 	txErr := interdb.DB().Transaction(func(tx *gorm.DB) error {
-		Group := service.GetVisualGroup(uuid)
+		Group := service.GetResourceGroup(uuid)
 		if err1 := service.DeleteUserLuaTemplate(uuid); err1 != nil {
 			c.JSON(common.HTTP_OK, common.Error400(err1))
 			return err1

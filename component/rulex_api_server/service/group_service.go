@@ -88,27 +88,6 @@ SELECT * FROM m_devices WHERE uuid IN (
 
 /*
 *
-* 查询分组吓得大屏
-*
- */
-func FindVisualByGroup(uuid string) []model.MVisual {
-	sql := `
-WHERE uuid IN (
-	SELECT m_generic_group_relations.rid
-	  FROM m_generic_groups
-		LEFT JOIN
-		m_generic_group_relations ON (m_generic_groups.uuid = m_generic_group_relations.gid)
-	  WHERE type = 'VISUAL' AND gid = ?
-) ORDER BY created_at DESC;`
-
-	m := []model.MVisual{}
-	interdb.DB().Raw(`SELECT * FROM m_visuals `+sql, uuid).Find(&m)
-	return m
-
-}
-
-/*
-*
   - 根据分组类型查询:代码模板
 
 *~
@@ -279,4 +258,22 @@ WHERE m_generic_group_relations.rid = ?;
 		}
 		return nil
 	})
+}
+
+/*
+*
+* 获取某个资源关联的分组
+*
+ */
+func GetResourceGroup(rid string) model.MGenericGroup {
+	sql := `
+SELECT m_generic_groups.*
+  FROM m_generic_group_relations
+       LEFT JOIN
+       m_generic_groups ON (m_generic_groups.uuid = m_generic_group_relations.gid)
+ WHERE m_generic_group_relations.rid = ?;
+`
+	m := model.MGenericGroup{}
+	interdb.DB().Raw(sql, rid).Find(&m)
+	return m
 }

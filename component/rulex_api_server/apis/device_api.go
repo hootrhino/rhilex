@@ -56,7 +56,7 @@ func DeviceDetail(c *gin.Context, ruleEngine typex.RuleX) {
 	} else {
 		DeviceVo.State = int(device.Device.Status())
 	}
-	Group := service.GetVisualGroup(mdev.UUID)
+	Group := service.GetResourceGroup(mdev.UUID)
 	DeviceVo.Gid = Group.UUID
 	c.JSON(common.HTTP_OK, common.OkWithData(DeviceVo))
 }
@@ -93,7 +93,7 @@ func ListDevice(c *gin.Context, ruleEngine typex.RuleX) {
 		} else {
 			DeviceVo.State = int(device.Device.Status())
 		}
-		Group := service.GetVisualGroup(mdev.UUID)
+		Group := service.GetResourceGroup(mdev.UUID)
 		DeviceVo.Gid = Group.UUID
 
 		devices = append(devices, DeviceVo)
@@ -137,7 +137,7 @@ func ListDeviceByGroup(c *gin.Context, ruleEngine typex.RuleX) {
 		} else {
 			DeviceVo.State = int(device.Device.Status())
 		}
-		Group := service.GetVisualGroup(mdev.UUID)
+		Group := service.GetResourceGroup(mdev.UUID)
 		DeviceVo.Gid = Group.UUID
 
 		devices = append(devices, DeviceVo)
@@ -210,7 +210,7 @@ func DeleteDevice(c *gin.Context, ruleEngine typex.RuleX) {
 	}
 	// 事务
 	txErr := interdb.DB().Transaction(func(tx *gorm.DB) error {
-		Group := service.GetVisualGroup(uuid)
+		Group := service.GetResourceGroup(uuid)
 		err3 := service.DeleteDevice(uuid)
 		if err3 != nil {
 			return err3

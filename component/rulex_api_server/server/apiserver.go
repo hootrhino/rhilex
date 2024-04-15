@@ -69,7 +69,12 @@ func StartRulexApiServer(ruleEngine typex.RuleX, port int) {
 		ruleEngine: ruleEngine,
 		config:     serverConfig{Port: port},
 	}
-	server.ginEngine.Use(static.Serve("/", WWWRoot("")))
+	staticFs := WWWRoot("")
+	server.ginEngine.Use(static.Serve("/", staticFs))
+	// server.ginEngine.GET("/logo.svg", func(c *gin.Context) {
+	// 	c.Header("Content-Type", "image/svg+xml")
+	// 	c.FileFromFS("/logo.svg", staticFs)
+	// })
 	server.ginEngine.Use(Authorize())
 	server.ginEngine.Use(CheckLicense())
 	// server.ginEngine.Use(RateLimit())

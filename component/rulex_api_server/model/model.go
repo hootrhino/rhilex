@@ -170,24 +170,6 @@ type MAiBase struct {
 	Description string `gorm:"not null"`
 }
 
-//--------------------------------------------------------------------------------------------------
-// 0.6.0
-//--------------------------------------------------------------------------------------------------
-/*
-*
-* 大屏
-*
- */
-type MVisual struct {
-	RulexModel
-	UUID      string `gorm:"uniqueIndex"` // 名称
-	Name      string `gorm:"not null"`    // 名称
-	Type      string `gorm:"not null"`    // 类型
-	Status    bool   `gorm:"not null"`    // 状态, EDITING, PUBLISH
-	Content   string `gorm:"not null"`    // 大屏的内容
-	Thumbnail string `gorm:"not null"`    // 缩略图
-}
-
 /*
 *
 * 通用分组

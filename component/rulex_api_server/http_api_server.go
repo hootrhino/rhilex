@@ -182,7 +182,6 @@ func (hs *ApiServerPlugin) Init(config *ini.Section) error {
 		&model.MDevice{},
 		&model.MGoods{},
 		&model.MApp{},
-		&model.MVisual{},
 		&model.MGenericGroup{},
 		&model.MGenericGroupRelation{},
 		&model.MNetworkConfig{},
@@ -399,23 +398,6 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		groupApi.POST("/bind", server.AddRoute(apis.BindResource))
 		groupApi.PUT("/unbind", server.AddRoute(apis.UnBindResource))
 		groupApi.DELETE("/del", server.AddRoute(apis.DeleteGroup))
-	}
-
-	//
-	// 大屏应用管理
-	//
-	visualApi := server.RouteGroup(server.ContextUrl("/visual"))
-	{
-		visualApi.POST("/create", server.AddRoute(apis.CreateVisual))
-		visualApi.PUT("/publish", server.AddRoute(apis.PublishVisual))
-		visualApi.PUT("/update", server.AddRoute(apis.UpdateVisual))
-		visualApi.GET("/listByGroup", server.AddRoute(apis.ListVisualByGroup))
-		visualApi.GET("/detail", server.AddRoute(apis.VisualDetail))
-		visualApi.GET("/group", server.AddRoute(apis.ListVisualGroup))
-		visualApi.DELETE("/", server.AddRoute(apis.DeleteVisual))
-		// 缩略图
-		visualApi.POST("/thumbnail", server.AddRoute(apis.UploadFile))
-		visualApi.GET("/thumbnail", server.AddRoute(apis.GetThumbnail))
 	}
 	//
 	// 用户LUA代码段管理
