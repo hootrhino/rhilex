@@ -10,6 +10,7 @@ import (
 	common "github.com/hootrhino/rhilex/component/rulex_api_server/common"
 	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
 	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
+	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
 	"github.com/dgrijalva/jwt-go"
@@ -130,19 +131,23 @@ func Login(c *gin.Context, ruleEngine typex.RuleX) {
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
+	clientIP := c.ClientIP()
 	var u _user
 	if err := c.BindJSON(&u); err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
 	if _, err := service.Login(u.Username, md5Hash(u.Password)); err != nil {
+		glogger.GLogger.Warn("User Login Failed:", clientIP)
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
 	if token, err := generateToken(u.Username); err != nil {
+		glogger.GLogger.Warn("User Login Failed:", clientIP)
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	} else {
+		glogger.GLogger.Info("User Login Success:", clientIP)
 		c.JSON(common.HTTP_OK, common.OkWithData(token))
 	}
 }

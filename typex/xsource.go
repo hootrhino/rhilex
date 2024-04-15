@@ -10,15 +10,15 @@ func (i InEndType) String() string {
 }
 
 const (
-	MQTT            InEndType = "MQTT"
-	HTTP            InEndType = "HTTP"
-	COAP            InEndType = "COAP"
-	GRPC            InEndType = "GRPC"
-	NATS_SERVER     InEndType = "NATS_SERVER"
-	RULEX_UDP       InEndType = "RULEX_UDP"
-	GENERIC_IOT_HUB InEndType = "GENERIC_IOT_HUB"
-	INTERNAL_EVENT  InEndType = "INTERNAL_EVENT" // 内部消息
-	GENERIC_MQTT    InEndType = "GENERIC_MQTT"   // 通用MQTT
+	MQTT                     InEndType = "MQTT"
+	HTTP                     InEndType = "HTTP"
+	COAP                     InEndType = "COAP"
+	GRPC                     InEndType = "GRPC"
+	NATS_SERVER              InEndType = "NATS_SERVER"
+	RULEX_UDP                InEndType = "RULEX_UDP"
+	GENERIC_IOT_HUB          InEndType = "GENERIC_IOT_HUB"
+	INTERNAL_EVENT           InEndType = "INTERNAL_EVENT"           // 内部消息
+	GENERIC_MQTT             InEndType = "GENERIC_MQTT"             // 通用MQTT
 )
 
 // XStatus for source status

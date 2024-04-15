@@ -31,6 +31,7 @@ import (
 	kdncnc "github.com/hootrhino/rhilex/component/intercache/kdncnc"
 	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
 	siemenscache "github.com/hootrhino/rhilex/component/intercache/siemens"
+	"github.com/hootrhino/rhilex/component/shellymanager"
 	supervisor "github.com/hootrhino/rhilex/component/supervisor"
 
 	"github.com/hootrhino/rhilex/component/interdb"
@@ -93,6 +94,8 @@ func InitRuleEngine(config typex.RulexConfig) typex.RuleX {
 	}
 	// Internal DB
 	interdb.Init(__DefaultRuleEngine, __DEFAULT_DB_PATH)
+	// Shelly Device Registry
+	shellymanager.InitShellyDeviceRegistry(__DefaultRuleEngine)
 	// SuperVisor Admin
 	supervisor.InitResourceSuperVisorAdmin(__DefaultRuleEngine)
 	// Init Modbus Point Cache
@@ -209,6 +212,8 @@ func (e *RuleEngine) Stop() {
 		glogger.GLogger.Info("Stop Device:", Device.Name, " Successfully")
 		return true
 	})
+	glogger.GLogger.Info("Flush Shelly Device Cache")
+	shellymanager.Flush()
 	glogger.GLogger.Info("Flush Modbus Point sheet Cache")
 	modbuscache.Flush()
 	glogger.GLogger.Info("Flush Siemens Point sheet Cache")
@@ -531,6 +536,12 @@ func (e *RuleEngine) RestartDevice(uuid string) error {
  */
 
 func (e *RuleEngine) InitDeviceTypeManager() error {
+	e.DeviceTypeManager.Register(typex.SHELLY_GEN1_PROXY_SERVER,
+		&typex.XConfig{
+			Engine:    e,
+			NewDevice: device.NewShellyGen1ProxyGateway,
+		},
+	)
 	e.DeviceTypeManager.Register(typex.GENERIC_HTTP_DEVICE,
 		&typex.XConfig{
 			Engine:    e,

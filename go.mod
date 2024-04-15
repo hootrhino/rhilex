@@ -47,8 +47,6 @@ require (
 	github.com/shirou/gopsutil/v3 v3.24.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/suapapa/go_eddystone v1.3.1
-	github.com/swaggo/files v1.0.1
-	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.3
 	github.com/tbrandon/mbserver v0.0.0-20231208015628-36eb59221ac2
 	github.com/thinkgos/go-iecp5 v1.2.1

@@ -44,7 +44,7 @@ func SContains(slice []string, e string) bool {
 *
  */
 var (
-	s               = `^[\p{Han}a-zA-Z0-9]{6,18}$`
+	s               = `^[\w]{4,64}$`
 	usernamePattern = regexp.MustCompile(s)
 	once            sync.Once
 )

@@ -12,12 +12,11 @@ import (
 	"github.com/hootrhino/rhilex/component/appstack"
 	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/component/rulex_api_server/apis"
+	"github.com/hootrhino/rhilex/component/rulex_api_server/apis/shelly"
 	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
 	"github.com/hootrhino/rhilex/component/rulex_api_server/server"
 	"github.com/hootrhino/rhilex/component/rulex_api_server/service"
 	"github.com/hootrhino/rhilex/component/trailer"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
@@ -412,6 +411,7 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		userLuaApi.DELETE("/del", server.AddRoute(apis.DeleteUserLuaTemplate))
 		userLuaApi.GET("/search", server.AddRoute(apis.SearchUserLuaTemplateGroup))
 	}
+
 	/*
 	*
 	* 模型管理
@@ -496,14 +496,10 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		jpegStream.GET("/list", server.AddRoute(apis.GetJpegStreamList))
 		jpegStream.GET("/detail", server.AddRoute(apis.GetJpegStreamDetail))
 	}
-
-	/**
-	  swagger config
-	  @reference http://localhost:2580/swagger/index.html
-	*/
-	route := server.DefaultApiServer.Route()
-	route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
+	//
+	//New Api
+	//
+	shelly.InitShellyRoute()
 }
 
 // ApiServerPlugin Start
