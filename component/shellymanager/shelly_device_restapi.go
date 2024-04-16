@@ -23,8 +23,47 @@ import (
 // 获取 Shelly 设备配置信息
 // https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Sys#syssetconfig-example
 // "http://%s/rpc/Shelly.GetDeviceInfo"
+type ShellyDeviceInfo struct {
+	Ip         string  `json:"ip"` // 扫描出来的IP
+	Name       *string `json:"name"`
+	ID         string  `json:"id"`
+	Mac        string  `json:"mac"`
+	Slot       int     `json:"slot"`
+	Model      string  `json:"model"`
+	Gen        int     `json:"gen"`
+	FwID       string  `json:"fw_id"`
+	Ver        string  `json:"ver"`
+	App        string  `json:"app"`
+	AuthEn     bool    `json:"auth_en"`
+	AuthDomain *string `json:"auth_domain"`
+}
+
+type ShellyDeviceStatus struct {
+	Mac              string `json:"mac"`
+	RestartRequired  bool   `json:"restart_required"`
+	Time             string `json:"time"`
+	Unixtime         int64  `json:"unixtime"`
+	Uptime           int    `json:"uptime"`
+	RamSize          int    `json:"ram_size"`
+	RamFree          int    `json:"ram_free"`
+	FsSize           int    `json:"fs_size"`
+	FsFree           int    `json:"fs_free"`
+	CfgRev           int    `json:"cfg_rev"`
+	KvsRev           int    `json:"kvs_rev"`
+	ScheduleRev      int    `json:"schedule_rev"`
+	WebhookRev       int    `json:"webhook_rev"`
+	AvailableUpdates struct {
+		Stable struct {
+			Version string `json:"version"`
+		} `json:"stable"`
+	} `json:"available_updates"`
+}
+
+// 获取 Shelly 设备配置信息
+// https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Sys#syssetconfig-example
+// "http://%s/rpc/Shelly.GetDeviceInfo"
 func GetShellyDeviceInfo(Ip string) (ShellyDeviceInfo, error) {
-	var ShellyDeviceInfo ShellyDeviceInfo
+	ShellyDeviceInfo := ShellyDeviceInfo{}
 	respBody, err := HttpGet(fmt.Sprintf("http://%s/rpc/Shelly.GetDeviceInfo", Ip))
 	if err != nil {
 		return ShellyDeviceInfo, err
@@ -39,7 +78,7 @@ func GetShellyDeviceInfo(Ip string) (ShellyDeviceInfo, error) {
 // https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/Sys#sysgetstatus-example
 // http://%s/rpc/Sys.GetStatus
 func GetShellyDeviceStatus(Ip string) (ShellyDeviceStatus, error) {
-	var ShellyDeviceStatus ShellyDeviceStatus
+	ShellyDeviceStatus := ShellyDeviceStatus{}
 	respBody, err := HttpGet(fmt.Sprintf("http://%s/rpc/Sys.GetStatus", Ip))
 	if err != nil {
 		return ShellyDeviceStatus, err

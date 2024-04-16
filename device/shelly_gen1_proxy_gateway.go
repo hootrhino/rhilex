@@ -16,7 +16,6 @@
 package device
 
 import (
-	"strings"
 	"sync"
 	"time"
 
@@ -47,6 +46,8 @@ type ShellyGen1ProxyGateway struct {
 	typex.XStatus
 	status     typex.DeviceState
 	mainConfig ShellyGen1ProxyGatewayConfig
+	BlackList  map[string]string
+	locker     sync.Mutex
 }
 
 /*
@@ -58,7 +59,7 @@ type ShellyGen1ProxyGatewayConfig struct {
 	// CIDR
 	NetworkCidr string `json:"networkCidr" validate:"required"`
 	// AutoScan
-	AutoScan *bool `json:"autoRequest" validate:"required"`
+	AutoScan *bool `json:"autoScan" validate:"required"`
 	// 扫描超时
 	ScanTimeout int `json:"timeout" validate:"required"`
 	// Request Frequency, default 5 second
@@ -72,6 +73,8 @@ type ShellyGen1ProxyGatewayConfig struct {
  */
 func NewShellyGen1ProxyGateway(e typex.RuleX) typex.XDevice {
 	Shelly := new(ShellyGen1ProxyGateway)
+	Shelly.BlackList = map[string]string{}
+	Shelly.locker = sync.Mutex{}
 	Shelly.mainConfig = ShellyGen1ProxyGatewayConfig{
 		NetworkCidr: "192.168.1.0/24",
 		AutoScan: func() *bool {
@@ -100,15 +103,24 @@ func (Shelly *ShellyGen1ProxyGateway) Init(devId string, configMap map[string]in
 func (Shelly *ShellyGen1ProxyGateway) Start(cctx typex.CCTX) error {
 	Shelly.Ctx = cctx.Ctx
 	Shelly.CancelCTX = cctx.CancelCTX
-
 	go func() {
+		ticker := time.NewTicker(30 * time.Second)
+		defer ticker.Stop()
 		if *Shelly.mainConfig.AutoScan {
 			for {
 				select {
 				case <-Shelly.Ctx.Done():
 					return
+				case <-ticker.C:
+					glogger.GLogger.Debug("Clear BlackList")
+					// 黑名单30秒刷新一次
+					Shelly.locker.Lock()
+					for k := range Shelly.BlackList {
+						delete(Shelly.BlackList, k)
+					}
+					Shelly.locker.Unlock()
 				default:
-					ScanDevice(Shelly.PointId)
+					Shelly.ScanDevice(Shelly.PointId)
 					time.Sleep(time.Duration(Shelly.mainConfig.Frequency) * time.Millisecond)
 				}
 			}
@@ -166,29 +178,44 @@ func (Shelly *ShellyGen1ProxyGateway) OnCtrl(cmd []byte, args []byte) ([]byte, e
 // --------------------------------------------------------------------------------------------------
 // Shelly API
 // --------------------------------------------------------------------------------------------------
-func ScanDevice(Slot string) {
+
+func (Shelly *ShellyGen1ProxyGateway) ScanDevice(Slot string) {
+
 	tinyarp.AutoRefresh(1000 * time.Second)
 	ArpTable := tinyarp.SendArp()
 	wg := sync.WaitGroup{}
 	wg.Add(len(ArpTable))
+	// 1 将第一次扫出来请求失败的设备拉进黑名单,防止浪费资源
+	// 2 已经有在列表里面的就不再扫描
 	for Ip, Mac := range ArpTable {
+		glogger.GLogger.Debugf("Scan Device [%s, %s:]", Ip, Mac)
+		if AlreadyExistsMac, ok := Shelly.BlackList[Ip]; ok {
+			if AlreadyExistsMac == Mac {
+				continue
+			}
+		}
+		if shellymanager.Exists(Slot, Ip) {
+			continue
+		}
 		go func(Ip, Mac string) {
 			defer wg.Done()
 			if tinyarp.IsValidIP(Ip) {
 				DeviceInfo, err := shellymanager.GetShellyDeviceInfo(Ip)
 				if err != nil {
+					Shelly.locker.Lock()
+					Shelly.BlackList[Ip] = Mac
+					Shelly.locker.Unlock()
 					glogger.GLogger.Error(err)
 					return
 				}
-				glogger.GLogger.Debug("Scan Device:", Ip, Mac)
 				// 注册设备到Registry
 				DeviceInfo.Ip = Ip
 				if DeviceInfo.Name == nil {
 					DName := "UNKNOWN"
 					DeviceInfo.Name = &DName
 				}
-				if isValidMacAddress1(DeviceInfo.Mac) ||
-					isValidMacAddress2(DeviceInfo.Mac) {
+				if utils.IsValidMacAddress1(DeviceInfo.Mac) ||
+					utils.IsValidMacAddress2(DeviceInfo.Mac) {
 					shellymanager.SetValue(Slot, DeviceInfo.Mac, shellymanager.ShellyDevice{
 						Ip:         DeviceInfo.Ip,
 						Name:       DeviceInfo.Name,
@@ -206,45 +233,12 @@ func ScanDevice(Slot string) {
 				} else {
 					glogger.GLogger.Error("Invalid Mac Address")
 				}
+			} else {
+				Shelly.locker.Lock()
+				Shelly.BlackList[Ip] = Mac
+				Shelly.locker.Unlock()
 			}
 		}(Ip, Mac)
 	}
 	wg.Wait()
-}
-
-func isValidMacAddress1(macAddress string) bool {
-	if len(macAddress) != 17 || !strings.Contains(macAddress, ":") {
-		return false
-	}
-	for i := 0; i < 11; i += 3 { // 跳过冒号
-		byteStr := macAddress[i : i+3]
-		if !isValidHex(byteStr) {
-			return false
-		}
-	}
-
-	return true
-}
-func isValidMacAddress2(macAddress string) bool {
-	if len(macAddress) != 12 {
-		return false
-	}
-	for i := 0; i < len(macAddress); i += 2 {
-		byteStr := macAddress[i : i+2]
-		if !isValidHex(byteStr) {
-			return false
-		}
-	}
-
-	return true
-}
-func isValidHex(hexStr string) bool {
-	for _, char := range hexStr {
-		if !(char >= '0' && char <= '9' ||
-			char >= 'a' && char <= 'f' ||
-			char >= 'A' && char <= 'F') {
-			return false
-		}
-	}
-	return true
 }

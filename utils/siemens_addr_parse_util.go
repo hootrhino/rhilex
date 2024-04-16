@@ -163,7 +163,7 @@ func _ParseADDR_I(s string) (AddressInfo, error) {
 }
 
 // IB0
-func _ParseADDR_IB(s string) (AddressInfo, error) {
+func _ParseADDR_IB(string) (AddressInfo, error) {
 	AddressInfo := AddressInfo{}
 	AddressInfo.AddressType = "IB"
 	DataBlockNumber := 0
@@ -204,7 +204,7 @@ func _ParseADDR_Q(s string) (AddressInfo, error) {
 
 	return AddressInfo, nil
 }
-func _ParseADDR_QB(s string) (AddressInfo, error) {
+func _ParseADDR_QB(string) (AddressInfo, error) {
 	AddressInfo := AddressInfo{}
 	AddressInfo.AddressType = "QB"
 	DataBlockNumber := 0

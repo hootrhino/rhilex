@@ -21,19 +21,25 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 )
 
+type IOPort struct {
+	Name   string
+	Status bool
+}
 type ShellyDevice struct {
-	Ip         string  `json:"ip"` // 扫描出来的IP
-	Name       *string `json:"name"`
-	ID         string  `json:"id"`
-	Mac        string  `json:"mac"`
-	Slot       int     `json:"slot"`
-	Model      string  `json:"model"`
-	Gen        int     `json:"gen"`
-	FwID       string  `json:"fw_id"`
-	Ver        string  `json:"ver"`
-	App        string  `json:"app"`
-	AuthEn     bool    `json:"auth_en"`
-	AuthDomain *string `json:"auth_domain"`
+	Ip         string   `json:"ip"` // 扫描出来的IP
+	Name       *string  `json:"name"`
+	ID         string   `json:"id"`
+	Mac        string   `json:"mac"`
+	Slot       int      `json:"slot"`
+	Model      string   `json:"model"`
+	Gen        int      `json:"gen"`
+	FwID       string   `json:"fw_id"`
+	Ver        string   `json:"ver"`
+	App        string   `json:"app"`
+	AuthEn     bool     `json:"auth_en"`
+	AuthDomain *string  `json:"auth_domain"`
+	Input      []IOPort `json:"input"`
+	Switch     []IOPort `json:"switch"`
 }
 
 func (device ShellyDevice) String() string {
@@ -57,6 +63,14 @@ func SetValue(Slot, K string, V ShellyDevice) {
 }
 func GetValue(Slot, K string) ShellyDevice {
 	return __DefaultShellyDeviceRegistry.GetValue(Slot, K)
+}
+func Exists(Slot, K string) bool {
+	if Slots, ok1 := __DefaultShellyDeviceRegistry.Slots[Slot]; ok1 {
+		if _, ok2 := Slots[K]; ok2 {
+			return true
+		}
+	}
+	return false
 }
 func DeleteValue(Slot, K string) {
 	__DefaultShellyDeviceRegistry.DeleteValue(Slot, K)

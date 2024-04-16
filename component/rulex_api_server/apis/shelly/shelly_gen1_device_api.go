@@ -9,6 +9,7 @@ import (
 	"github.com/hootrhino/rhilex/component/rulex_api_server/server"
 	"github.com/hootrhino/rhilex/component/shellymanager"
 	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/hootrhino/rhilex/utils/tinyarp"
 )
 
@@ -23,24 +24,75 @@ func InitShellyRoute() {
 	}
 }
 
+type ShellyDeviceInPortVo struct {
+	ID     int  `json:"id"`
+	Status bool `json:"status"`
+}
+type ShellyDeviceOutPortVo struct {
+	ID          int    `json:"id"`
+	Source      string `json:"source"`
+	Output      bool   `json:"output"`
+	Temperature struct {
+		TC float64 `json:"tC"`
+		TF float64 `json:"tF"`
+	} `json:"temperature"`
+}
 type ShellyDeviceVo struct {
-	Ip         string  `json:"ip"` // 扫描出来的IP
-	Name       *string `json:"name"`
-	ID         string  `json:"id"`
-	Mac        string  `json:"mac"`
-	Slot       int     `json:"slot"`
-	Model      string  `json:"model"`
-	Gen        int     `json:"gen"`
-	FwID       string  `json:"fw_id"`
-	Ver        string  `json:"ver"`
-	App        string  `json:"app"`
-	AuthEn     bool    `json:"auth_en"`
-	AuthDomain *string `json:"auth_domain"`
+	Ip         string                  `json:"ip"` // 扫描出来的IP
+	Name       *string                 `json:"name"`
+	ID         string                  `json:"id"`
+	Mac        string                  `json:"mac"`
+	Slot       int                     `json:"slot"`
+	Model      string                  `json:"model"`
+	Gen        int                     `json:"gen"`
+	FwID       string                  `json:"fw_id"`
+	Ver        string                  `json:"ver"`
+	App        string                  `json:"app"`
+	AuthEn     bool                    `json:"auth_en"`
+	AuthDomain *string                 `json:"auth_domain"`
+	Input      []ShellyDeviceInPortVo  `json:"input"`
+	Switch     []ShellyDeviceOutPortVo `json:"switch"`
 }
 
 func ScanShellyDevice(c *gin.Context, ruleEngine typex.RuleX) {
+	uuid, _ := c.GetQuery("uuid")
+	tinyarp.AutoRefresh(1000 * time.Second)
+	ArpTable := tinyarp.SendArp()
+	go func() {
+		// 1 将第一次扫出来请求失败的设备拉进黑名单,防止浪费资源
+		// 2 已经有在列表里面的就不再扫描
+		for Ip, Mac := range ArpTable {
+			if shellymanager.Exists(uuid, Ip) {
+				continue
+			}
+			if !tinyarp.IsValidIP(Ip) {
+				continue
+			}
+			DeviceInfo, err := shellymanager.GetShellyDeviceInfo(Ip)
+			if err != nil {
+				continue
+			}
+			DeviceInfo.Mac = Mac
+			if utils.IsValidMacAddress1(DeviceInfo.Mac) ||
+				utils.IsValidMacAddress2(DeviceInfo.Mac) {
+				shellymanager.SetValue(uuid, DeviceInfo.Mac, shellymanager.ShellyDevice{
+					Ip:         DeviceInfo.Ip,
+					Name:       DeviceInfo.Name,
+					ID:         DeviceInfo.ID,
+					Mac:        DeviceInfo.Mac,
+					Slot:       DeviceInfo.Slot,
+					Model:      DeviceInfo.Model,
+					Gen:        DeviceInfo.Gen,
+					FwID:       DeviceInfo.FwID,
+					Ver:        DeviceInfo.Ver,
+					App:        DeviceInfo.App,
+					AuthEn:     DeviceInfo.AuthEn,
+					AuthDomain: DeviceInfo.AuthDomain,
+				})
+			}
+		}
+	}()
 	c.JSON(common.HTTP_OK, common.Ok())
-
 }
 
 /*
@@ -63,7 +115,7 @@ func ListShellyDevice(c *gin.Context, ruleEngine typex.RuleX) {
 	uuid, _ := c.GetQuery("uuid")
 	Slot := shellymanager.GetSlot(uuid)
 	for _, ShellyDevice := range Slot {
-		ShellyDevices = append(ShellyDevices, ShellyDeviceVo{
+		NewShellyDevice := ShellyDeviceVo{
 			Ip:         ShellyDevice.Ip,
 			Name:       ShellyDevice.Name,
 			ID:         ShellyDevice.ID,
@@ -76,11 +128,67 @@ func ListShellyDevice(c *gin.Context, ruleEngine typex.RuleX) {
 			App:        ShellyDevice.App,
 			AuthEn:     ShellyDevice.AuthEn,
 			AuthDomain: ShellyDevice.AuthDomain,
-		})
+			Input:      make([]ShellyDeviceInPortVo, 0),
+			Switch:     make([]ShellyDeviceOutPortVo, 0),
+		}
+		if ShellyDevice.App == "Pro1" {
+			{
+				Pro1InputStatus, err := shellymanager.GetPro1Input1Status(ShellyDevice.Ip)
+				if err != nil {
+					NewShellyDevice.Input = append(NewShellyDevice.Input, ShellyDeviceInPortVo{
+						ID:     Pro1InputStatus.ID,
+						Status: Pro1InputStatus.Status,
+					})
+				} else {
+					NewShellyDevice.Input = append(NewShellyDevice.Input, ShellyDeviceInPortVo{
+						ID:     0,
+						Status: false,
+					})
+				}
+			}
+			{
+				Pro1InputStatus, err := shellymanager.GetPro1Input2Status(ShellyDevice.Ip)
+				if err != nil {
+					NewShellyDevice.Input = append(NewShellyDevice.Input, ShellyDeviceInPortVo{
+						ID:     Pro1InputStatus.ID,
+						Status: Pro1InputStatus.Status,
+					})
+				} else {
+					NewShellyDevice.Input = append(NewShellyDevice.Input, ShellyDeviceInPortVo{
+						ID:     1,
+						Status: false,
+					})
+				}
+			}
+			{
+				Pro1Switch1Status, err := shellymanager.GetPro1Switch1Status(ShellyDevice.Ip)
+				if err == nil {
+					NewShellyDevice.Switch = append(NewShellyDevice.Switch, ShellyDeviceOutPortVo{
+						ID:     0,
+						Source: Pro1Switch1Status.Source,
+						Output: Pro1Switch1Status.Output,
+						Temperature: struct {
+							TC float64 "json:\"tC\""
+							TF float64 "json:\"tF\""
+						}{Pro1Switch1Status.Temperature.TC, Pro1Switch1Status.Temperature.TF},
+					})
+				} else {
+					NewShellyDevice.Switch = append(NewShellyDevice.Switch, ShellyDeviceOutPortVo{
+						ID:     0,
+						Source: "error",
+						Output: false,
+						Temperature: struct {
+							TC float64 "json:\"tC\""
+							TF float64 "json:\"tF\""
+						}{0, 0},
+					})
+				}
+			}
+
+		}
+		ShellyDevices = append(ShellyDevices, NewShellyDevice)
 	}
-
 	c.JSON(common.HTTP_OK, common.OkWithData(ShellyDevices))
-
 }
 
 /*
