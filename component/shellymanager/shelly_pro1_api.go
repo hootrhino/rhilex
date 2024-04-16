@@ -31,7 +31,6 @@ import (
 	"fmt"
 )
 
-
 func GetPro1DeviceInfo(Ip string) (ShellyDeviceInfo, error) {
 	var ShellyDeviceInfo ShellyDeviceInfo
 	respBody, err := HttpGet(fmt.Sprintf("http://%s/rpc/Shelly.GetDeviceInfo", Ip))
@@ -112,4 +111,22 @@ func GetPro1Switch1Status(Ip string) (Pro1SwitchStatus, error) {
 		return Pro1Switch1Status, fmt.Errorf("Error parsing JSON: %v", err)
 	}
 	return Pro1Switch1Status, nil
+}
+
+// http://192.168.1.106/rpc/Switch.Toggle?id=0
+type ProToggleSwitch1 struct {
+	WasOn bool `json:"was_on"`
+}
+
+func Pro1ToggleSwitch1(Ip string) (ProToggleSwitch1, error) {
+	ProToggleSwitch1 := ProToggleSwitch1{}
+	respBody, err := HttpGet(fmt.Sprintf("http://%s/rpc/Switch.Toggle?id=0", Ip))
+	if err != nil {
+		return ProToggleSwitch1, err
+	}
+	err = json.Unmarshal(respBody, &ProToggleSwitch1)
+	if err != nil {
+		return ProToggleSwitch1, fmt.Errorf("Error parsing JSON: %v", err)
+	}
+	return ProToggleSwitch1, nil
 }
