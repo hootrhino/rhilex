@@ -22,6 +22,10 @@ func InitShellyRoute() {
 		ShellyApi.DELETE("/del", server.AddRoute(DeleteShellyDevice))
 		ShellyApi.POST("/scan", server.AddRoute(ScanShellyDevice))
 	}
+	Pro1Api := server.RouteGroup(server.ContextUrl("/shelly_gen1/pro1"))
+	{
+		Pro1Api.GET("/switch1/toggle", server.AddRoute(Pro1ToggleSwitch1))
+	}
 }
 
 type ShellyDeviceInPortVo struct {
@@ -279,4 +283,19 @@ func ScanDevice(c *gin.Context, ruleEngine typex.RuleX) {
 	}
 	wg.Wait()
 	c.JSON(common.HTTP_OK, common.Ok())
+}
+
+/*
+*
+* 拨动开关
+* http://192.168.1.106/rpc/Switch.Toggle?id=0
+ */
+func Pro1ToggleSwitch1(c *gin.Context, ruleEngine typex.RuleX) {
+	Ip, _ := c.GetQuery("ip")
+	ProToggleSwitch1Response, err := shellymanager.Pro1ToggleSwitch1(Ip)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	c.JSON(common.HTTP_OK, common.OkWithData(ProToggleSwitch1Response))
 }

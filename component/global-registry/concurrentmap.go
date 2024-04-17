@@ -78,24 +78,26 @@ func (m *ConcurrentMap) Keys() []string {
 	copy(keys, m.keys)
 	return keys
 }
+func (m *ConcurrentMap) List() []interface{} {
+	List := []interface{}{}
+	m.RLock()
+	defer m.RUnlock()
+	for _, k := range m.keys {
+		V := m.data[k]
+		if V != nil {
+			List = append(List, V)
+		}
+	}
+	return List
+}
 
-// func main() {
-// 	// 测试用例
-// 	m := NewConcurrentMap()
-// 	m.Set("a", 1)
-// 	m.Set("b", 2)
-// 	m.Set("c", 3)
-
-// 	// 获取键的顺序
-// 	keys := m.Keys()
-// 	println("Keys:", keys)
-
-// 	// 获取指定键的值
-// 	value, ok := m.Get("b")
-// 	if ok {
-// 		println("Value for key 'b':", value)
-// 	}
-
-// 	// 删除键值对
-// 	m.Delete("c")
-// }
+func (m *ConcurrentMap) Clear() {
+	m.RLock()
+	defer m.RUnlock()
+	for _, k := range m.keys {
+		delete(m.data, k)
+	}
+	for i := 0; i < len(m.keys); i++ {
+		m.keys = append(m.keys[:i], m.keys[i+1:]...)
+	}
+}

@@ -118,6 +118,11 @@ type ProToggleSwitch1 struct {
 	WasOn bool `json:"was_on"`
 }
 
+/*
+*
+* 翻转开关
+*
+ */
 func Pro1ToggleSwitch1(Ip string) (ProToggleSwitch1, error) {
 	ProToggleSwitch1 := ProToggleSwitch1{}
 	respBody, err := HttpGet(fmt.Sprintf("http://%s/rpc/Switch.Toggle?id=0", Ip))

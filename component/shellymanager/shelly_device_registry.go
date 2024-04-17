@@ -89,8 +89,9 @@ func Flush() {
 
 type ShellyDeviceRegistry struct {
 	Slots      map[string]map[string]ShellyDevice // MAC : {MAC, Info}
+	keys       []string
 	ruleEngine typex.RuleX
-	locker     sync.Mutex
+	locker     sync.RWMutex
 	status     string // SCANNING | DONE
 }
 
@@ -98,8 +99,9 @@ func InitShellyDeviceRegistry(ruleEngine typex.RuleX) *ShellyDeviceRegistry {
 	__DefaultShellyDeviceRegistry = &ShellyDeviceRegistry{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]ShellyDevice{},
-		locker:     sync.Mutex{},
+		locker:     sync.RWMutex{},
 		status:     "DONE",
+		keys:       make([]string, 0),
 	}
 	__DefaultShellyDeviceRegistry.TestAlive()
 	return __DefaultShellyDeviceRegistry
@@ -129,6 +131,17 @@ func (M *ShellyDeviceRegistry) SetValue(Slot, K string, V ShellyDevice) {
 		S[K] = V
 		M.Slots[Slot] = S
 	}
+	found := false
+	for i, k := range M.keys {
+		if k == K {
+			M.keys[i] = K
+			found = true
+			break
+		}
+	}
+	if !found {
+		M.keys = append(M.keys, K)
+	}
 }
 func (M *ShellyDeviceRegistry) GetValue(Slot, K string) ShellyDevice {
 	M.locker.Lock()
@@ -144,7 +157,14 @@ func (M *ShellyDeviceRegistry) DeleteValue(Slot, K string) {
 	if S, ok := M.Slots[Slot]; ok {
 		delete(S, Slot)
 	}
+	for i, k := range M.keys {
+		if k == K {
+			M.keys = append(M.keys[:i], M.keys[i+1:]...)
+			break
+		}
+	}
 }
+
 func (M *ShellyDeviceRegistry) UnRegisterSlot(Slot string) {
 	M.locker.Lock()
 	defer M.locker.Unlock()
@@ -161,4 +181,41 @@ func (M *ShellyDeviceRegistry) Flush() {
 		}
 		delete(M.Slots, slotName)
 	}
+}
+
+/*
+*
+* 顺序Map
+*
+ */
+func (M *ShellyDeviceRegistry) ListAllSlots() []map[string]ShellyDevice {
+	M.locker.Lock()
+	defer M.locker.Unlock()
+	List := []map[string]ShellyDevice{}
+	for _, k := range M.keys {
+		V := M.Slots[k]
+		if V != nil {
+			List = append(List, V)
+		}
+	}
+	return List
+}
+func (M *ShellyDeviceRegistry) ListAllValues() []ShellyDevice {
+	M.locker.Lock()
+	defer M.locker.Unlock()
+	List := []ShellyDevice{}
+	for _, k := range M.keys {
+		Slot := M.Slots[k]
+		for _, Value := range Slot {
+			List = append(List, Value)
+		}
+	}
+	return List
+}
+func (M *ShellyDeviceRegistry) Keys() []string {
+	M.locker.Lock()
+	defer M.locker.Unlock()
+	keys := make([]string, len(M.keys))
+	copy(keys, M.keys)
+	return keys
 }
