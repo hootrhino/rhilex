@@ -266,12 +266,6 @@ func initStaticModel() {
 	service.InitHwPortConfig()
 	// 配置一个默认分组
 	service.InitGenericGroup(&model.MGenericGroup{
-		UUID:   "VROOT",
-		Type:   "VISUAL",
-		Name:   "默认分组",
-		Parent: "NULL",
-	})
-	service.InitGenericGroup(&model.MGenericGroup{
 		UUID:   "DROOT",
 		Type:   "DEVICE",
 		Name:   "默认分组",

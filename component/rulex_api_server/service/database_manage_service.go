@@ -40,23 +40,3 @@ func CleanGoodsUpload() error {
 	}
 	return nil
 }
-
-/*
-*
-* 清理缩略图
-*
- */
-func CleanThumbnailUpload() error {
-	sql1 := `SELECT thumbnail FROM m_visuals;`
-	thumbnail_local_paths := []string{}
-	err1 := interdb.DB().Raw(sql1).Find(&thumbnail_local_paths).Error
-	if err1 != nil {
-		return err1
-	}
-	for _, thumbnail_local_path := range thumbnail_local_paths {
-		if err := os.Remove(thumbnail_local_path); err != nil {
-			return err
-		}
-	}
-	return nil
-}

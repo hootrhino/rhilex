@@ -14,7 +14,7 @@ import (
 type MGenericGroupVo struct {
 	UUID   string `json:"uuid" validate:"required"` // 名称
 	Name   string `json:"name" validate:"required"` // 名称
-	Type   string `json:"type" validate:"required"` // 组的类型, DEVICE: 设备分组, VISUAL: 大屏分组
+	Type   string `json:"type" validate:"required"` // 组的类型, DEVICE: 设备分组
 	Parent string `json:"parent"`                   // 上级, 如果是0表示根节点
 }
 type MGenericGroupRelationVo struct {
@@ -33,7 +33,7 @@ func CreateGroup(c *gin.Context, ruleEngine typex.RuleX) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.SContains([]string{"VISUAL", "DEVICE", "USER_LUA_TEMPLATE"}, vvo.Type) {
+	if !utils.SContains([]string{"DEVICE", "USER_LUA_TEMPLATE"}, vvo.Type) {
 		c.JSON(common.HTTP_OK, common.Error400(fmt.Errorf("invalid group type [%s]", vvo.Type)))
 		return
 	}
@@ -113,47 +113,30 @@ func DeleteGroup(c *gin.Context, ruleEngine typex.RuleX) {
 *
  */
 func ListGroup(c *gin.Context, ruleEngine typex.RuleX) {
-	visuals := []MGenericGroupVo{}
+	MGenericGroups := []MGenericGroupVo{}
 	for _, vv := range service.AllGenericGroup() {
-		visuals = append(visuals, MGenericGroupVo{
+		MGenericGroups = append(MGenericGroups, MGenericGroupVo{
 			UUID:   vv.UUID,
 			Name:   vv.Name,
 			Type:   vv.Type,
 			Parent: vv.Parent,
 		})
 	}
-	c.JSON(common.HTTP_OK, common.OkWithData(visuals))
+	c.JSON(common.HTTP_OK, common.OkWithData(MGenericGroups))
 
 }
 
-/*
-*
-* 查找分组
-*
- */
-func ListVisualGroup(c *gin.Context, ruleEngine typex.RuleX) {
-	visuals := []MGenericGroupVo{}
-	for _, vv := range service.ListByGroupType("VISUAL") {
-		visuals = append(visuals, MGenericGroupVo{
-			UUID:   vv.UUID,
-			Name:   vv.Name,
-			Type:   vv.Type,
-			Parent: vv.Parent,
-		})
-	}
-	c.JSON(common.HTTP_OK, common.OkWithData(visuals))
-}
 func ListDeviceGroup(c *gin.Context, ruleEngine typex.RuleX) {
-	visuals := []MGenericGroupVo{}
+	MGenericGroups := []MGenericGroupVo{}
 	for _, vv := range service.ListByGroupType("DEVICE") {
-		visuals = append(visuals, MGenericGroupVo{
+		MGenericGroups = append(MGenericGroups, MGenericGroupVo{
 			UUID:   vv.UUID,
 			Name:   vv.Name,
 			Type:   vv.Type,
 			Parent: vv.Parent,
 		})
 	}
-	c.JSON(common.HTTP_OK, common.OkWithData(visuals))
+	c.JSON(common.HTTP_OK, common.OkWithData(MGenericGroups))
 }
 
 /*

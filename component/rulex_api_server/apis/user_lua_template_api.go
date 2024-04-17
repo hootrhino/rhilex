@@ -140,16 +140,16 @@ func DeleteUserLuaTemplate(c *gin.Context, ruleEngine typex.RuleX) {
 
 }
 func ListUserLuaTemplateGroup(c *gin.Context, ruleEngine typex.RuleX) {
-	visuals := []MGenericGroupVo{}
+	MGenericGroups := []MGenericGroupVo{}
 	for _, vv := range service.ListByGroupType("USER_LUA_TEMPLATE") {
-		visuals = append(visuals, MGenericGroupVo{
+		MGenericGroups = append(MGenericGroups, MGenericGroupVo{
 			UUID:   vv.UUID,
 			Name:   vv.Name,
 			Type:   vv.Type,
 			Parent: vv.Parent,
 		})
 	}
-	c.JSON(common.HTTP_OK, common.OkWithData(visuals))
+	c.JSON(common.HTTP_OK, common.OkWithData(MGenericGroups))
 }
 
 /*
@@ -158,10 +158,10 @@ func ListUserLuaTemplateGroup(c *gin.Context, ruleEngine typex.RuleX) {
 *
  */
 func SearchUserLuaTemplateGroup(c *gin.Context, ruleEngine typex.RuleX) {
-	visuals := []UserLuaTemplateVo{}
+	MGenericGroups := []UserLuaTemplateVo{}
 	keyword, _ := c.GetQuery("keyword")
 	for _, vv := range service.SearchUserLuaTemplate(keyword, keyword) {
-		visuals = append(visuals, UserLuaTemplateVo{
+		MGenericGroups = append(MGenericGroups, UserLuaTemplateVo{
 			UUID:      vv.UUID,
 			Label:     vv.Label,
 			Type:      vv.Type,
@@ -171,7 +171,7 @@ func SearchUserLuaTemplateGroup(c *gin.Context, ruleEngine typex.RuleX) {
 			Variables: vv.GetVariables(),
 		})
 	}
-	c.JSON(common.HTTP_OK, common.OkWithData(visuals))
+	c.JSON(common.HTTP_OK, common.OkWithData(MGenericGroups))
 }
 
 /*
