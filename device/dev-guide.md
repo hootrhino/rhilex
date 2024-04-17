@@ -121,7 +121,7 @@ func (mdev *generic_modbus_device) Stop() {
 ```
 
 ## 点位操作
-如果涉及到点位类型的接入设备，直接在Sqlite里建表：
+如果涉及到点位类型的接入设备，直接在Sqlite里建表,以Modbus加载点位表为例：
 ```sql
 CREATE TABLE m_modbus_data_points (
     id          INTEGER  PRIMARY KEY AUTOINCREMENT,
