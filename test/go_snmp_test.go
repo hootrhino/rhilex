@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gosnmp/gosnmp"
-	"github.com/hootrhino/rhilex/glogger"
 )
 
 // https://www.alvestrand.no/objectid/top.html
@@ -20,12 +20,15 @@ type SystemInfo struct {
 
 func (si *SystemInfo) SystemDescription() string {
 	s := ""
-	si.snmpClient.Walk(".1.3.6.1.2.1.1.1.0", func(variable gosnmp.SnmpPDU) error {
+	err := si.snmpClient.Walk(".1.3.6.1.2.1.1.1.0", func(variable gosnmp.SnmpPDU) error {
 		if variable.Type == gosnmp.OctetString {
 			s = string(variable.Value.([]byte))
 		}
 		return nil
 	})
+	if err != nil {
+		fmt.Println(err)
+	}
 	return s
 }
 func (si *SystemInfo) PCName() string {
@@ -124,22 +127,35 @@ func (si *SystemInfo) HardwareNetInterfaceMac() []string {
 	}
 	return result
 }
+
+// go test -timeout 30s -run ^TestSnmp github.com/hootrhino/rhilex/test -v -count=1
+
 func TestSnmp(t *testing.T) {
-	gosnmp.Default.Target = "127.0.0.1"
-	gosnmp.Default.Community = "public"
-	err := gosnmp.Default.Connect()
-	if err != nil {
-		glogger.GLogger.Fatalf("Connect() err: %v", err)
+	var Default = &gosnmp.GoSNMP{
+		Target:             "192.168.1.170",
+		Port:               161,
+		Transport:          "udp",
+		Community:          "public",
+		Version:            0x1,
+		Timeout:            time.Duration(2) * time.Second,
+		Retries:            3,
+		ExponentialTimeout: true,
+		MaxOids:            60,
 	}
-	defer gosnmp.Default.Conn.Close()
+	err := Default.ConnectIPv4()
+	if err != nil {
+		t.Fatalf("Connect() err: %v", err)
+	}
+	defer Default.Conn.Close()
 
-	si := &SystemInfo{snmpClient: gosnmp.Default}
-	t.Log(si.SystemDescription())
-	t.Log(si.TotalMemory())
-	t.Log(si.PCName())
-	// t.Log(si.CPUs())
-	t.Log(si.HardwareNetInterfaceName())
-	// t.Log(si.HardwareNetInterfaceMac())
-	// t.Log(si.InterfaceIPs())
-
+	err1 := Default.Walk(".1.3.6.1.2.1.1.1.0", func(variable gosnmp.SnmpPDU) error {
+		if variable.Type == gosnmp.OctetString {
+			s = string(variable.Value.([]byte))
+			t.Log(s)
+		}
+		return nil
+	})
+	if err1 != nil {
+		t.Fatal(err1)
+	}
 }

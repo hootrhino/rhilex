@@ -31,6 +31,7 @@ import (
 	kdncnc "github.com/hootrhino/rhilex/component/intercache/kdncnc"
 	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
 	siemenscache "github.com/hootrhino/rhilex/component/intercache/siemens"
+	snmpCache "github.com/hootrhino/rhilex/component/intercache/snmp"
 	"github.com/hootrhino/rhilex/component/shellymanager"
 	supervisor "github.com/hootrhino/rhilex/component/supervisor"
 
@@ -102,6 +103,8 @@ func InitRuleEngine(config typex.RhilexConfig) typex.Rhilex {
 	modbuscache.InitModbusPointCache(__DefaultRuleEngine)
 	// Init Siemens Point Cache
 	siemenscache.InitSiemensPointCache(__DefaultRuleEngine)
+	// Init Snmp OidCache
+	snmpCache.InitSnmpOidCache(__DefaultRuleEngine)
 	// KDN CNC
 	hnccnc.InitHnc8CnCPointCache(__DefaultRuleEngine)
 	// HNC CNC
@@ -215,6 +218,8 @@ func (e *RuleEngine) Stop() {
 	modbuscache.Flush()
 	glogger.GLogger.Info("Flush Siemens Point sheet Cache")
 	siemenscache.Flush()
+	glogger.GLogger.Info("Flush SNMP Oids Cache")
+	snmpCache.Flush()
 	glogger.GLogger.Info("Flush KDN CNC Cache")
 	kdncnc.Flush()
 	glogger.GLogger.Info("Flush HNC Cache")

@@ -65,6 +65,8 @@ type GenericSnmpConfig struct {
 	Transport string `json:"transport" validate:"required" title:"Transport" info:"Transport"`
 	// Community is an SNMP Community string.
 	Community string `json:"community" validate:"required" title:"Community" info:"Community"`
+	// 1 2 3
+	Version uint8 `json:"version" validate:"required" title:"Community" info:"Community"`
 }
 
 /*

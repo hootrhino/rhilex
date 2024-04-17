@@ -11,53 +11,55 @@ SNMP使用一组标准的管理信息库（Management Information Base，MIB）�
 
 SNMP协议支持各种版本，其中最常用的是SNMPv1、SNMPv2c和SNMPv3。每个版本都具有不同的功能和安全性特性，以适应不同的网络管理需求。
 ## 设备配置
-```go
-
-type _SNMPCommonConfig struct {
-	AutoRequest *bool  `json:"autoRequest" validate:"required"`
-	Frequency   int64 `json:"frequency" validate:"required" title:"采集频率"`
+```json
+{
+    "name": "GENERIC_SNMP",
+    "type": "GENERIC_SNMP",
+    "gid": "DROOT",
+    "schemaId": "",
+    "config": {
+        "commonConfig": {
+            "autoRequest": true
+        },
+        "snmpConfig": {
+            "timeout": 5,
+            "frequency": 5,
+            "target": "192.168.1.170",
+            "port": 161,
+            "transport": "udp",
+            "community": "public",
+            "version": 3
+        }
+    },
+    "description": "GENERIC_SNMP"
 }
-type GenericSnmpConfig struct {
-	// Target is an ipv4 address.
-	Target string `json:"target" validate:"required" title:"Target" info:"Target"`
-	// Port is a port.
-	Port uint16 `json:"port" validate:"required" title:"Port" info:"Port"`
-	// Transport is the transport protocol to use ("udp" or "tcp"); if unset "udp" will be used.
-	Transport string `json:"transport" validate:"required" title:"Transport" info:"Transport"`
-	// Community is an SNMP Community string.
-	Community string `json:"community" validate:"required" title:"Community" info:"Community"`
-}
-
-type _GSNMPConfig struct {
-	CommonConfig _SNMPCommonConfig        `json:"commonConfig" validate:"required"`
-	SNMPConfig   common.GenericSnmpConfig `json:"snmpConfig" validate:"required"`
-}
-
 ```
 ## 数据示例
 ```json
-{
-    "PCHost":"127.0.0.1",
-    "PCDescription":"Linux x86_64",
-    "PCUserName":"demo",
-    "PCHardIFaces":[],
-    "PCTotalMemory":0
-}
+[
+    {
+        "oid": ".1.3.6.1.2.1.1.7.0",
+        "tag": "sysServices",
+        "alias": "sysServices",
+        "value": 76
+    },
+    {
+        "oid": ".1.3.6.1.2.1.1.1.0",
+        "tag": "SystemDescription",
+        "alias": "SystemDescription",
+        "value": "Hardware: Intel64"
+    },
+    {
+        "oid": ".1.3.6.1.2.1.1.5.0",
+        "tag": "PCName",
+        "alias": "PCName",
+        "value": "DESKTOP-4LMLO5C"
+    }
+]
 ```
 ## 数据解析示例
 ```lua
-
-function (data)
-    local DataT, err = rhilexlib:J2T(data)
-    if err ~= nil then
-        return true, args
-    end
-    -- Do your business
-    rhilexlib:log(DataT['PCHost'])
-    rhilexlib:log(DataT['PCDescription'])
-    rhilexlib:log(DataT['PCUserName'])
-    rhilexlib:log(DataT['PCHardIFaces'])
-    rhilexlib:log(DataT['PCTotalMemory'])
+function (args)
+    Debug(args)
 end
-
 ```

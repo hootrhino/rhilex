@@ -83,10 +83,6 @@ func (hd *TemplateDevice) SetState(status typex.DeviceState) {
 
 }
 
-// --------------------------------------------------------------------------------------------------
-//
-// --------------------------------------------------------------------------------------------------
-
 func (hd *TemplateDevice) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {
 	return typex.DCAResult{}
 }
