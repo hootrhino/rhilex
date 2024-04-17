@@ -9,21 +9,21 @@ import (
 var __DefaultInternalMetric *InternalMetric
 
 type InternalMetric struct {
-	rulex      typex.RuleX
+	rhilex     typex.Rhilex
 	InSuccess  uint64 `json:"inSuccess"`
 	OutSuccess uint64 `json:"outSuccess"`
 	InFailed   uint64 `json:"inFailed"`
 	OutFailed  uint64 `json:"outFailed"`
 }
 
-func InitInternalMetric(rulex typex.RuleX) *InternalMetric {
+func InitInternalMetric(rhilex typex.Rhilex) *InternalMetric {
 	__DefaultInternalMetric = &InternalMetric{
 		InSuccess:  0,
 		OutSuccess: 0,
 		InFailed:   0,
 		OutFailed:  0,
 	}
-	__DefaultInternalMetric.rulex = rulex
+	__DefaultInternalMetric.rhilex = rhilex
 	return __DefaultInternalMetric
 
 }

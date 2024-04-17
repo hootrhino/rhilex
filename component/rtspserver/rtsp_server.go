@@ -49,7 +49,7 @@ type RtspServer struct {
 }
 
 // NewRouter Gin 路由配置
-func InitRtspServer(rulex typex.RuleX) *RtspServer {
+func InitRtspServer(rhilex typex.Rhilex) *RtspServer {
 	if core.GlobalConfig.AppDebugMode {
 		gin.SetMode(gin.DebugMode)
 	} else {

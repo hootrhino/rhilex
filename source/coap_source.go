@@ -24,7 +24,7 @@ type coAPInEndSource struct {
 	status     typex.SourceState
 }
 
-func NewCoAPInEndSource(e typex.RuleX) typex.XSource {
+func NewCoAPInEndSource(e typex.Rhilex) typex.XSource {
 	c := coAPInEndSource{}
 	c.router = mux.NewRouter()
 	c.mainConfig = common.HostConfig{}
@@ -97,15 +97,6 @@ func (cc *coAPInEndSource) Test(inEndId string) bool {
 
 func (cc *coAPInEndSource) Details() *typex.InEnd {
 	return cc.RuleEngine.GetInEnd(cc.PointId)
-}
-
-func (cc *coAPInEndSource) Driver() typex.XExternalDriver {
-	return nil
-}
-
-// 拓扑
-func (*coAPInEndSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
 }
 
 // 来自外面的数据

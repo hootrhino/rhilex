@@ -41,14 +41,14 @@ type BacnetIpConfig struct {
 type GenericBacnetIpDevice struct {
 	typex.XStatus
 	status         typex.DeviceState
-	RuleEngine     typex.RuleX
+	RuleEngine     typex.Rhilex
 	bacnetIpConfig BacnetIpConfig
 	// Bacnet
 	bacnetClient bacnet.Client
 	remoteDev    btypes.Device
 }
 
-func NewGenericBacnetIpDevice(e typex.RuleX) typex.XDevice {
+func NewGenericBacnetIpDevice(e typex.Rhilex) typex.XDevice {
 	g := new(GenericBacnetIpDevice)
 	g.RuleEngine = e
 	g.bacnetIpConfig = BacnetIpConfig{
@@ -195,10 +195,6 @@ func (dev *GenericBacnetIpDevice) Details() *typex.Device {
 
 func (dev *GenericBacnetIpDevice) SetState(state typex.DeviceState) {
 	dev.status = state
-}
-
-func (dev *GenericBacnetIpDevice) Driver() typex.XExternalDriver {
-	return nil
 }
 
 func (dev *GenericBacnetIpDevice) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

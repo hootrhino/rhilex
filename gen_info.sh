@@ -35,7 +35,7 @@ var DefaultVersionInfo = VersionInfo{
 	ReleaseTime: "$(echo $(date "+%Y-%m-%d %H:%M:%S"))",
 }
 var Banner = \`
- **  Welcome to RULEX framework world <'_'>     -.
+ **  Welcome to RHILEX framework world <'_'>     -.
 **   Version: ${VERSION}-${HASH:0:15}             -.
  **  More information: https://hootrhino.github.io  -.
 \`

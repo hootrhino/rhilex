@@ -69,7 +69,7 @@ func (*Telemetry) Init(sec *ini.Section) error {
 
 	return nil
 }
-func (*Telemetry) Start(typex.RuleX) error {
+func (*Telemetry) Start(typex.Rhilex) error {
 	return nil
 }
 
@@ -86,8 +86,8 @@ func (p *Telemetry) PluginMetaInfo() typex.XPluginMetaInfo {
 		UUID:     "BUSINESS_TELEMETRY",
 		Name:     "Business Telemetry",
 		Version:  "v0.0.1",
-		Homepage: "https://github.com/dropliu/rulex",
-		HelpLink: "https://github.com/dropliu/rulex",
+		Homepage: "https://github.com/dropliu/rhilex",
+		HelpLink: "https://github.com/dropliu/rhilex",
 		Author:   "dropliu",
 		Email:    "13594448678@163.com",
 		License:  "AGPL",

@@ -18,6 +18,6 @@ Actions = {function(args)
             ["values"] = {0xFF}
         }
     }
-    rulexlib:WriteInStream('INEND', rulexlib:T2J(t))
+    rhilexlib:WriteInStream('INEND', rhilexlib:T2J(t))
     return false, data
 end}

@@ -35,7 +35,7 @@ type SqliteTarget struct {
 	db         *gorm.DB
 }
 
-func NewSqliteTarget(e typex.RuleX) typex.XTarget {
+func NewSqliteTarget(e typex.Rhilex) typex.XTarget {
 	ht := new(SqliteTarget)
 	ht.RuleEngine = e
 	ht.mainConfig = common.SqliteConfig{}

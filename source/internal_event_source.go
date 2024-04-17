@@ -43,7 +43,7 @@ type InternalEventSource struct {
 	mainConfig __InternalEventSourceConfig
 }
 
-func NewInternalEventSource(r typex.RuleX) typex.XSource {
+func NewInternalEventSource(r typex.Rhilex) typex.XSource {
 	s := InternalEventSource{}
 	s.mainConfig = __InternalEventSourceConfig{
 		Type: "ALL",
@@ -80,9 +80,6 @@ func (u *InternalEventSource) Stop() {
 		u.CancelCTX()
 	}
 }
-func (*InternalEventSource) Driver() typex.XExternalDriver {
-	return nil
-}
 
 func (u *InternalEventSource) Details() *typex.InEnd {
 	return u.RuleEngine.GetInEnd(u.PointId)
@@ -92,10 +89,6 @@ func (u *InternalEventSource) Test(inEndId string) bool {
 	return true
 }
 
-// 拓扑
-func (*InternalEventSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
-}
 
 // 来自外面的数据
 func (*InternalEventSource) DownStream([]byte) (int, error) {

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
@@ -24,7 +24,7 @@ func Test_S7_PLC_Parse(t *testing.T) {
 		glogger.GLogger.Fatal("Rule load failed:", err)
 	}
 	// Grpc Inend
-	grpcInend := typex.NewInEnd("GRPC", "Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 		"port": 2581,
 	})
 	ctx, cancelF := typex.NewCCTX() // ,ctx, cancelF
@@ -42,17 +42,17 @@ func Test_S7_PLC_Parse(t *testing.T) {
 		`
 		Actions = {
 			function(args)
-				local V0 = rulexlib:MB(">a:16 b:16 c:16 d:16 e:16", data, false)
-				local a = rulexlib:T2J(V0['a'])
-				local b = rulexlib:T2J(V0['b'])
-				local c = rulexlib:T2J(V0['c'])
-				local d = rulexlib:T2J(V0['d'])
-				local e = rulexlib:T2J(V0['e'])
-				print('a ==> ', a, ' ->', rulexlib:BS2B(a), '==> ', rulexlib:B2I64('>', rulexlib:BS2B(a)))
-				print('b ==> ', b, ' ->', rulexlib:BS2B(a), '==> ', rulexlib:B2I64('>', rulexlib:BS2B(b)))
-				print('c ==> ', c, ' ->', rulexlib:BS2B(a), '==> ', rulexlib:B2I64('>', rulexlib:BS2B(c)))
-				print('d ==> ', d, ' ->', rulexlib:BS2B(a), '==> ', rulexlib:B2I64('>', rulexlib:BS2B(d)))
-				print('e ==> ', e, ' ->', rulexlib:BS2B(a), '==> ', rulexlib:B2I64('>', rulexlib:BS2B(e)))
+				local V0 = rhilexlib:MB(">a:16 b:16 c:16 d:16 e:16", data, false)
+				local a = rhilexlib:T2J(V0['a'])
+				local b = rhilexlib:T2J(V0['b'])
+				local c = rhilexlib:T2J(V0['c'])
+				local d = rhilexlib:T2J(V0['d'])
+				local e = rhilexlib:T2J(V0['e'])
+				print('a ==> ', a, ' ->', rhilexlib:BS2B(a), '==> ', rhilexlib:B2I64('>', rhilexlib:BS2B(a)))
+				print('b ==> ', b, ' ->', rhilexlib:BS2B(a), '==> ', rhilexlib:B2I64('>', rhilexlib:BS2B(b)))
+				print('c ==> ', c, ' ->', rhilexlib:BS2B(a), '==> ', rhilexlib:B2I64('>', rhilexlib:BS2B(c)))
+				print('d ==> ', d, ' ->', rhilexlib:BS2B(a), '==> ', rhilexlib:B2I64('>', rhilexlib:BS2B(d)))
+				print('e ==> ', e, ' ->', rhilexlib:BS2B(a), '==> ', rhilexlib:B2I64('>', rhilexlib:BS2B(e)))
 				return true, args
 			end
 		}`,
@@ -65,9 +65,9 @@ func Test_S7_PLC_Parse(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 
-	resp, err := client.Work(context.Background(), &rulexrpc.Data{
+	resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 		Value: string([]byte{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
 			10, 11, 12, 13, 14, 15, 16}),
@@ -75,7 +75,7 @@ func Test_S7_PLC_Parse(t *testing.T) {
 	if err != nil {
 		glogger.GLogger.Errorf("grpc.Dial err: %v", err)
 	}
-	glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+	glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 
 	time.Sleep(1 * time.Second)
 	engine.Stop()

@@ -62,7 +62,7 @@ func (tty *WebTTYPlugin) Init(config *ini.Section) error {
 * 这里拉起来一个 ttyd 进程，默认运行 bash
 *
  */
-func (tty *WebTTYPlugin) Start(typex.RuleX) error {
+func (tty *WebTTYPlugin) Start(typex.Rhilex) error {
 	return nil
 }
 func (tty *WebTTYPlugin) Stop() error {

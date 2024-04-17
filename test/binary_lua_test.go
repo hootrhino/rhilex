@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/glogger"
@@ -31,7 +31,7 @@ func Test_Binary_LUA_Parse(t *testing.T) {
 		glogger.GLogger.Error("Rule load failed:", err)
 	}
 	// Grpc Inend
-	grpcInend := typex.NewInEnd("GRPC", "Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 		"port": "2581",
 	})
 	ctx, cancelF := typex.NewCCTX()
@@ -55,8 +55,8 @@ func Test_Binary_LUA_Parse(t *testing.T) {
 			--        └───────────────────────────────────────────────┘
 			function(args)
 				local json = require("json")
-				local V6 = json.encode(rulexlib:MB("<a:8 b:8 c:8 d:8", data, false))
-				print("[LUA Actions Callback 5, rulex.MatchBinary] ==>", V6)
+				local V6 = json.encode(rhilexlib:MB("<a:8 b:8 c:8 d:8", data, false))
+				print("[LUA Actions Callback 5, rhilex.MatchBinary] ==>", V6)
 				return true, args
 			end
 		}`,
@@ -69,10 +69,10 @@ func Test_Binary_LUA_Parse(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 	for i := 0; i < 2; i++ {
-		glogger.GLogger.Infof("Rulex Rpc Call ==========================>>: %v", i)
-		resp, err := client.Work(context.Background(), &rulexrpc.Data{
+		glogger.GLogger.Infof("rhilex Rpc Call ==========================>>: %v", i)
+		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: string([]byte{
 				1, 2, 3, 4, 5, 6, 7, 8, 9,
 				10, 11, 12, 13, 14, 15, 16}),
@@ -81,7 +81,7 @@ func Test_Binary_LUA_Parse(t *testing.T) {
 			glogger.GLogger.Error(err)
 
 		}
-		glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+		glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 	}
 
 	time.Sleep(1 * time.Second)

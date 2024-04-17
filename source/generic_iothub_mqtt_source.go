@@ -87,7 +87,7 @@ func (it iothubUpMsg) String() string {
 // 		"devices":[
 // 			{
 // 				"productID":"268dGhSTdOE",
-// 				"deviceName":"RULEX-大屏1"
+// 				"deviceName":"RHILEX-大屏1"
 // 			}
 // 		]
 // 	}
@@ -138,7 +138,7 @@ type iothub struct {
 	TopologyTopicDown string
 }
 
-func NewIoTHubSource(e typex.RuleX) typex.XSource {
+func NewIoTHubSource(e typex.Rhilex) typex.XSource {
 	m := new(iothub)
 	m.RuleEngine = e
 	m.mainConfig = common.GenericIoTHUBMqttConfig{
@@ -291,14 +291,6 @@ func (tc *iothub) Test(inEndId string) bool {
 func (tc *iothub) Details() *typex.InEnd {
 	return tc.RuleEngine.GetInEnd(tc.PointId)
 }
-func (*iothub) Driver() typex.XExternalDriver {
-	return nil
-}
-
-// 拓扑
-func (*iothub) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
-}
 
 func (tc *iothub) DownStream(bytes []byte) (int, error) {
 	var msg iothubUpMsg
@@ -381,7 +373,7 @@ func (tc *iothub) subscribe(topic string) error {
 // 		"devices":[
 // 			{
 // 				"productID":"268dGhSTdOE",
-// 				"deviceName":"RULEX-大屏1"
+// 				"deviceName":"RHILEX-大屏1"
 // 			}
 // 		]
 // 	}

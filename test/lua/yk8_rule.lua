@@ -28,7 +28,7 @@ end
 -- }
 -- Actions
 Actions = { function(args)
-    local dataT, err = rulexlib:J2T(data)
+    local dataT, err = rhilexlib:J2T(data)
     -- 兼容多种平台
     if dataT['method'] == 'control' or dataT['method'] == 'property' then
         local params = dataT['params']
@@ -42,25 +42,25 @@ Actions = { function(args)
             [7] = params['sw2'],
             [8] = params['sw1']
         }
-        local n, err = rulexlib:WriteDevice('YK8Device1', 0, rulexlib:T2J({ {
+        local n, err = rhilexlib:WriteDevice('YK8Device1', 0, rhilexlib:T2J({ {
             ['function'] = 15,
             ['slaverId'] = 3,
             ['address'] = 0,
             ['quantity'] = 1,
-            ['value'] = rulexlib:T2Str(cmd)
+            ['value'] = rhilexlib:T2Str(cmd)
         } }))
         if (err) then
-            rulexlib:Throw(err)
+            rhilexlib:Throw(err)
         end
         -- read data publish to mqtt
-        local n, err = rulexlib:WriteSource('tencentIothub', rulexlib:T2J({
+        local n, err = rhilexlib:WriteSource('tencentIothub', rhilexlib:T2J({
             method = 'control_reply',
             clientToken = dataT['clientToken'],
             code = 0,
             status = 'OK'
         }))
         if (err) then
-            rulexlib:Throw(err)
+            rhilexlib:Throw(err)
         end
     end
     return true, args

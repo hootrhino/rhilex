@@ -33,7 +33,7 @@ type SuperVisorAdmin struct {
 	Ctx         context.Context
 	Locker      sync.Locker
 	SuperVisors map[string]*SuperVisor
-	rulex       typex.RuleX
+	rhilex      typex.Rhilex
 }
 
 /*
@@ -41,12 +41,12 @@ type SuperVisorAdmin struct {
 * 初始化超级Admin
 *
  */
-func InitResourceSuperVisorAdmin(rulex typex.RuleX) {
+func InitResourceSuperVisorAdmin(rhilex typex.Rhilex) {
 	__DefaultSuperVisorAdmin = &SuperVisorAdmin{
 		Ctx:         context.Background(),
 		Locker:      &sync.Mutex{},
 		SuperVisors: map[string]*SuperVisor{},
-		rulex:       rulex,
+		rhilex:      rhilex,
 	}
 }
 

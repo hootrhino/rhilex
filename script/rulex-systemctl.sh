@@ -15,7 +15,7 @@ SOURCE_DIR="$PWD"
 install(){
 cat > "$SERVICE_FILE" << EOL
 [Unit]
-Description=Rulex Daemon
+Description=rhilex Daemon
 After=network.target
 
 [Service]
@@ -44,9 +44,9 @@ EOL
     systemctl enable rhilex
     systemctl start rhilex
     if [ $? -eq 0 ]; then
-        echo "[√] Rulex service has been created and extracted."
+        echo "[√] rhilex service has been created and extracted."
     else
-        echo "[x] Failed to create the Rulex service or extract files."
+        echo "[x] Failed to create the rhilex service or extract files."
     fi
     exit 0
 }
@@ -54,7 +54,7 @@ EOL
 start(){
     systemctl daemon-reload
     systemctl start rhilex
-    echo "[√] RULEX started as a daemon."
+    echo "[√] RHILEX started as a daemon."
     exit 0
 }
 status(){
@@ -67,7 +67,7 @@ restart(){
 
 stop(){
     systemctl stop rhilex
-    echo "[√] Service Rulex has been stopped."
+    echo "[√] Service rhilex has been stopped."
 }
 remove_files() {
     if [ -e "$1" ]; then
@@ -91,15 +91,15 @@ uninstall(){
     remove_files "$WORKING_DIRECTORY/rhilex.db"
     remove_files "$WORKING_DIRECTORY/license.lic"
     remove_files "$WORKING_DIRECTORY/license.key"
-    remove_files "$WORKING_DIRECTORY/rulex_internal_datacenter.db"
+    remove_files "$WORKING_DIRECTORY/rhilex_internal_datacenter.db"
     remove_files "$WORKING_DIRECTORY/upload/"
-    remove_files "$WORKING_DIRECTORY/rulexlog.txt"
+    remove_files "$WORKING_DIRECTORY/rhilexlog.txt"
     remove_files "$WORKING_DIRECTORY/rhilex-daemon-log.txt"
     remove_files "$WORKING_DIRECTORY/rhilex-recover-log.txt"
     remove_files "$WORKING_DIRECTORY/rhilex-upgrade-log.txt"
     systemctl daemon-reload
     systemctl reset-failed
-    echo "[√] Rulex has been uninstalled."
+    echo "[√] rhilex has been uninstalled."
 }
 #
 #

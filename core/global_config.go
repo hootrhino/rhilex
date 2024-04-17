@@ -31,12 +31,12 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-var GlobalConfig typex.RulexConfig
+var GlobalConfig typex.RhilexConfig
 var INIPath string
 
 // Init config
-func InitGlobalConfig(path string) typex.RulexConfig {
-	log.Println("Init rulex config:", path)
+func InitGlobalConfig(path string) typex.RhilexConfig {
+	log.Println("Init rhilex config:", path)
 	cfg, err := ini.ShadowLoad(path)
 	if err != nil {
 		log.Fatalf("Fail to read config file: %v", err)
@@ -52,7 +52,7 @@ func InitGlobalConfig(path string) typex.RulexConfig {
 		log.Fatalf("Fail to map config file: %v", err)
 		os.Exit(1)
 	}
-	log.Println("Rulex config init successfully")
+	log.Println("rhilex config init successfully")
 	return GlobalConfig
 }
 

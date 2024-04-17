@@ -1,4 +1,4 @@
-APP=rulex
+APP=rhilex
 # 获取操作系统信息
 distro=$(shell cat /etc/os-release | grep PRETTY_NAME | cut -d '"' -f 2)
 kernel=$(shell uname -r)

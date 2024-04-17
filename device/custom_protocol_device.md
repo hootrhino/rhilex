@@ -130,36 +130,36 @@ end
   ```lua
      -- 第一个参数为提取表达式
      -- 格式为: [<|> K1:LEN1 K2:LEN2... ], 返回一个K-V table
-		local V6 = rulexlib:T2J(rulexlib:MB("<a:5 b:3 c:1", "aab", false))
+		local V6 = rhilexlib:T2J(rhilexlib:MB("<a:5 b:3 c:1", "aab", false))
 
   ```
 - applib:MBHex 二进制匹匹配, 返回值为二进制的十六进制表示法
   ```lua
      -- 第一个参数为提取表达式
      -- 格式为: [<|> K1:LEN1 K2:LEN2... ], 返回一个K-V table
-		local V6 = rulexlib:T2J(rulexlib:MBHex("<a:5 b:3 c:1", "aab", false))
+		local V6 = rhilexlib:T2J(rhilexlib:MBHex("<a:5 b:3 c:1", "aab", false))
   ```
 - hex:ABCD 十六进制字节序按照 ABCD 顺序调整
   ```lua
-		local V, err = rulexlib:ABCD("AABBCCDDEEFF")
+		local V, err = rhilexlib:ABCD("AABBCCDDEEFF")
     -- V = FFEEDDCCBBAA
   ```
 
 - hex:DCBA 十六进制字节序按照 DCBA 顺序调整
   ```lua
-		local V, err = rulexlib:DCBA("FFEEDDCCBBAA")
+		local V, err = rhilexlib:DCBA("FFEEDDCCBBAA")
     -- V = AABBCCDDEEFF
   ```
 
 - hex:BADC 十六进制字节序按照 BADC 顺序调整
   ```lua
-		local V, err = rulexlib:BADC("CDAB12EF")
+		local V, err = rhilexlib:BADC("CDAB12EF")
     -- V = ABCDEF12
   ```
 
 - hex:CDAB 十六进制字节序按照 CDAB 顺序调整
   ```lua
-		local V, err = rulexlib:CDAB("ABCDEF12")
+		local V, err = rhilexlib:CDAB("ABCDEF12")
     -- V = CDAB12EF
   ```
 
@@ -227,7 +227,7 @@ func main() {
 }
 
 ```
-### RULEX APP Demo
+### RHILEX APP Demo
 ```lua
 AppNAME = "Test1"
 AppVERSION = "1.0.0"

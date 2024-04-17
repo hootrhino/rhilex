@@ -3,7 +3,7 @@ package test
 import (
 	"context"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 	"github.com/hootrhino/rhilex/glogger"
 	mbserver "github.com/tbrandon/mbserver"
 
@@ -67,14 +67,14 @@ func Test_Generic_modbus_device_tcp_mode(t *testing.T) {
 		Actions = {
 			function(args)
 				print("RawData --->",data)
-				local nodeT = rulexlib:J2T(data)
+				local nodeT = rhilexlib:J2T(data)
 				local dataT = nodeT['node1']
-				local rawbin, error = rulexlib:B64S2B(dataT['value'])
-				local matchedData = rulexlib:MB(">a1:8 b2:8 c3:8 d4:8", rawbin, false)
-				local a1 = rulexlib:B2I64('>', rulexlib:BS2B(matchedData["a1"]))
-				local b2 = rulexlib:B2I64('>', rulexlib:BS2B(matchedData["b2"]))
-				local c3 = rulexlib:B2I64('>', rulexlib:BS2B(matchedData["c3"]))
-				local d4 = rulexlib:B2I64('>', rulexlib:BS2B(matchedData["d4"]))
+				local rawbin, error = rhilexlib:B64S2B(dataT['value'])
+				local matchedData = rhilexlib:MB(">a1:8 b2:8 c3:8 d4:8", rawbin, false)
+				local a1 = rhilexlib:B2I64('>', rhilexlib:BS2B(matchedData["a1"]))
+				local b2 = rhilexlib:B2I64('>', rhilexlib:BS2B(matchedData["b2"]))
+				local c3 = rhilexlib:B2I64('>', rhilexlib:BS2B(matchedData["c3"]))
+				local d4 = rhilexlib:B2I64('>', rhilexlib:BS2B(matchedData["d4"]))
 				print('a1 --> ', matchedData["a1"], ' --> ', a1)
 				print('b2 --> ', matchedData["b2"], ' --> ', b2)
 				print('c3 --> ', matchedData["c3"], ' --> ', c3)

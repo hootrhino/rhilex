@@ -52,7 +52,7 @@ type LicenseManager struct {
 * 开源版本默认是给一个授权证书
 *
  */
-func NewLicenseManager(r typex.RuleX) *LicenseManager {
+func NewLicenseManager(r typex.Rhilex) *LicenseManager {
 	return &LicenseManager{
 		localLicense: typex.LocalLicense{},
 	}
@@ -131,7 +131,7 @@ func (dm *LicenseManager) Init(section *ini.Section) error {
 }
 
 // Start 未实现
-func (dm *LicenseManager) Start(typex.RuleX) error {
+func (dm *LicenseManager) Start(typex.Rhilex) error {
 	return nil
 }
 func (dm *LicenseManager) Service(arg typex.ServiceArg) typex.ServiceResult {

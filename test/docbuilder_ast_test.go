@@ -14,7 +14,7 @@ import (
 * 尝试使用AST来生成文档
 *
  */
-func Test_gen_rulexlib_with_ast(t *testing.T) {
+func Test_gen_rhilexlib_with_ast(t *testing.T) {
 	fset := token.NewFileSet()
 	node, err := parser.ParseFile(fset, "data/ast_test_example1.spec", nil, parser.ParseComments)
 	if err != nil {
@@ -38,8 +38,8 @@ func Test_gen_rulexlib_with_ast(t *testing.T) {
 		switch typa := v.(type) {
 		case *ast.FuncDecl:
 			{
-				// __RULEX_rulexlib_DataToTdEngine
-				if strings.HasPrefix(typa.Name.String(), "__RULEX_") {
+				// __RHILEX_rhilexlib_DataToTdEngine
+				if strings.HasPrefix(typa.Name.String(), "__RHILEX_") {
 					fmt.Println("## " + typa.Name.String()[8:])
 					fmt.Println("### 命名空间")
 					fmt.Println("- " + node.Name.Name + "\n")

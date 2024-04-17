@@ -25,7 +25,7 @@ type TemplateDevice struct {
 	typex.XStatus
 }
 
-func NewTemplateDevice(e typex.RuleX) typex.XDevice {
+func NewTemplateDevice(e typex.Rhilex) typex.XDevice {
 	hd := new(TemplateDevice)
 	hd.RuleEngine = e
 	return hd
@@ -81,11 +81,6 @@ func (hd *TemplateDevice) Details() *typex.Device {
 func (hd *TemplateDevice) SetState(status typex.DeviceState) {
 	hd.status = status
 
-}
-
-// 驱动
-func (hd *TemplateDevice) Driver() typex.XExternalDriver {
-	return nil
 }
 
 // --------------------------------------------------------------------------------------------------

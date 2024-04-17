@@ -32,7 +32,7 @@ type _GUDConfig struct {
 type genericUartDevice struct {
 	typex.XStatus
 	status     typex.DeviceState
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	driver     typex.XExternalDriver
 	mainConfig _GUDConfig
 	locker     sync.Locker
@@ -43,7 +43,7 @@ type genericUartDevice struct {
 * 通用串口透传
 *
  */
-func NewGenericUartDevice(e typex.RuleX) typex.XDevice {
+func NewGenericUartDevice(e typex.Rhilex) typex.XDevice {
 	uart := new(genericUartDevice)
 	uart.locker = &sync.Mutex{}
 	uart.mainConfig = _GUDConfig{}
@@ -171,10 +171,6 @@ func (uart *genericUartDevice) SetState(status typex.DeviceState) {
 
 }
 
-// 驱动
-func (uart *genericUartDevice) Driver() typex.XExternalDriver {
-	return uart.driver
-}
 
 // --------------------------------------------------------------------------------------------------
 //

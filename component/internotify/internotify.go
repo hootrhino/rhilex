@@ -73,7 +73,7 @@ func Push(e BaseEvent) error {
  */
 type InternalEventBus struct {
 	Queue       chan BaseEvent
-	Rulex       typex.RuleX
+	rhilex      typex.Rhilex
 	SourceCount uint
 }
 
@@ -99,10 +99,10 @@ func GetQueue() chan BaseEvent {
 
 *
 */
-func InitInternalEventBus(r typex.RuleX, MaxQueueSize int) *InternalEventBus {
+func InitInternalEventBus(r typex.Rhilex, MaxQueueSize int) *InternalEventBus {
 	__DefaultInternalEventBus = new(InternalEventBus)
 	__DefaultInternalEventBus.Queue = make(chan BaseEvent, 1024)
-	__DefaultInternalEventBus.Rulex = r
+	__DefaultInternalEventBus.rhilex = r
 	return __DefaultInternalEventBus
 }
 

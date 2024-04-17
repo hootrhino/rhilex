@@ -28,8 +28,8 @@ import (
 func TestApp_Hot_update(t *testing.T) {
 	fmt.Println(os.Args[0])
 	s := gin.Default()
-	s.GET("/rulex", downloadRulex)
-	// s.StaticFile("/rulex", "./rulex")
+	s.GET("/rhilex", downloadRhilex)
+	// s.StaticFile("/rhilex", "./rhilex")
 	s.Run(":8088")
 }
 
@@ -49,7 +49,7 @@ func (ss Strings) Has(s string) bool {
 	return false
 }
 
-func downloadRulex(c *gin.Context) {
+func downloadRhilex(c *gin.Context) {
 	var (
 		os   = c.Query("os")
 		arch = c.Query("arch")
@@ -70,7 +70,7 @@ func downloadRulex(c *gin.Context) {
 	// 当请求字段没有version时，当作latest（最新版本）处理
 	// 当version字段有效且大于等于最新版本时，不返回内容
 
-	c.Writer.Header().Add("Rulex-Version", "v1.5.x")
-	c.Writer.Header().Add("Rulex-MD5", "cc21c06617b95eabc812b82ffad2e9a8")
-	c.File("./rulex_new")
+	c.Writer.Header().Add("rhilex-Version", "v1.5.x")
+	c.Writer.Header().Add("rhilex-MD5", "cc21c06617b95eabc812b82ffad2e9a8")
+	c.File("./rhilex_new")
 }

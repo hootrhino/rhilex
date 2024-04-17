@@ -36,7 +36,7 @@ func KillProcess(processID int) error {
 
 /*
 *
-* pgrep rulex -> 38506\n
+* pgrep rhilex -> 38506\n
 *
  */
 func GetProcessPID(processName string) (int, error) {

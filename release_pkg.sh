@@ -1,6 +1,6 @@
 #! /bin/bash
 set -e
-APP=rulex
+APP=rhilex
 RESPOSITORY="https://github.com/hootrhino"
 
 #
@@ -150,9 +150,9 @@ fetch_dashboard() {
     echo "[√] Download complete. Tag: $tag"
 
     # 解压 www.zip 文件到指定目录
-    unzip -o www.zip -d /plugin/rulex_api_server/server/www/
+    unzip -o www.zip -d /plugin/rhilex_api_server/server/www/
 
-    echo "[√] Extraction complete. www.zip contents have been overwritten to /plugin/rulex_api_server/server/www/."
+    echo "[√] Extraction complete. www.zip contents have been overwritten to /plugin/rhilex_api_server/server/www/."
 }
 
 #

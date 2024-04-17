@@ -38,7 +38,7 @@ type userG776 struct {
 	errCount   int
 }
 
-func NewUserG776(e typex.RuleX) typex.XTarget {
+func NewUserG776(e typex.Rhilex) typex.XTarget {
 	g776 := new(userG776)
 	g776.RuleEngine = e
 	g776.mainConfig = common.CommonUartConfig{

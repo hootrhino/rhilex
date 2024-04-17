@@ -65,8 +65,8 @@ info:
   contact:
     name: API Support
     url: https://github.com/hootrhino/rhilex
-  description: Rulex Swagger API
-  title: Rulex API
+  description: rhilex Swagger API
+  title: rhilex API
   version: "1.0"
 paths:
   /crontask/create:

@@ -32,10 +32,10 @@ local Devices = {
 }
 
 for __i, Device in ipairs(Devices) do
-    local response, err = rulexlib:CtrlDevice("UUID",
+    local response, err = rhilexlib:CtrlDevice("UUID",
         Device.Encode("0001020304AABBCCDD(你的请求报文)"))
     if err ~= nil then
-        rulexlib:Log(err)
+        rhilexlib:Log(err)
     else
         local parsedValue = Device.Decode(response)
         print('parsedValue', parsedValue)

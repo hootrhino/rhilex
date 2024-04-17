@@ -19,7 +19,7 @@ type natsSource struct {
 	status        typex.SourceState
 }
 
-func NewNatsSource(e typex.RuleX) typex.XSource {
+func NewNatsSource(e typex.Rhilex) typex.XSource {
 	nt := &natsSource{}
 	nt.RuleEngine = e
 	return nt
@@ -33,7 +33,7 @@ func (nt *natsSource) Start(cctx typex.CCTX) error {
 		func(o *nats.Options) error {
 			o.User = nt.mainConfig.Username
 			o.Password = nt.mainConfig.Password
-			o.Name = "rulex-nats-source"
+			o.Name = "rhilex-nats-source"
 			o.AllowReconnect = true
 			o.ReconnectWait = 5 * time.Second
 			return nil
@@ -111,14 +111,6 @@ func (nt *natsSource) Stop() {
 
 func (nt *natsSource) DataModels() []typex.XDataModel {
 	return []typex.XDataModel{}
-}
-func (nt *natsSource) Driver() typex.XExternalDriver {
-	return nil
-}
-
-// 拓扑
-func (*natsSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
 }
 
 // 来自外面的数据

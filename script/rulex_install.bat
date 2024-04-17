@@ -15,11 +15,11 @@ rem along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 @echo off
 
-set SERVICE_NAME=RulexService
+set SERVICE_NAME=RhilexService
 set BINARY_PATH=%CD%\rhilex.exe
 set CONFIG_PATH=%CD%\rhilex.ini
 
-sc create %SERVICE_NAME% binPath= "%BINARY_PATH% run -config %CONFIG_PATH%" start= auto DisplayName= RulexService
+sc create %SERVICE_NAME% binPath= "%BINARY_PATH% run -config %CONFIG_PATH%" start= auto DisplayName= RhilexService
 
 echo Service created successfully.
 

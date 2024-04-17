@@ -52,7 +52,7 @@ func Flush() {
 
 type IotSchemaCache struct {
 	Slots      map[string]map[string]DataSchemaValue
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	locker     sync.Mutex
 }
 type DataSchemaValue struct {
@@ -62,7 +62,7 @@ type DataSchemaValue struct {
 	LastFetchTime uint64
 }
 
-func InitIotSchemaCache(ruleEngine typex.RuleX) intercache.InterCache {
+func InitIotSchemaCache(ruleEngine typex.Rhilex) intercache.InterCache {
 	__DefaultIotSchemaCache = &IotSchemaCache{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]DataSchemaValue{},

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "./;rhilexrpc";
+option java_multiple_files = false;
+option java_package = "rhilexrpc";
+option java_outer_classname = "RhilexRpcService";
+
+package rhilexrpc;
+
+service RhilexRpc {
+  rpc Work (Data) returns (Response) {}
+}
+
+message Data {
+  string value = 1;
+}
+
+message Response {
+  int32 code = 1;
+  string message = 2;
+}

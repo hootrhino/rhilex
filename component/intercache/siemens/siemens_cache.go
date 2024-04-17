@@ -59,11 +59,11 @@ func Flush() {
 
 type SiemensPointCache struct {
 	Slots      map[string]map[string]SiemensPoint
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	locker     sync.Mutex
 }
 
-func InitSiemensPointCache(ruleEngine typex.RuleX) intercache.InterCache {
+func InitSiemensPointCache(ruleEngine typex.Rhilex) intercache.InterCache {
 	__DefaultSiemensPointCache = &SiemensPointCache{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]SiemensPoint{},

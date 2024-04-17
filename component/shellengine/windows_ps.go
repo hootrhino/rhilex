@@ -18,9 +18,9 @@ package shellengine
 import "github.com/hootrhino/rhilex/typex"
 
 type WindowsPowerShell struct {
-	rulex typex.RuleX
+	rhilex typex.Rhilex
 }
 
-func InitWindowsPowerShell(rulex typex.RuleX) *WindowsPowerShell {
-	return &WindowsPowerShell{rulex: rulex}
+func InitWindowsPowerShell(rhilex typex.Rhilex) *WindowsPowerShell {
+	return &WindowsPowerShell{rhilex: rhilex}
 }

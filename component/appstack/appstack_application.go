@@ -27,7 +27,7 @@ type Application struct {
 	Description string             `json:"description"` // 版本号
 	AutoStart   bool               `json:"autoStart"`   // 自动启动
 	AppState    AppState           `json:"appState"`    // 状态: 1 运行中, 0 停止
-	KilledBy    string             `json:"-"`           // 被谁杀死的: RULEX|EXCEPT|NORMAL|""
+	KilledBy    string             `json:"-"`           // 被谁杀死的: RHILEX|EXCEPT|NORMAL|""
 	luaMainFunc *lua.LFunction     `json:"-"`           // Main
 	vm          *lua.LState        `json:"-"`           // lua 环境
 	ctx         context.Context    `json:"-"`           // context
@@ -96,7 +96,7 @@ func (app *Application) Remove() {
 *
  */
 type XAppStack interface {
-	GetRuleX() typex.RuleX
+	GetRhilex() typex.Rhilex
 	ListApp() []*Application
 	// 把配置里的应用信息加载到内存里
 	LoadApp(app *Application) error

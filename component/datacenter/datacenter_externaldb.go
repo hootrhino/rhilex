@@ -31,12 +31,12 @@ import (
 *
  */
 type ExternalDb struct {
-	rulex typex.RuleX
+	rhilex typex.Rhilex
 }
 
-func InitExternalDb(rulex typex.RuleX) DataSource {
+func InitExternalDb(rhilex typex.Rhilex) DataSource {
 	Edb := new(ExternalDb)
-	Edb.rulex = rulex
+	Edb.rhilex = rhilex
 	return Edb
 }
 func (db *ExternalDb) Init() error {

@@ -28,13 +28,13 @@ import (
  */
 type LocalDb struct {
 	Sqlite *SqliteDAO
-	rulex  typex.RuleX
+	rhilex typex.Rhilex
 }
 
-func InitLocalDb(rulex typex.RuleX) DataSource {
+func InitLocalDb(rhilex typex.Rhilex) DataSource {
 	return &LocalDb{
-		Sqlite: InitSqliteDAO(rulex),
-		rulex:  rulex,
+		Sqlite: InitSqliteDAO(rhilex),
+		rhilex: rhilex,
 	}
 }
 
@@ -44,9 +44,9 @@ func (ldb *LocalDb) Init() error {
 
 func (ldb *LocalDb) GetSchemaDetail(goodsId string) SchemaDetail {
 	return SchemaDetail{
-		UUID:        "rulex_internal_datacenter",
-		SchemaType:  "rulex_internal_datacenter",
-		Name:        "RULEX内置轻量级数据仓库",
+		UUID:        "rhilex_internal_datacenter",
+		SchemaType:  "rhilex_internal_datacenter",
+		Name:        "RHILEX内置轻量级数据仓库",
 		LocalPath:   ".local",
 		NetAddr:     ".local",
 		CreateTs:    0,

@@ -60,11 +60,11 @@ func Flush() {
 
 type KdnCnCPointCache struct {
 	Slots      map[string]map[string]KndRegisterPoint
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	locker     sync.Mutex
 }
 
-func InitKdnCnCPointCache(ruleEngine typex.RuleX) intercache.InterCache {
+func InitKdnCnCPointCache(ruleEngine typex.Rhilex) intercache.InterCache {
 	__DefaultKdnCnCPointCache = &KdnCnCPointCache{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]KndRegisterPoint{},

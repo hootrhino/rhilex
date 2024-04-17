@@ -21,7 +21,7 @@ type httpInEndSource struct {
 	status     typex.SourceState
 }
 
-func NewHttpInEndSource(e typex.RuleX) typex.XSource {
+func NewHttpInEndSource(e typex.Rhilex) typex.XSource {
 	h := httpInEndSource{}
 	if core.GlobalConfig.AppDebugMode {
 		gin.SetMode(gin.DebugMode)
@@ -100,14 +100,6 @@ func (hh *httpInEndSource) Details() *typex.InEnd {
 	return hh.RuleEngine.GetInEnd(hh.PointId)
 }
 
-func (*httpInEndSource) Driver() typex.XExternalDriver {
-	return nil
-}
-
-// 拓扑
-func (*httpInEndSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
-}
 
 // 来自外面的数据
 func (*httpInEndSource) DownStream([]byte) (int, error) {

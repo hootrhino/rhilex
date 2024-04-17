@@ -126,7 +126,7 @@ type ModbusPoint struct {
 type generic_modbus_device struct {
 	typex.XStatus
 	status     typex.DeviceState
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	//
 	rtuHandler *modbus.RTUClientHandler
 	tcpHandler *modbus.TCPClientHandler
@@ -144,7 +144,7 @@ type generic_modbus_device struct {
 * 温湿度传感器
 *
  */
-func NewGenericModbusDevice(e typex.RuleX) typex.XDevice {
+func NewGenericModbusDevice(e typex.Rhilex) typex.XDevice {
 	mdev := new(generic_modbus_device)
 	mdev.RuleEngine = e
 	mdev.mainConfig = _GMODConfig{
@@ -542,10 +542,6 @@ func (mdev *generic_modbus_device) SetState(status typex.DeviceState) {
 	mdev.status = status
 }
 
-// 驱动
-func (mdev *generic_modbus_device) Driver() typex.XExternalDriver {
-	return nil
-}
 func (mdev *generic_modbus_device) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {
 	return typex.DCAResult{}
 }

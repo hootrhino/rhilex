@@ -23,7 +23,7 @@ var __Sqlite *SqliteDAO
 *
  */
 type SqliteDAO struct {
-	engine typex.RuleX
+	engine typex.Rhilex
 	name   string   // 框架可以根据名称来选择不同的数据库驱动,为以后扩展准备
 	db     *gorm.DB // Sqlite 驱动
 }
@@ -33,7 +33,7 @@ type SqliteDAO struct {
 * 初始化DAO
 *
  */
-func Init(engine typex.RuleX, dbPath string) error {
+func Init(engine typex.Rhilex, dbPath string) error {
 	__Sqlite = &SqliteDAO{name: "Sqlite3", engine: engine}
 
 	var err error

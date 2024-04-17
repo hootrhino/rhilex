@@ -48,16 +48,16 @@ type _GSNMPConfig struct {
 ```lua
 
 function (data)
-    local DataT, err = rulexlib:J2T(data)
+    local DataT, err = rhilexlib:J2T(data)
     if err ~= nil then
         return true, args
     end
     -- Do your business
-    rulexlib:log(DataT['PCHost'])
-    rulexlib:log(DataT['PCDescription'])
-    rulexlib:log(DataT['PCUserName'])
-    rulexlib:log(DataT['PCHardIFaces'])
-    rulexlib:log(DataT['PCTotalMemory'])
+    rhilexlib:log(DataT['PCHost'])
+    rhilexlib:log(DataT['PCDescription'])
+    rhilexlib:log(DataT['PCUserName'])
+    rhilexlib:log(DataT['PCHardIFaces'])
+    rhilexlib:log(DataT['PCTotalMemory'])
 end
 
 ```

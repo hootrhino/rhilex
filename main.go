@@ -61,29 +61,29 @@ func init() {
 //go:generate bash ./gen_info.sh
 func main() {
 	app := &cli.App{
-		Name:  "RULEX Gateway FrameWork",
-		Usage: "Homepage: http://rulex.hootrhino.com",
+		Name:  "RHILEX Gateway FrameWork",
+		Usage: "Homepage: http://rhilex.hootrhino.com",
 		Commands: []*cli.Command{
 			{
 				Name:  "run",
-				Usage: "Start rulex, Must with config: -config=path/rhilex.ini",
+				Usage: "Start rhilex, Must with config: -config=path/rhilex.ini",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:  "db",
-						Usage: "Database of rulex",
+						Usage: "Database of rhilex",
 						Value: "rhilex.db",
 					},
 					&cli.StringFlag{
 						Name:  "config",
-						Usage: "Config of rulex",
+						Usage: "Config of rhilex",
 						Value: "rhilex.ini",
 					},
 				},
 				Action: func(c *cli.Context) error {
 					utils.CLog(typex.Banner)
 					utils.ShowGGpuAndCpuInfo()
-					engine.RunRulex(c.String("config"))
-					fmt.Printf("[RULEX UPGRADE] Run rulex successfully.")
+					engine.RunRhilex(c.String("config"))
+					fmt.Printf("[RHILEX UPGRADE] Run rhilex successfully.")
 					return nil
 				},
 			},
@@ -109,47 +109,47 @@ func main() {
 					os.Stderr = file
 					// upgrade lock
 					if err := os.WriteFile(ossupport.UpgradeLockPath, []byte{48}, 0755); err != nil {
-						utils.CLog("[RULEX UPGRADE] Write Upgrade Lock File error:%s", err.Error())
+						utils.CLog("[RHILEX UPGRADE] Write Upgrade Lock File error:%s", err.Error())
 						return nil
 					}
 					defer func() {
 						// upgrade lock
 						if err := os.Remove(ossupport.UpgradeLockPath); err != nil {
-							utils.CLog("[RULEX UPGRADE] Remove Upgrade Lock File error:%s", err.Error())
+							utils.CLog("[RHILEX UPGRADE] Remove Upgrade Lock File error:%s", err.Error())
 							return
 						}
-						utils.CLog("[RULEX UPGRADE] Remove Upgrade Lock File Finished")
+						utils.CLog("[RHILEX UPGRADE] Remove Upgrade Lock File Finished")
 					}()
 					if runtime.GOOS != "linux" {
-						utils.CLog("[RULEX UPGRADE] Only Support Linux")
+						utils.CLog("[RHILEX UPGRADE] Only Support Linux")
 						return nil
 					}
 					if !c.Bool("upgrade") {
-						utils.CLog("[RULEX UPGRADE] Nothing todo")
+						utils.CLog("[RHILEX UPGRADE] Nothing todo")
 						return nil
 					}
 					// unzip Firmware
-					utils.CLog("[RULEX UPGRADE] Unzip Firmware")
+					utils.CLog("[RHILEX UPGRADE] Unzip Firmware")
 					if err := ossupport.UnzipFirmware(
 						ossupport.FirmwarePath, ossupport.MainWorkDir); err != nil {
-						utils.CLog("[RULEX UPGRADE] Unzip error:%s", err.Error())
+						utils.CLog("[RHILEX UPGRADE] Unzip error:%s", err.Error())
 						return nil
 					}
-					utils.CLog("[RULEX UPGRADE] Unzip Firmware finished")
+					utils.CLog("[RHILEX UPGRADE] Unzip Firmware finished")
 					// Remove old package
-					utils.CLog("[RULEX UPGRADE] Remove Firmware")
+					utils.CLog("[RHILEX UPGRADE] Remove Firmware")
 					if err := os.Remove(ossupport.FirmwarePath); err != nil {
-						utils.CLog("[RULEX UPGRADE] Remove Firmware error:%s", err.Error())
+						utils.CLog("[RHILEX UPGRADE] Remove Firmware error:%s", err.Error())
 						return nil
 					}
-					utils.CLog("[RULEX UPGRADE] Remove Firmware finished")
+					utils.CLog("[RHILEX UPGRADE] Remove Firmware finished")
 					//
-					utils.CLog("[RULEX UPGRADE] Restart rulex")
-					if err := ossupport.RestartRulex(); err != nil {
-						utils.CLog("[RULEX UPGRADE] Restart rulex error:%s", err.Error())
+					utils.CLog("[RHILEX UPGRADE] Restart rhilex")
+					if err := ossupport.RestartRhilex(); err != nil {
+						utils.CLog("[RHILEX UPGRADE] Restart rhilex error:%s", err.Error())
 						return nil
 					}
-					utils.CLog("[RULEX UPGRADE] Restart rulex finished, Upgrade Process Exited")
+					utils.CLog("[RHILEX UPGRADE] Restart rhilex finished, Upgrade Process Exited")
 					os.Exit(0)
 					return nil
 				},
@@ -210,11 +210,11 @@ func main() {
 						return nil
 					}
 					utils.CLog("[DATA RECOVER] Move New Db File Finished")
-					utils.CLog("[DATA RECOVER] Try to Restart rulex")
-					if err := ossupport.RestartRulex(); err != nil {
-						utils.CLog("[DATA RECOVER] Restart rulex error:%s", err.Error())
+					utils.CLog("[DATA RECOVER] Try to Restart rhilex")
+					if err := ossupport.RestartRhilex(); err != nil {
+						utils.CLog("[DATA RECOVER] Restart rhilex error:%s", err.Error())
 					} else {
-						utils.CLog("[DATA RECOVER] Restart rulex success, Recover Process Exited")
+						utils.CLog("[DATA RECOVER] Restart rhilex success, Recover Process Exited")
 					}
 					os.Exit(0)
 					return nil
@@ -258,7 +258,7 @@ func main() {
 						return err
 					}
 					// Commercial version will implement it
-					// rulex active -H 127.0.0.1 -U admin -P 123456
+					// rhilex active -H 127.0.0.1 -U admin -P 123456
 					// - H: Active Server Host
 					// - U: Active Server Account
 					// - P: Active Server Password
@@ -274,17 +274,17 @@ func main() {
 			// version
 			{
 				Name:  "version",
-				Usage: "Show Rulex Current Version",
+				Usage: "Show rhilex Current Version",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:  "version",
-						Usage: "Rulex version",
+						Usage: "rhilex version",
 					},
 				},
 				Action: func(*cli.Context) error {
 					version := fmt.Sprintf("[%v-%v-%v]",
 						runtime.GOOS, runtime.GOARCH, typex.MainVersion)
-					utils.CLog("[*] Rulex Version: " + version)
+					utils.CLog("[*] rhilex Version: " + version)
 					return nil
 				},
 			},

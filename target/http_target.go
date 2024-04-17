@@ -34,7 +34,7 @@ type HTTPTarget struct {
 	status     typex.SourceState
 }
 
-func NewHTTPTarget(e typex.RuleX) typex.XTarget {
+func NewHTTPTarget(e typex.Rhilex) typex.XTarget {
 	ht := new(HTTPTarget)
 	ht.RuleEngine = e
 	ht.mainConfig = common.HTTPConfig{}

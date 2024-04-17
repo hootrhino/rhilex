@@ -106,7 +106,7 @@ func (e *RuleEngine) LoadDeviceWithCtx(deviceInstance *typex.Device,
 
 /*
 *
-* 启动一个和RULEX直连的外部设备
+* 启动一个和RHILEX直连的外部设备
 *
  */
 

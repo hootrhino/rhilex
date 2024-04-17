@@ -71,7 +71,7 @@ type ShellyGen1ProxyGatewayConfig struct {
 * 初始化
 *
  */
-func NewShellyGen1ProxyGateway(e typex.RuleX) typex.XDevice {
+func NewShellyGen1ProxyGateway(e typex.Rhilex) typex.XDevice {
 	Shelly := new(ShellyGen1ProxyGateway)
 	Shelly.BlackList = map[string]string{}
 	Shelly.locker = sync.Mutex{}
@@ -161,11 +161,6 @@ func (Shelly *ShellyGen1ProxyGateway) Details() *typex.Device {
 func (Shelly *ShellyGen1ProxyGateway) SetState(status typex.DeviceState) {
 	Shelly.status = status
 
-}
-
-// 驱动
-func (Shelly *ShellyGen1ProxyGateway) Driver() typex.XExternalDriver {
-	return nil
 }
 
 func (Shelly *ShellyGen1ProxyGateway) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

@@ -30,7 +30,7 @@ import (
 	usbmonitor "github.com/hootrhino/rhilex/plugin/usb_monitor"
 	"gopkg.in/ini.v1"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/glogger"
 	icmpsender "github.com/hootrhino/rhilex/plugin/icmp_sender"
@@ -38,8 +38,8 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 )
 
-// 启动 Rulex
-func RunRulex(iniPath string) {
+// 启动 rhilex
+func RunRhilex(iniPath string) {
 	mainConfig := core.InitGlobalConfig(iniPath)
 	//----------------------------------------------------------------------------------------------
 	// Init logger
@@ -79,14 +79,14 @@ func RunRulex(iniPath string) {
 	loadPlugin(engine)
 
 	s := <-c
-	glogger.GLogger.Warn("RULEX Receive Stop Signal: ", s)
+	glogger.GLogger.Warn("RHILEX Receive Stop Signal: ", s)
 	typex.GCancel()
 	engine.Stop()
 	os.Exit(0)
 }
 
 // loadPlugin 根据Ini配置信息，加载插件
-func loadPlugin(engine typex.RuleX) {
+func loadPlugin(engine typex.Rhilex) {
 	cfg, _ := ini.ShadowLoad(core.INIPath)
 	sections := cfg.ChildSections("plugin")
 	for _, section := range sections {

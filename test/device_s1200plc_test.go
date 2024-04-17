@@ -66,10 +66,10 @@ func Test_parse_config(t *testing.T) {
 
 /*
 *
-* 测试RULEX加载 SIEMENS_PLC
+* 测试RHILEX加载 SIEMENS_PLC
 *
  */
-func Test_RULEX_WITH_SIEMENS_PLC(t *testing.T) {
+func Test_RHILEX_WITH_SIEMENS_PLC(t *testing.T) {
 	engine := RunTestEngine()
 	engine.Start()
 
@@ -134,7 +134,7 @@ func Test_RULEX_WITH_SIEMENS_PLC(t *testing.T) {
 		`
 	Actions = {
 		function(args)
-		    rulexlib:log('EMQX_BROKER: ', data)
+		    rhilexlib:log('EMQX_BROKER: ', data)
 			return true, args
 		end
 	}`, `function Failed(error) print("[EMQX_BROKER Failed Callback]", error) end`)

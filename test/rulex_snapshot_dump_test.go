@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/glogger"
@@ -41,7 +41,7 @@ func Test_snapshot_dump(t *testing.T) {
 		glogger.GLogger.Error("Rule load failed:", err)
 	}
 	// Grpc Inend
-	grpcInend := typex.NewInEnd("GRPC", "Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 		"port": 2581,
 	})
 	ctx, cancelF := typex.NewCCTX() // ,ctx, cancelF
@@ -62,9 +62,9 @@ func Test_snapshot_dump(t *testing.T) {
 			    print(data)
 				local json = require("json")
 				local V6 = json.decode(data)
-				local V7 = json.encode(rulexlib:MB(">a:16 b:8 c:8", data, false))
+				local V7 = json.encode(rhilexlib:MB(">a:16 b:8 c:8", data, false))
 				-- {"a":"0000000000000001","b":"00000000","c":"00000001"}
-				print("[LUA Actions Callback, rulex.MatchBinary] ==>", V7)
+				print("[LUA Actions Callback, rhilex.MatchBinary] ==>", V7)
 				return true, args
 			end
 		}`,
@@ -77,16 +77,16 @@ func Test_snapshot_dump(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 
-	resp, err := client.Work(context.Background(), &rulexrpc.Data{
+	resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 		// lua 输出 {"a":"0000000000000001","b":"00000000","c":"00000001"}
 		Value: string([]byte{0, 1, 0, 1}),
 	})
 	if err != nil {
 		glogger.GLogger.Error(err)
 	}
-	glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+	glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 	t.Log(engine.SnapshotDump())
 	time.Sleep(1 * time.Second)
 	engine.Stop()

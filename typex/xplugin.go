@@ -11,7 +11,7 @@ import "gopkg.in/ini.v1"
 
 // 插件的服务参数
 type ServiceArg struct {
-	UUID string      `json:"uuid"` // 插件UUID, Rulex用来查找插件的
+	UUID string      `json:"uuid"` // 插件UUID, Rhilex用来查找插件的
 	Name string      `json:"name"` // 服务名, 在服务中响应识别
 	Args interface{} `json:"args"` // 服务参数
 }
@@ -39,12 +39,12 @@ type XPluginMetaInfo struct {
 
 /*
 *
-* 插件: 用来增强RULEX的外部功能，本色不属于RULEX
+* 插件: 用来增强RHILEX的外部功能，本色不属于RHILEX
 *
  */
 type XPlugin interface {
 	Init(*ini.Section) error // 参数为外部配置
-	Start(RuleX) error
+	Start(Rhilex) error
 	Service(ServiceArg) ServiceResult // 对外提供一些服务
 	Stop() error
 	PluginMetaInfo() XPluginMetaInfo

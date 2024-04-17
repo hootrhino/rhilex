@@ -28,6 +28,6 @@ import (
  */
 type AppStackRuntime struct {
 	locker       sync.Mutex
-	RuleEngine   typex.RuleX
+	RuleEngine   typex.Rhilex
 	Applications map[string]*Application
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func Test_rulex_load_plugin(t *testing.T) {
+func Test_rhilex_load_plugin(t *testing.T) {
 	engine := RunTestEngine()
 	ttyd := ttyterminal.NewWebTTYPlugin()
 	if err := engine.LoadPlugin("plugin.ttyd", ttyd); err != nil {

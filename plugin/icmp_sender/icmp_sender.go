@@ -26,7 +26,7 @@ func (dm *ICMPSender) Init(config *ini.Section) error {
 	return nil
 }
 
-func (dm *ICMPSender) Start(typex.RuleX) error {
+func (dm *ICMPSender) Start(typex.Rhilex) error {
 	return nil
 }
 func (dm *ICMPSender) Stop() error {

@@ -13,13 +13,13 @@ import (
 type udpSource struct {
 	typex.XStatus
 	uDPConn    *net.UDPConn
-	mainConfig common.RULEXUdpConfig
+	mainConfig common.RHILEXUdpConfig
 	status     typex.SourceState
 }
 
-func NewUdpInEndSource(e typex.RuleX) typex.XSource {
+func NewUdpInEndSource(e typex.Rhilex) typex.XSource {
 	u := udpSource{}
-	u.mainConfig = common.RULEXUdpConfig{}
+	u.mainConfig = common.RHILEXUdpConfig{}
 	u.RuleEngine = e
 	return &u
 }
@@ -109,14 +109,6 @@ func (u *udpSource) Stop() {
 		}
 	}
 
-}
-func (*udpSource) Driver() typex.XExternalDriver {
-	return nil
-}
-
-// 拓扑
-func (*udpSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
 }
 
 // 来自外面的数据

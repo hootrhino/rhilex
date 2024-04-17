@@ -41,7 +41,7 @@ type AISDeviceMaster struct {
 	typex.XStatus
 	status       typex.DeviceState
 	mainConfig   _AISDeviceMasterConfig
-	RuleEngine   typex.RuleX
+	RuleEngine   typex.Rhilex
 	tcpListener  net.Listener // TCP 接收端
 	serialPort   serial.Port
 	hwPortConfig hwportmanager.UartConfig
@@ -55,7 +55,7 @@ type AISDeviceMaster struct {
 * AIS 数据解析服务器
 *
  */
-func NewAISDeviceMaster(e typex.RuleX) typex.XDevice {
+func NewAISDeviceMaster(e typex.Rhilex) typex.XDevice {
 	aism := new(AISDeviceMaster)
 	aism.RuleEngine = e
 	aism.mainConfig = _AISDeviceMasterConfig{
@@ -318,11 +318,6 @@ func (aism *AISDeviceMaster) Details() *typex.Device {
 func (aism *AISDeviceMaster) SetState(status typex.DeviceState) {
 	aism.status = status
 
-}
-
-// 驱动
-func (aism *AISDeviceMaster) Driver() typex.XExternalDriver {
-	return nil
 }
 
 func (aism *AISDeviceMaster) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

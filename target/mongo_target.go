@@ -38,7 +38,7 @@ type mongoTarget struct {
 	status     typex.SourceState
 }
 
-func NewMongoTarget(e typex.RuleX) typex.XTarget {
+func NewMongoTarget(e typex.Rhilex) typex.XTarget {
 	mg := new(mongoTarget)
 	mg.mainConfig = common.MongoConfig{}
 	mg.RuleEngine = e

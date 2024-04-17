@@ -54,7 +54,7 @@ type _CustomProtocolConfig struct {
 type CustomProtocolDevice struct {
 	typex.XStatus
 	status       typex.DeviceState
-	RuleEngine   typex.RuleX
+	RuleEngine   typex.Rhilex
 	serialPort   *serial.Port // 串口
 	tcpcon       net.Conn     // TCP
 	mainConfig   _CustomProtocolConfig
@@ -62,7 +62,7 @@ type CustomProtocolDevice struct {
 	hwPortConfig hwportmanager.UartConfig
 }
 
-func NewCustomProtocolDevice(e typex.RuleX) typex.XDevice {
+func NewCustomProtocolDevice(e typex.Rhilex) typex.XDevice {
 	mdev := new(CustomProtocolDevice)
 	mdev.RuleEngine = e
 	mdev.mainConfig = _CustomProtocolConfig{
@@ -223,11 +223,6 @@ func (mdev *CustomProtocolDevice) Details() *typex.Device {
 // 状态
 func (mdev *CustomProtocolDevice) SetState(status typex.DeviceState) {
 	mdev.status = status
-}
-
-// 驱动
-func (mdev *CustomProtocolDevice) Driver() typex.XExternalDriver {
-	return nil
 }
 
 /*

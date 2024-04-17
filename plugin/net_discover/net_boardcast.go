@@ -61,7 +61,7 @@ func (dm *NetDiscover) Init(config *ini.Section) error {
 	return nil
 }
 
-func (dm *NetDiscover) Start(typex.RuleX) error {
+func (dm *NetDiscover) Start(typex.Rhilex) error {
 	// 超时管理器
 	go func(ctx context.Context) {
 		for {

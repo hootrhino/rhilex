@@ -9,12 +9,12 @@ go get -u google.golang.org/grpc
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 echo -e "\033[42;33m>>>\033[0m [BEGIN]"
-# RulexRpc
-echo ">>> Generating RulexRpc Proto..."
-protoc -I ./component/rulexrpc --go_out=./component/rulexrpc --go_opt paths=source_relative \
-    --go-grpc_out=./component/rulexrpc --go-grpc_opt paths=source_relative \
-    ./component/rulexrpc/grpc_source.proto
-echo ">>> Generate RulexRpc Proto OK"
+# RhilexRpc
+echo ">>> Generating RhilexRpc Proto..."
+protoc -I ./component/rhilexrpc --go_out=./component/rhilexrpc --go_opt paths=source_relative \
+    --go-grpc_out=./component/rhilexrpc --go-grpc_opt paths=source_relative \
+    ./component/rhilexrpc/grpc_source.proto
+echo ">>> Generate RhilexRpc Proto OK"
 
 # Stream
 echo ">>> Generating XStream Proto..."
@@ -24,9 +24,9 @@ protoc -I ./component/xstream --go_out ./component/xstream --go_opt paths=source
 echo ">>> Generate XStream Proto OK."
 # Codec
 echo ">>> Generating Codec Proto..."
-protoc -I ./component/rulexrpc --go_out ./component/rulexrpc --go_opt paths=source_relative \
-    --go-grpc_out=./component/rulexrpc --go-grpc_opt paths=source_relative \
-    ./component/rulexrpc/xcodec.proto
+protoc -I ./component/rhilexrpc --go_out ./component/rhilexrpc --go_opt paths=source_relative \
+    --go-grpc_out=./component/rhilexrpc --go-grpc_opt paths=source_relative \
+    ./component/rhilexrpc/xcodec.proto
 echo ">>> Generate Codec Proto OK."
 # Trailer
 echo ">>> Generating Trailer Proto..."

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
@@ -24,7 +24,7 @@ func Test_JQ_Parse(t *testing.T) {
 		glogger.GLogger.Fatal("Rule load failed:", err)
 	}
 	// Grpc Inend
-	grpcInend := typex.NewInEnd("GRPC", "Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 		"port": 2581,
 	})
 	ctx, cancelF := typex.NewCCTX() // ,ctx, cancelF
@@ -42,9 +42,9 @@ func Test_JQ_Parse(t *testing.T) {
 		`
 		Actions = {
 			function(args)
-				print("[LUA rulexlib:J2T] ==>",rulexlib:J2T(data))
-				print("[LUA rulexlib:T2J] ==>",rulexlib:T2J(rulexlib:J2T(data)))
-				print("[LUA rulexlib:T2J] ==>",rulexlib:T2J(rulexlib:J2T(data)) == data)
+				print("[LUA rhilexlib:J2T] ==>",rhilexlib:J2T(data))
+				print("[LUA rhilexlib:T2J] ==>",rhilexlib:T2J(rhilexlib:J2T(data)))
+				print("[LUA rhilexlib:T2J] ==>",rhilexlib:T2J(rhilexlib:J2T(data)) == data)
 				return true, args
 			end,
 			function(args)
@@ -65,15 +65,15 @@ func Test_JQ_Parse(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 
-	resp, err := client.Work(context.Background(), &rulexrpc.Data{
+	resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 		Value: `[{"co2":10,"hum":30,"lex":22,"temp":100}]`,
 	})
 	if err != nil {
 		glogger.GLogger.Error(err)
 	}
-	glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+	glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 
 	time.Sleep(1 * time.Second)
 	engine.Stop()

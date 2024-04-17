@@ -23,7 +23,7 @@ package datacenter
 type SchemaDetail struct {
 	UUID string `json:"uuid"`
 	Name string `json:"name"`
-	// SchemaType 数据库类型，如果是"INTERNAL"则表示原始RULEX；如果是 "EXTERNAL" 则表示扩展设备
+	// SchemaType 数据库类型，如果是"INTERNAL"则表示原始RHILEX；如果是 "EXTERNAL" 则表示扩展设备
 	// 该字段是为了扩展数据中心, 将数据中心扩展为通用的一个中间层
 	SchemaType   string       `json:"schemaType"`
 	LocalPath    string       `json:"local_path"`

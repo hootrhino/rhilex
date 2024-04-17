@@ -48,7 +48,7 @@ func TestGetLocalIp(t *testing.T) {
 
 ```
 ## 继承测试
-### 启动RULEX实例
+### 启动RHILEX实例
 ```go
 engine := RunTestEngine()
 engine.Start()

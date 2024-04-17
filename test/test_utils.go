@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 
 	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/engine"
@@ -63,7 +63,7 @@ func HttpGet(api string) string {
 * 起一个测试服务
 *
  */
-func RunTestEngine() typex.RuleX {
+func RunTestEngine() typex.Rhilex {
 	mainConfig := core.InitGlobalConfig("conf/rhilex.ini")
 	glogger.StartGLogger(
 		core.GlobalConfig.LogLevel,
@@ -85,7 +85,7 @@ func RunTestEngine() typex.RuleX {
 *
  */
 func GenDate() string {
-	return "rulex-test_" + time.Now().Format("2006-01-02-15_04_05")
+	return "rhilex-test_" + time.Now().Format("2006-01-02-15_04_05")
 }
 
 /*

@@ -3,7 +3,7 @@ package test
 import (
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 
 	"testing"
 
@@ -87,9 +87,9 @@ func Test_modbus_485_sensor_gateway(t *testing.T) {
 		`function Success() print("[LUA Success Callback]=> OK") end`,
 		`
 Actions = {function(args)
-	for tag, v in pairs(rulexlib:J2T(data)) do
-		local ts = rulexlib:TsUnixNano()
-		local value = rulexlib:J2T(v['value'])
+	for tag, v in pairs(rhilexlib:J2T(data)) do
+		local ts = rhilexlib:TsUnixNano()
+		local value = rhilexlib:J2T(v['value'])
 		value['tag']= tag;
 		local jsont = {
 			method = 'report',
@@ -97,8 +97,8 @@ Actions = {function(args)
 			timestamp = ts,
 			params = value
 		}
-		print('mqttOutEnd-iothub', rulexlib:T2J(jsont))
-		data:ToMqtt('mqttOutEnd-iothub', rulexlib:T2J(jsont))
+		print('mqttOutEnd-iothub', rhilexlib:T2J(jsont))
+		data:ToMqtt('mqttOutEnd-iothub', rhilexlib:T2J(jsont))
 	end
 	return true, args
 end}

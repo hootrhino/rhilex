@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/hootrhino/rhilex/component/interdb"
-	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	"github.com/hootrhino/rhilex/component/rhilex_api_server/model"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/robfig/cron/v3"
 )

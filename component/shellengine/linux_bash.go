@@ -24,11 +24,11 @@ import (
 )
 
 type LinuxBashShell struct {
-	rulex typex.RuleX
+	rhilex typex.Rhilex
 }
 
-func InitLinuxBashShell(rulex typex.RuleX) *LinuxBashShell {
-	return &LinuxBashShell{rulex: rulex}
+func InitLinuxBashShell(rhilex typex.Rhilex) *LinuxBashShell {
+	return &LinuxBashShell{rhilex: rhilex}
 
 }
 func (lsh *LinuxBashShell) JustRun(ctx context.Context, cmd string) error {

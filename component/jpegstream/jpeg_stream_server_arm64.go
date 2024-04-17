@@ -5,6 +5,7 @@ package jpegstream
 
 import (
 	"fmt"
+
 	"github.com/hootrhino/rhilex/component"
 	"github.com/hootrhino/rhilex/typex"
 )
@@ -14,7 +15,7 @@ var __DefaultJpegStreamServer *JpegStreamServer
 type JpegStreamServer struct {
 }
 
-func InitJpegStreamServer(rulex typex.RuleX) {
+func InitJpegStreamServer(rhilex typex.Rhilex) {
 	__DefaultJpegStreamServer = &JpegStreamServer{}
 }
 
@@ -22,7 +23,7 @@ func (s *JpegStreamServer) Init(cfg map[string]any) error {
 
 	return nil
 }
-func (s *JpegStreamServer) Start(r typex.RuleX) error {
+func (s *JpegStreamServer) Start(r typex.Rhilex) error {
 
 	return nil
 }

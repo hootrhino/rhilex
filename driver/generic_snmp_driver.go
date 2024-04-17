@@ -21,19 +21,19 @@ import (
 
 /*
 * Notice:
-*  RULEX对于SNMP当前仅仅支持获取硬件信息、内存总量、用户名。
+*  RHILEX对于SNMP当前仅仅支持获取硬件信息、内存总量、用户名。
 *
  */
 type snmpDriver struct {
 	state      typex.DriverState
 	client     *gosnmp.GoSNMP
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	device     *typex.Device
 }
 
 func NewSnmpDriver(
 	d *typex.Device,
-	e typex.RuleX,
+	e typex.Rhilex,
 	client *gosnmp.GoSNMP,
 ) typex.XExternalDriver {
 	sd := new(snmpDriver)

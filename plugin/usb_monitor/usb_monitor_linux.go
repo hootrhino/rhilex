@@ -36,7 +36,7 @@ type _info struct {
 	Device string `json:"device"`
 }
 
-func (usbm *usbMonitor) Start(_ typex.RuleX) error {
+func (usbm *usbMonitor) Start(_ typex.Rhilex) error {
 	// 为了减小问题, 直接把Windows给限制了不支持, 实际上大部分情况下都是Arm-Linux场景
 	if runtime.GOOS == "windows" {
 		return errors.New("USB monitor plugin not support windows")

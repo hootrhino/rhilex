@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/hootrhino/rhilex/common"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
-	"time"
 )
 
 type MqttMessage struct {
@@ -24,11 +25,11 @@ type genericMqttSource struct {
 	status     typex.SourceState
 }
 
-func NewGenericMqttSource(e typex.RuleX) typex.XSource {
+func NewGenericMqttSource(e typex.Rhilex) typex.XSource {
 	src := new(genericMqttSource)
 	src.mainConfig = common.GenericMqttConfig{
 		Port:     1883,
-		ClientId: fmt.Sprintf("rulex_mqtt_source_%d", (time.Now().Second())),
+		ClientId: fmt.Sprintf("rhilex_mqtt_source_%d", (time.Now().Second())),
 	}
 	src.RuleEngine = e
 	src.status = typex.SOURCE_DOWN
@@ -141,14 +142,6 @@ func (tc *genericMqttSource) Status() typex.SourceState {
 
 func (tc *genericMqttSource) Details() *typex.InEnd {
 	return tc.RuleEngine.GetInEnd(tc.PointId)
-}
-
-func (tc *genericMqttSource) Driver() typex.XExternalDriver {
-	return nil
-}
-
-func (tc *genericMqttSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
 }
 
 func (tc *genericMqttSource) Stop() {

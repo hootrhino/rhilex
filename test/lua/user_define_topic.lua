@@ -1,6 +1,6 @@
 Actions = {
     function(args)
-        local Json = rulexlib:T2J(
+        local Json = rhilexlib:T2J(
             {
                 method = 'userDefineTopic',
                 userDefineTopic = '/userDefineTopic',

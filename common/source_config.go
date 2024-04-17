@@ -29,7 +29,7 @@ type GenericMqttConfig struct {
 *
  */
 
-type RULEXUdpConfig struct {
+type RHILEXUdpConfig struct {
 	Host          string `json:"host" validate:"required" title:"服务地址"`
 	Port          int    `json:"port" validate:"required" title:"服务端口"`
 	MaxDataLength int    `json:"maxDataLength" title:"最大数据包"`

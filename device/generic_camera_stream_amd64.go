@@ -23,8 +23,8 @@ import (
 const (
 	__INPUT_REMOTE_STREAM_RTSP        = "REMOTE_STREAM_RTSP"       // 远程RTSP拉流
 	__INPUT_LOCAL_CAMERA              = "LOCAL_CAMERA"             // 本地摄像头
-	__OUTPUT_LOCAL_H264_STREAM_SERVER = "LOCAL_H264_STREAM_SERVER" // RULEX 自带的FLVServer
-	__OUTPUT_LOCAL_JPEG_STREAM_SERVER = "LOCAL_JPEG_STREAM_SERVER" // RULEX 自带的FLVServer
+	__OUTPUT_LOCAL_H264_STREAM_SERVER = "LOCAL_H264_STREAM_SERVER" // RHILEX 自带的FLVServer
+	__OUTPUT_LOCAL_JPEG_STREAM_SERVER = "LOCAL_JPEG_STREAM_SERVER" // RHILEX 自带的FLVServer
 	__OUTPUT_REMOTE_STREAM_SERVER     = "REMOTE_STREAM_SERVER"     // 远程地址
 	__internal_ws_server_url          = "http://127.0.0.1:9400/h264_stream/push?liveId="
 	__internal_jpeg_stream_server_url = "http://127.0.0.1:9401/jpeg_stream/push?liveId="
@@ -34,7 +34,7 @@ const (
 )
 
 // RTSP URL格式= rtsp://<username>:<password>@<ip>:<port>，
-// 默认为本地拉流，推向Rulex自带的Stream server
+// 默认为本地拉流，推向Rhilex自带的Stream server
 type _MainConfig struct {
 	InputMode    string `json:"inputMode" validate:"required"`    // 输入模式: REMOTE_STREAM_RTSP | LOCAL_CAMERA
 	InputAddr    string `json:"inputAddr" validate:"required"`    // 视频路径，REMOTE_STREAM_RTSP是远程地址，LOCAL_CAMERA是本地设备
@@ -51,7 +51,7 @@ type videoCamera struct {
 	ffmpegProcess *exec.Cmd
 }
 
-func NewVideoCamera(e typex.RuleX) typex.XDevice {
+func NewVideoCamera(e typex.Rhilex) typex.XDevice {
 	videoCamera := new(videoCamera)
 	videoCamera.RuleEngine = e
 	videoCamera.status = typex.DEV_DOWN
@@ -173,9 +173,6 @@ func (vc *videoCamera) SetState(_ typex.DeviceState) {
 
 }
 
-func (vc *videoCamera) Driver() typex.XExternalDriver {
-	return nil
-}
 
 func (vc *videoCamera) OnDCACall(_ string, _ string, _ interface{}) typex.DCAResult {
 	return typex.DCAResult{}

@@ -78,9 +78,9 @@ EOL
     "$service_file" enable
 
     if [ $? -eq 0 ]; then
-        log INFO "Rulex service has been created and extracted."
+        log INFO "rhilex service has been created and extracted."
     else
-        log ERROR "Failed to create the Rulex service or extract files."
+        log ERROR "Failed to create the rhilex service or extract files."
     fi
     exit 0
 }
@@ -111,13 +111,13 @@ uninstall() {
     __remove_files "$WORKING_DIRECTORY/rhilex.db"
     __remove_files "$WORKING_DIRECTORY/license.lic"
     __remove_files "$WORKING_DIRECTORY/license.key"
-    __remove_files "$WORKING_DIRECTORY/rulex_internal_datacenter.db"
+    __remove_files "$WORKING_DIRECTORY/rhilex_internal_datacenter.db"
     __remove_files "$WORKING_DIRECTORY/LICENSE"
     __remove_files "$WORKING_DIRECTORY/md5.sum"
     __remove_files "$WORKING_DIRECTORY/upload/"
     rm -f "$WORKING_DIRECTORY/*.txt"
     rm -f "$WORKING_DIRECTORY/*.txt.gz"
-    log INFO "Rulex has been uninstalled."
+    log INFO "rhilex has been uninstalled."
 }
 
 start() {

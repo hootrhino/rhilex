@@ -26,26 +26,26 @@ type ResourceRegistry interface {
 	Find(DeviceType) *XConfig
 	All() []*XConfig
 }
-type RulexResourceRegistry struct {
+type RhilexResourceRegistry struct {
 	// K: 资源类型
 	// V: 伪构造函数
 	registry map[InEndType]*XConfig
 }
 
-func NewRulexResourceRegistry() *RulexResourceRegistry {
-	return &RulexResourceRegistry{
+func NewRhilexResourceRegistry() *RhilexResourceRegistry {
+	return &RhilexResourceRegistry{
 		registry: map[InEndType]*XConfig{},
 	}
 }
-func (rm *RulexResourceRegistry) Register(name InEndType, f *XConfig) {
+func (rm *RhilexResourceRegistry) Register(name InEndType, f *XConfig) {
 	rm.registry[name] = f
 }
 
-func (rm *RulexResourceRegistry) Find(name InEndType) *XConfig {
+func (rm *RhilexResourceRegistry) Find(name InEndType) *XConfig {
 
 	return rm.registry[name]
 }
-func (rm *RulexResourceRegistry) All() []*XConfig {
+func (rm *RhilexResourceRegistry) All() []*XConfig {
 	data := make([]*XConfig, 0)
 	for _, v := range rm.registry {
 		data = append(data, v)

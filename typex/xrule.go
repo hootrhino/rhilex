@@ -32,7 +32,7 @@ type Rule struct {
 	LuaVM       *lua.LState `json:"-"` // Lua VM
 }
 
-func NewLuaRule(e RuleX,
+func NewLuaRule(e Rhilex,
 	uuid string,
 	name string,
 	description string,
@@ -54,7 +54,7 @@ func NewLuaRule(e RuleX,
 }
 
 // New
-func NewRule(e RuleX,
+func NewRule(e Rhilex,
 	uuid string,
 	name string,
 	description string,
@@ -100,7 +100,7 @@ func (r *Rule) LoadExternLuaLib(path string) error {
 *  - Global: 命名空间
 *   - funcName: 函数名称
  */
-func (r *Rule) AddLib(rx RuleX, ModuleName string, funcName string,
+func (r *Rule) AddLib(rx Rhilex, ModuleName string, funcName string,
 	f func(l *lua.LState) int) {
 
 	r.LuaVM.PreloadModule(ModuleName, func(L *lua.LState) int {

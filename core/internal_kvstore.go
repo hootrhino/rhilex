@@ -27,16 +27,16 @@ import (
 var GlobalStore typex.XStore
 
 func StartStore(maxSize int) {
-	GlobalStore = NewRulexStore(maxSize)
+	GlobalStore = NewRhilexStore(maxSize)
 
 }
 
-type RulexStore struct {
+type RhilexStore struct {
 	cache *cache.Cache
 }
 
-func NewRulexStore(maxSize int) typex.XStore {
-	return &RulexStore{
+func NewRhilexStore(maxSize int) typex.XStore {
+	return &RhilexStore{
 		cache: cache.New(0, 0),
 	}
 
@@ -47,7 +47,7 @@ func NewRulexStore(maxSize int) typex.XStore {
 * 设置过期时间
 *
  */
-func (rs *RulexStore) SetWithDuration(k string, v string, d time.Duration) {
+func (rs *RhilexStore) SetWithDuration(k string, v string, d time.Duration) {
 	if (rs.cache.ItemCount() + 1) > 10000 {
 		glogger.GLogger.Error("Max store size reached:", rs.cache.ItemCount())
 	}
@@ -55,7 +55,7 @@ func (rs *RulexStore) SetWithDuration(k string, v string, d time.Duration) {
 }
 
 // 设置值
-func (rs *RulexStore) Set(k string, v string) {
+func (rs *RhilexStore) Set(k string, v string) {
 	if (rs.cache.ItemCount() + 1) > 10000 {
 		glogger.GLogger.Error("Max store size reached:", rs.cache.ItemCount())
 	}
@@ -63,7 +63,7 @@ func (rs *RulexStore) Set(k string, v string) {
 }
 
 // 获取值
-func (rs *RulexStore) Get(k string) string {
+func (rs *RhilexStore) Get(k string) string {
 	v, ok := rs.cache.Get(k)
 	if ok {
 		return v.(string)
@@ -71,19 +71,19 @@ func (rs *RulexStore) Get(k string) string {
 		return ""
 	}
 }
-func (rs *RulexStore) Delete(k string) error {
+func (rs *RhilexStore) Delete(k string) error {
 	rs.cache.Delete(k)
 	return nil
 }
 
 // 统计数量
-func (rs *RulexStore) Count() int {
+func (rs *RhilexStore) Count() int {
 	return rs.cache.ItemCount()
 }
 
 // 模糊查询匹配
 // 支持: *AAA AAA* A*B
-func (rs *RulexStore) FuzzyGet(Key string) any {
+func (rs *RhilexStore) FuzzyGet(Key string) any {
 	for k, v := range rs.cache.Items() {
 		if fuzzyMatch(k, Key) {
 			return v

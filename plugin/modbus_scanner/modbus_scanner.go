@@ -46,7 +46,7 @@ func (ms *modbusScanner) Init(config *ini.Section) error {
 	return nil
 }
 
-func (ms *modbusScanner) Start(typex.RuleX) error {
+func (ms *modbusScanner) Start(typex.Rhilex) error {
 	return nil
 }
 func (ms *modbusScanner) Stop() error {

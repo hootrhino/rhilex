@@ -29,7 +29,7 @@ type GenericHttpDevice struct {
 	typex.XStatus
 	client     http.Client
 	status     typex.DeviceState
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	mainConfig __HttpMainConfig
 	locker     sync.Locker
 }
@@ -39,7 +39,7 @@ type GenericHttpDevice struct {
 * 通用串口透传
 *
  */
-func NewGenericHttpDevice(e typex.RuleX) typex.XDevice {
+func NewGenericHttpDevice(e typex.Rhilex) typex.XDevice {
 	hd := new(GenericHttpDevice)
 	hd.locker = &sync.Mutex{}
 	hd.client = *http.DefaultClient
@@ -131,12 +131,6 @@ func (hd *GenericHttpDevice) SetState(status typex.DeviceState) {
 	hd.status = status
 
 }
-
-// 驱动
-func (hd *GenericHttpDevice) Driver() typex.XExternalDriver {
-	return nil
-}
-
 // --------------------------------------------------------------------------------------------------
 //
 // --------------------------------------------------------------------------------------------------

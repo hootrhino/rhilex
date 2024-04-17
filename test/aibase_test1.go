@@ -3,7 +3,7 @@ package test
 import (
 	"context"
 
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -63,15 +63,15 @@ func Test_AIBASE_ANN_MNIST(t *testing.T) {
 		t.Errorf("grpc.Dial err: %v", err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 	for i := 0; i < 2; i++ {
-		resp, err := client.Work(context.Background(), &rulexrpc.Data{
+		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: `{"value":"0298010d"}`,
 		})
 		if err != nil {
 			t.Error(err)
 		}
-		t.Logf("Rulex Rpc Call Result ====>>: %v --%v", resp.GetMessage(), i)
+		t.Logf("rhilex Rpc Call Result ====>>: %v --%v", resp.GetMessage(), i)
 
 	}
 

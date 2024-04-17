@@ -16,6 +16,6 @@
 AppNAME = 'PlayMusic Demo'
 AppVERSION = '0.0.1'
 function Main(arg)
-    audio:PlayMusic('/home/rer/Desktop/rulex/1.mp3')
+    audio:PlayMusic('/home/rer/Desktop/rhilex/1.mp3')
     return 0
 end

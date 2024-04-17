@@ -27,7 +27,7 @@ type _GSNMPConfig struct {
 type genericSnmpDevice struct {
 	typex.XStatus
 	status     typex.DeviceState
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	driver     typex.XExternalDriver
 	locker     sync.Locker
 	mainConfig _GSNMPConfig
@@ -39,7 +39,7 @@ type genericSnmpDevice struct {
 * 温湿度传感器
 *
  */
-func NewGenericSnmpDevice(e typex.RuleX) typex.XDevice {
+func NewGenericSnmpDevice(e typex.Rhilex) typex.XDevice {
 	sd := new(genericSnmpDevice)
 	sd.RuleEngine = e
 	sd.locker = &sync.Mutex{}
@@ -156,11 +156,6 @@ func (sd *genericSnmpDevice) Details() *typex.Device {
 func (sd *genericSnmpDevice) SetState(status typex.DeviceState) {
 	sd.status = status
 
-}
-
-// 驱动
-func (sd *genericSnmpDevice) Driver() typex.XExternalDriver {
-	return sd.driver
 }
 
 func (sd *genericSnmpDevice) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

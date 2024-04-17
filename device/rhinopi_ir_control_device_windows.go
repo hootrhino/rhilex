@@ -34,11 +34,11 @@ type IR struct {
 	typex.XStatus
 	status     typex.DeviceState
 	irFd       syscall.Handle
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	mainConfig __IrConfig
 }
 
-func NewIRDevice(e typex.RuleX) typex.XDevice {
+func NewIRDevice(e typex.Rhilex) typex.XDevice {
 	uart := new(IR)
 	uart.RuleEngine = e
 	uart.mainConfig = __IrConfig{
@@ -154,11 +154,6 @@ func (ird *IR) Details() *typex.Device {
 func (ird *IR) SetState(status typex.DeviceState) {
 	ird.status = status
 
-}
-
-// 驱动
-func (ird *IR) Driver() typex.XExternalDriver {
-	return nil
 }
 
 func (ird *IR) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

@@ -52,7 +52,7 @@ type opcua_CustomProtocolConfig struct {
 type genericOpcuaDevice struct {
 	typex.XStatus
 	status     typex.DeviceState
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	driver     typex.XExternalDriver
 	client     *opcua.Client
 	mainConfig opcua_CustomProtocolConfig
@@ -85,7 +85,7 @@ const (
 	MODE_SIGN_AND_ENCRYPT SecurityMode = "SignAndEncrypt"
 )
 
-func NewGenericOpcuaDevice(e typex.RuleX) typex.XDevice {
+func NewGenericOpcuaDevice(e typex.Rhilex) typex.XDevice {
 	opc := new(genericOpcuaDevice)
 	opc.RuleEngine = e
 	opc.locker = &sync.Mutex{}
@@ -323,11 +323,6 @@ func (opcDev *genericOpcuaDevice) Details() *typex.Device {
 func (opcDev *genericOpcuaDevice) SetState(status typex.DeviceState) {
 	opcDev.status = status
 
-}
-
-// 驱动
-func (opcDev *genericOpcuaDevice) Driver() typex.XExternalDriver {
-	return opcDev.driver
 }
 
 func (opcDev *genericOpcuaDevice) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

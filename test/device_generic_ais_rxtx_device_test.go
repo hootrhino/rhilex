@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 
 	"github.com/adrianmo/go-nmea"
 	"github.com/hootrhino/rhilex/typex"

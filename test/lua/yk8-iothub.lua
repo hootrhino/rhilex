@@ -3,7 +3,7 @@ Actions = {
         print('Received data from iothub:', data)
         local source = 'tencentIothub'
         local device = 'YK8Device1'
-        local dataT, err = rulexlib:J2T(data)
+        local dataT, err = rhilexlib:J2T(data)
         if (err ~= nil) then
             print('Received data from iothub parse to json error:', err)
             return false, data
@@ -12,13 +12,13 @@ Actions = {
         if dataT['method'] == 'action' then
             local actionId = dataT['actionId']
             if actionId == 'get_state' then
-                local readData, err = rulexlib:ReadDevice(0, device)
+                local readData, err = rhilexlib:ReadDevice(0, device)
                 if (err ~= nil) then
                     print('ReadDevice data from device error:', err)
                     return false, data
                 end
                 print('ReadDevice data from device:', readData)
-                local readDataT, err = rulexlib:J2T(readData)
+                local readDataT, err = rhilexlib:J2T(readData)
                 if (err ~= nil) then
                     print('Parse ReadDevice data from device error:', err)
                     return false, data
@@ -35,15 +35,15 @@ Actions = {
         end
         -- Property
         if dataT['method'] == 'property' then
-            local schemaParams = rulexlib:J2T(dataT['data'])
+            local schemaParams = rhilexlib:J2T(dataT['data'])
             print('schemaParams:', schemaParams)
-            local n1, err = rulexlib:WriteDevice(device, 0, rulexlib:T2J({
+            local n1, err = rhilexlib:WriteDevice(device, 0, rhilexlib:T2J({
                 {
                     ['function'] = 15,
                     ['slaverId'] = 3,
                     ['address'] = 0,
                     ['quantity'] = 1,
-                    ['value'] = rulexlib:T2Str({
+                    ['value'] = rhilexlib:T2Str({
                         [1] = schemaParams['sw8'],
                         [2] = schemaParams['sw7'],
                         [3] = schemaParams['sw6'],

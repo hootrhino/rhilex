@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Rulex Swagger API",
-        "title": "Rulex API",
+        "description": "rhilex Swagger API",
+        "title": "rhilex API",
         "contact": {
             "name": "API Support",
             "url": "https://github.com/hootrhino/rhilex"

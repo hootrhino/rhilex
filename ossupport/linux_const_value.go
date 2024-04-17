@@ -21,20 +21,20 @@ package ossupport
 *
  */
 const (
-	// Rulex 工作目录
+	// rhilex 工作目录
 	MainWorkDir = "/usr/local"
-	// RULEX 的配置数据库
+	// RHILEX 的配置数据库
 	RunDbPath = "/usr/local/rhilex.db"
 	// 固件保存路径
 	FirmwarePath = "/usr/local/upload/Firmware/Firmware.zip"
 	// 升级日志
 	UpgradeLogPath = "/usr/local/local-upgrade-log.txt"
 	// 运行时日志
-	RunningLogPath = "/usr/local/rulexlog.txt"
+	RunningLogPath = "/usr/local/rhilexlog.txt"
 	// 数据恢复日志
 	RecoverLogPath = "/usr/local/local-recover-log.txt"
 	// 备份锁
-	BackupLockPath = "/var/run/rulex-upgrade.lock"
+	BackupLockPath = "/var/run/rhilex-upgrade.lock"
 	// 升级锁
 	UpgradeLockPath = BackupLockPath
 	// 备份数据库

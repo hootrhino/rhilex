@@ -50,7 +50,7 @@ func (__TrailerRpcServer) OnStream(s Trailer_OnStreamServer) error {
 
 type TrailerRuntime struct {
 	ctx             context.Context
-	re              typex.RuleX
+	re              typex.Rhilex
 	goodsProcessMap *sync.Map // Key: UUID, Value: GoodsProcess
 	rpcServer       *grpc.Server
 	pid             int
@@ -59,10 +59,10 @@ type TrailerRuntime struct {
 
 /*
 *
-* RULEX RPC Server 默认运行在 2588
+* RHILEX RPC Server 默认运行在 2588
 *
  */
-func InitTrailerRuntime(re typex.RuleX) *TrailerRuntime {
+func InitTrailerRuntime(re typex.Rhilex) *TrailerRuntime {
 	__DefaultTrailerRuntime = &TrailerRuntime{
 		ctx:             typex.GCTX,
 		re:              re,
@@ -293,14 +293,14 @@ func runLocalProcess(goodsProcess *GoodsProcess) error {
 		if !State.Success() {
 			glogger.GLogger.Error("Cmd Exit With State:", State)
 			// 非正常结束, 极有可能是被kill的，所以要尝试抢救
-			// 如果是被 RULEX 干死的就不抢救了，说明触发了 Stop 和 Remove；
+			// 如果是被 RHILEX 干死的就不抢救了，说明触发了 Stop 和 Remove；
 			//    killedBy 如果是别的原因就有抢救机会
 			// 还需要判断是否是主进程结束
 			if !__DefaultTrailerRuntime.running {
 				glogger.GLogger.Error("Trailer Runtime exited:", State)
 				return nil
 			}
-			if goodsProcess.Info.KilledBy != "RULEX" {
+			if goodsProcess.Info.KilledBy != "RHILEX" {
 				glogger.GLogger.Warn("Goods process Exit, May be a accident, try to rescue it:",
 					goodsProcess.String())
 				// 说明是用户操作停止
@@ -311,7 +311,7 @@ func runLocalProcess(goodsProcess *GoodsProcess) error {
 					go rescueRunLocalProcess(goodsProcess)
 				}
 			} else {
-				glogger.GLogger.Debug("Goods process killed by Rulex, No need to rescue it:",
+				glogger.GLogger.Debug("Goods process killed by rhilex, No need to rescue it:",
 					goodsProcess.String())
 			}
 		}
@@ -361,7 +361,7 @@ func Stop() {
 	__DefaultTrailerRuntime.running = false
 	__DefaultTrailerRuntime.goodsProcessMap.Range(func(key, v interface{}) bool {
 		gp := (v.(*GoodsProcess))
-		gp.StopBy("RULEX")
+		gp.StopBy("RHILEX")
 		return true
 	})
 	if __DefaultTrailerRuntime.rpcServer != nil {

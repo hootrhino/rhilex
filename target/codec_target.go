@@ -19,7 +19,7 @@ import (
 	"fmt"
 
 	"github.com/hootrhino/rhilex/common"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
 
@@ -29,13 +29,13 @@ import (
 
 type codecTarget struct {
 	typex.XStatus
-	client        rulexrpc.CodecClient
+	client        rhilexrpc.CodecClient
 	rpcConnection *grpc.ClientConn
 	mainConfig    common.GrpcConfig
 	status        typex.SourceState
 }
 
-func NewCodecTarget(rx typex.RuleX) typex.XTarget {
+func NewCodecTarget(rx typex.Rhilex) typex.XTarget {
 	ct := &codecTarget{}
 	ct.mainConfig = common.GrpcConfig{}
 	ct.RuleEngine = rx
@@ -65,7 +65,7 @@ func (ct *codecTarget) Start(cctx typex.CCTX) error {
 		return err
 	}
 	ct.rpcConnection = rpcConnection
-	ct.client = rulexrpc.NewCodecClient(rpcConnection)
+	ct.client = rhilexrpc.NewCodecClient(rpcConnection)
 	ct.status = typex.SOURCE_UP
 	return nil
 
@@ -86,10 +86,10 @@ func (ct *codecTarget) Details() *typex.OutEnd {
 
 // 数据出口
 func (ct *codecTarget) To(data interface{}) (interface{}, error) {
-	dataRequest := &rulexrpc.CodecRequest{
+	dataRequest := &rhilexrpc.CodecRequest{
 		Value: []byte(data.(string)),
 	}
-	var response *rulexrpc.CodecResponse
+	var response *rhilexrpc.CodecResponse
 	var err error
 	if ct.mainConfig.Type == "DECODE" {
 		response, err = ct.client.Decode(ct.Ctx, dataRequest)

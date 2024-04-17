@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
@@ -16,18 +16,18 @@ import (
 )
 
 type _rpcCodecServer struct {
-	rulexrpc.UnimplementedCodecServer
+	rhilexrpc.UnimplementedCodecServer
 }
 
-func (_rpcCodecServer) Decode(c context.Context, req *rulexrpc.CodecRequest) (resp *rulexrpc.CodecResponse, err error) {
+func (_rpcCodecServer) Decode(c context.Context, req *rhilexrpc.CodecRequest) (resp *rhilexrpc.CodecResponse, err error) {
 	glogger.GLogger.Debug("[REQUEST]=====================> ", req.String())
-	resp = new(rulexrpc.CodecResponse)
+	resp = new(rhilexrpc.CodecResponse)
 	resp.Data = []byte("DecodeOK")
 	return resp, nil
 }
-func (_rpcCodecServer) Encode(c context.Context, req *rulexrpc.CodecRequest) (resp *rulexrpc.CodecResponse, err error) {
+func (_rpcCodecServer) Encode(c context.Context, req *rhilexrpc.CodecRequest) (resp *rhilexrpc.CodecResponse, err error) {
 	glogger.GLogger.Debug("[REQUEST]=====================> ", req.String())
-	resp = new(rulexrpc.CodecResponse)
+	resp = new(rhilexrpc.CodecResponse)
 	resp.Data = []byte("EncodeOK")
 	return resp, nil
 }
@@ -44,7 +44,7 @@ func _startServer() {
 		return
 	}
 	rpcServer := grpc.NewServer()
-	rulexrpc.RegisterCodecServer(rpcServer, new(_rpcCodecServer))
+	rhilexrpc.RegisterCodecServer(rpcServer, new(_rpcCodecServer))
 	go func(c context.Context) {
 		defer listener.Close()
 		glogger.GLogger.Info("rpcCodecServer started on", listener.Addr())
@@ -64,8 +64,8 @@ func Test_Codec(t *testing.T) {
 	}
 	// Grpc Inend
 	grpcInend := typex.NewInEnd("GRPC",
-		"Rulex Grpc InEnd",
-		"Rulex Grpc InEnd", map[string]interface{}{
+		"rhilex Grpc InEnd",
+		"rhilex Grpc InEnd", map[string]interface{}{
 			"port": 2581,
 		})
 	ctx, cancelF := typex.NewCCTX() // ,ctx, cancelF
@@ -106,8 +106,8 @@ func Test_Codec(t *testing.T) {
 		`
 		Actions = {
 			function(args)
-			print('rulexlib:RPCDEC ==> ', rulexlib:RPCDEC('grpcCodec001', data))
-			print('rulexlib:RPCENC ==> ', rulexlib:RPCENC('grpcCodec002', data))
+			print('rhilexlib:RPCDEC ==> ', rhilexlib:RPCDEC('grpcCodec001', data))
+			print('rhilexlib:RPCENC ==> ', rhilexlib:RPCENC('grpcCodec002', data))
 				return true, args
 			end
 		}`,
@@ -120,9 +120,9 @@ func Test_Codec(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer grpcConnection.Close()
-	client := rulexrpc.NewRulexRpcClient(grpcConnection)
+	client := rhilexrpc.NewRhilexRpcClient(grpcConnection)
 
-	resp, err := client.Work(context.Background(), &rulexrpc.Data{
+	resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 		Value: string([]byte{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
 			10, 11, 12, 13, 14, 15, 16}),
@@ -130,7 +130,7 @@ func Test_Codec(t *testing.T) {
 	if err != nil {
 		glogger.GLogger.Error(err)
 	}
-	glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+	glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 
 	time.Sleep(1 * time.Second)
 	engine.Stop()

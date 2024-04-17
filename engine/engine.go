@@ -57,7 +57,7 @@ import (
 * 全局默认引擎，未来主要留给外部使用
 *
  */
-var __DefaultRuleEngine typex.RuleX
+var __DefaultRuleEngine typex.Rhilex
 
 const __DEFAULT_DB_PATH string = "./rhilex.db"
 
@@ -71,13 +71,13 @@ type RuleEngine struct {
 	OutEnds           *sync.Map            `json:"outends"`
 	Drivers           *sync.Map            `json:"drivers"`
 	Devices           *sync.Map            `json:"devices"`
-	Config            *typex.RulexConfig   `json:"config"`
+	Config            *typex.RhilexConfig  `json:"config"`
 	DeviceTypeManager typex.DeviceRegistry `json:"-"` // 待迁移组件
 	SourceTypeManager typex.SourceRegistry `json:"-"` // 待迁移组件
 	TargetTypeManager typex.TargetRegistry `json:"-"` // 待迁移组件
 }
 
-func InitRuleEngine(config typex.RulexConfig) typex.RuleX {
+func InitRuleEngine(config typex.RhilexConfig) typex.Rhilex {
 	__DefaultRuleEngine = &RuleEngine{
 		locker:            sync.Mutex{},
 		DeviceTypeManager: core.NewDeviceTypeManager(),
@@ -136,7 +136,7 @@ func InitRuleEngine(config typex.RulexConfig) typex.RuleX {
 * Engine Start
 *
  */
-func (e *RuleEngine) Start() *typex.RulexConfig {
+func (e *RuleEngine) Start() *typex.RhilexConfig {
 	// Resource Manager
 	e.InitDeviceTypeManager()
 	e.InitSourceTypeManager()
@@ -159,13 +159,13 @@ func (e *RuleEngine) Version() typex.VersionInfo {
 	return typex.DefaultVersionInfo
 }
 
-func (e *RuleEngine) GetConfig() *typex.RulexConfig {
+func (e *RuleEngine) GetConfig() *typex.RhilexConfig {
 	return e.Config
 }
 
 // Stop
 func (e *RuleEngine) Stop() {
-	glogger.GLogger.Info("[*] Ready to stop rulex")
+	glogger.GLogger.Info("[*] Ready to stop rhilex")
 	// 所有的APP停了
 	appstack.Stop()
 	// 外挂停了
@@ -177,9 +177,6 @@ func (e *RuleEngine) Stop() {
 			glogger.GLogger.Info("Stop InEnd:", inEnd.Name, inEnd.UUID)
 			e.GetInEnd(inEnd.UUID).State = typex.SOURCE_STOP
 			inEnd.Source.Stop()
-			if inEnd.Source.Driver() != nil {
-				inEnd.Source.Driver().Stop()
-			}
 		}
 		glogger.GLogger.Info("Stop InEnd:", inEnd.Name, inEnd.UUID, " Successfully")
 		return true
@@ -226,7 +223,7 @@ func (e *RuleEngine) Stop() {
 	dataschema.Flush()
 	glogger.GLogger.Info("Stop AI Runtime")
 	aibase.Stop()
-	glogger.GLogger.Info("[√] Stop Rulex successfully")
+	glogger.GLogger.Info("[√] Stop rhilex successfully")
 	if err := glogger.Close(); err != nil {
 		fmt.Println("Close logger error: ", err)
 	}
@@ -671,7 +668,7 @@ func (e *RuleEngine) InitSourceTypeManager() error {
 			NewSource: source.NewNatsSource,
 		},
 	)
-	e.SourceTypeManager.Register(typex.RULEX_UDP,
+	e.SourceTypeManager.Register(typex.RHILEX_UDP,
 		&typex.XConfig{
 			Engine:    e,
 			NewSource: source.NewUdpInEndSource,

@@ -11,24 +11,24 @@
 ---@diagnostic disable: undefined-global
 -- Success
 function Success()
-    -- rulexlib:log("success")
+    -- rhilexlib:log("success")
 end
 -- Failed
 function Failed(error)
-    rulexlib:log("Error:", error)
+    rhilexlib:log("Error:", error)
 end
 
 -- Actions
 Actions = {function(args)
-    for _, v in pairs(rulexlib:J2T(data)) do
-        local ts = rulexlib:TsUnixNano()
+    for _, v in pairs(rhilexlib:J2T(data)) do
+        local ts = rhilexlib:TsUnixNano()
         local jsont = {
             method = 'report',
             requestId = ts,
             timestamp = ts,
             params = v['value']
         }
-        data:ToMqtt('mqttOutEnd', rulexlib:T2J(jsont))
+        data:ToMqtt('mqttOutEnd', rhilexlib:T2J(jsont))
     end
     return true, args
 end}

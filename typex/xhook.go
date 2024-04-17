@@ -1,8 +1,6 @@
 package typex
 
-//
-// XHook for enhancement rulex with golang
-//
+// XHook for enhancement rhilex with golang
 type XHook interface {
 	Work(data string) error
 	Error(error)

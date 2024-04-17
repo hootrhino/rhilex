@@ -15,7 +15,7 @@ rem along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 @echo off
 
-set SERVICE_NAME=RulexService
+set SERVICE_NAME=RhilexService
 
 sc stop %SERVICE_NAME%
 sc delete %SERVICE_NAME%

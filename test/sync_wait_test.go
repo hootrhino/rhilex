@@ -40,7 +40,7 @@ func Test_Open_Switch(t *testing.T) {
 * 发送指令:当指令下发后马上给redis保存一个指令id, 用于等待后期同步
  */
 func sendCmd(ctx context.Context, redisClient *redis.Client, requestId string) {
-	fmt.Println("Send open cmd to rulex")
+	fmt.Println("Send open cmd to rhilex")
 	redisClient.Set(ctx, requestId, 0, 5*time.Second)
 }
 
@@ -76,7 +76,7 @@ func waitResult(ctx context.Context, redisClient *redis.Client, requestId string
 
 /*
 *
-*监听rulex的反馈, 如果  rulexlib:finishCmd(CmdId) 调用了 这里就把redis的值更新
+*监听rhilex的反馈, 如果  rhilexlib:finishCmd(CmdId) 调用了 这里就把redis的值更新
 *
  */
 func finishCmd(ctx context.Context, redisClient *redis.Client, requestId string) {

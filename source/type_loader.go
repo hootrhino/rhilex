@@ -19,7 +19,7 @@ func LoadSt() {
 	SM.Register(typex.COAP, &typex.XConfig{})
 	SM.Register(typex.GRPC, &typex.XConfig{})
 	SM.Register(typex.HTTP, &typex.XConfig{})
-	SM.Register(typex.RULEX_UDP, &typex.XConfig{})
+	SM.Register(typex.RHILEX_UDP, &typex.XConfig{})
 	SM.Register(typex.NATS_SERVER, &typex.XConfig{})
 	SM.Register(typex.MQTT, &typex.XConfig{})
 }

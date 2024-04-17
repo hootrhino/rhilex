@@ -10,15 +10,15 @@ func (i InEndType) String() string {
 }
 
 const (
-	MQTT                     InEndType = "MQTT"
-	HTTP                     InEndType = "HTTP"
-	COAP                     InEndType = "COAP"
-	GRPC                     InEndType = "GRPC"
-	NATS_SERVER              InEndType = "NATS_SERVER"
-	RULEX_UDP                InEndType = "RULEX_UDP"
-	GENERIC_IOT_HUB          InEndType = "GENERIC_IOT_HUB"
-	INTERNAL_EVENT           InEndType = "INTERNAL_EVENT"           // 内部消息
-	GENERIC_MQTT             InEndType = "GENERIC_MQTT"             // 通用MQTT
+	MQTT            InEndType = "MQTT"
+	HTTP            InEndType = "HTTP"
+	COAP            InEndType = "COAP"
+	GRPC            InEndType = "GRPC"
+	NATS_SERVER     InEndType = "NATS_SERVER"
+	RHILEX_UDP      InEndType = "RHILEX_UDP"
+	GENERIC_IOT_HUB InEndType = "GENERIC_IOT_HUB"
+	INTERNAL_EVENT  InEndType = "INTERNAL_EVENT" // 内部消息
+	GENERIC_MQTT    InEndType = "GENERIC_MQTT"   // 通用MQTT
 )
 
 // XStatus for source status
@@ -27,7 +27,7 @@ type XStatus struct {
 	Enable     bool               // 是否开启
 	Ctx        context.Context    // context
 	CancelCTX  context.CancelFunc // cancel
-	RuleEngine RuleX              // rulex
+	RuleEngine Rhilex             // rhilex
 	Busy       bool               // 是否处于忙碌状态, 防止请求拥挤
 }
 
@@ -57,14 +57,6 @@ type XSource interface {
 	// 获取资源绑定的的详情
 	//
 	Details() *InEnd
-	//
-	// 驱动接口, 通常用来和硬件交互
-	//
-	Driver() XExternalDriver
-	//
-	//
-	//
-	Topology() []TopologyPoint
 	//
 	// 停止资源, 用来释放资源
 	//

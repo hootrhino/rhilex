@@ -23,7 +23,7 @@ WORKDIR  "/go/src"
 RUN git clone https://github.com/hybridgroup/gocv.git
 WORKDIR "/go/src/gocv"
 # RUN make install
-ADD ../ "/go/src/rulex"
-WORKDIR "/go/src/rulex"
+ADD ../ "/go/src/rhilex"
+WORKDIR "/go/src/rhilex"
 # RUN ["go","build"]
 RUN "bash"

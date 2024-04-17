@@ -60,11 +60,11 @@ func Flush() {
 
 type Hnc8CnCPointCache struct {
 	Slots      map[string]map[string]Hnc8RegisterPoint
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	locker     sync.Mutex
 }
 
-func InitHnc8CnCPointCache(ruleEngine typex.RuleX) intercache.InterCache {
+func InitHnc8CnCPointCache(ruleEngine typex.Rhilex) intercache.InterCache {
 	__DefaultHnc8CnCPointCache = &Hnc8CnCPointCache{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]Hnc8RegisterPoint{},

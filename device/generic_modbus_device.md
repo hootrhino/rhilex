@@ -98,7 +98,7 @@ Modbus协议是一种简单且易于实现的协议，广泛应用于工业自�
 ```lua
 Actions = {
   function(args)
-​    local dataT, err0 = rulexlib:J2T(data)
+​    local dataT, err0 = rhilexlib:J2T(data)
 ​    if err0 ~= nil then
 ​      print("ERROR:", err0)
 ​      goto END
@@ -106,7 +106,7 @@ Actions = {
 ​    for _, entity in pairs(dataT) do
 ​      print('tag', entity.tag)
 ​      print('value', entity.value)
-​      local udpData = rulexlib:T2J{
+​      local udpData = rhilexlib:T2J{
 ​        model = 'modbus_device',
 ​        sn = entity.tag,
 ​        value = entity.value

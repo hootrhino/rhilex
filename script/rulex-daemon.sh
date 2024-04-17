@@ -31,8 +31,8 @@ export PATH=\$PATH:/usr/local/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/sbin
 # Required-Stop:     \$network \$local_fs \$remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Rulex Service
-# Description:       Rulex Service
+# Short-Description: rhilex Service
+# Description:       rhilex Service
 ### END INIT INFO
 
 #
@@ -148,9 +148,9 @@ EOL
     cp -rfp "$SOURCE_DIR/license.key" "$WORKING_DIRECTORY/"
     chmod 777 $SERVICE_FILE
     if [ $? -eq 0 ]; then
-        log INFO "Rulex service has been created and extracted."
+        log INFO "rhilex service has been created and extracted."
     else
-        log ERROR "Failed to create the Rulex service or extract files."
+        log ERROR "Failed to create the rhilex service or extract files."
     fi
     exit 0
 }
@@ -180,14 +180,14 @@ uninstall(){
     __remove_files "$WORKING_DIRECTORY/rhilex.db"
     __remove_files "$WORKING_DIRECTORY/license.lic"
     __remove_files "$WORKING_DIRECTORY/license.key"
-    __remove_files "$WORKING_DIRECTORY/rulex_internal_datacenter.db"
+    __remove_files "$WORKING_DIRECTORY/rhilex_internal_datacenter.db"
     __remove_files "$WORKING_DIRECTORY/upload/"
-    __remove_files "$WORKING_DIRECTORY/rulexlog.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilexlog.txt"
     __remove_files "$WORKING_DIRECTORY/rhilex-daemon-log.txt"
     __remove_files "$WORKING_DIRECTORY/rhilex-recover-log.txt"
     __remove_files "$WORKING_DIRECTORY/rhilex-upgrade-log.txt"
-    __remove_files "$WORKING_DIRECTORY/rulexlog-*.txt.gz"
-    log INFO "Rulex has been uninstalled."
+    __remove_files "$WORKING_DIRECTORY/rhilexlog-*.txt.gz"
+    log INFO "rhilex has been uninstalled."
 }
 
 start() {

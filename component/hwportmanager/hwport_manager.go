@@ -33,13 +33,13 @@ var __HwPortsManager *HwPortsManager
 
 type HwPortsManager struct {
 	Interfaces sync.Map
-	rulex      typex.RuleX
+	rhilex     typex.Rhilex
 }
 
-func InitHwPortsManager(rulex typex.RuleX) *HwPortsManager {
+func InitHwPortsManager(rhilex typex.Rhilex) *HwPortsManager {
 	__HwPortsManager = &HwPortsManager{
 		Interfaces: sync.Map{},
-		rulex:      rulex,
+		rhilex:     rhilex,
 	}
 	return __HwPortsManager
 }
@@ -106,7 +106,7 @@ func refreshHwPort(name string) {
 	if Port.Busy {
 		if Port.OccupyBy.Type == "DEVICE" {
 			UUID := Port.OccupyBy.UUID
-			if Device := __HwPortsManager.rulex.GetDevice(UUID); Device != nil {
+			if Device := __HwPortsManager.rhilex.GetDevice(UUID); Device != nil {
 				// 拉闸 DEV_DOWN 以后就重启了, 然后就会拉取最新的配置
 				Device.Device.SetState(typex.DEV_DOWN)
 			}
@@ -135,7 +135,7 @@ func GetHwPort(name string) (RhinoH3HwPort, error) {
 func AllHwPort() []RhinoH3HwPort {
 	result := []RhinoH3HwPort{}
 	__HwPortsManager.Interfaces.Range(func(key, Object any) bool {
-		// 如果不是被rulex占用；则需要检查是否被操作系统进程占用了
+		// 如果不是被rhilex占用；则需要检查是否被操作系统进程占用了
 		Port := Object.(RhinoH3HwPort)
 		if Port.OccupyBy.Type != "DEVICE" {
 			if err := CheckSerialBusy(Port.Name); err != nil {

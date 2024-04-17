@@ -60,7 +60,7 @@ type S1200Config struct {
 type SIEMENS_PLC struct {
 	typex.XStatus
 	status              typex.DeviceState
-	RuleEngine          typex.RuleX
+	RuleEngine          typex.Rhilex
 	mainConfig          S1200Config
 	client              gos7.Client
 	handler             *gos7.TCPClientHandler
@@ -73,7 +73,7 @@ type SIEMENS_PLC struct {
 * 西门子 S1200 系列 PLC
 *
  */
-func NewSIEMENS_PLC(e typex.RuleX) typex.XDevice {
+func NewSIEMENS_PLC(e typex.Rhilex) typex.XDevice {
 	s1200 := new(SIEMENS_PLC)
 	s1200.RuleEngine = e
 	s1200.locker = sync.Mutex{}
@@ -256,11 +256,6 @@ func (s1200 *SIEMENS_PLC) Details() *typex.Device {
 // 状态
 func (s1200 *SIEMENS_PLC) SetState(status typex.DeviceState) {
 	s1200.status = status
-}
-
-// 驱动
-func (s1200 *SIEMENS_PLC) Driver() typex.XExternalDriver {
-	return nil
 }
 
 func (s1200 *SIEMENS_PLC) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

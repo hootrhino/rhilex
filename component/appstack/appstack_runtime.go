@@ -29,7 +29,7 @@ import (
 
 var __DefaultAppStackRuntime *AppStackRuntime
 
-func InitAppStack(re typex.RuleX) *AppStackRuntime {
+func InitAppStack(re typex.Rhilex) *AppStackRuntime {
 	__DefaultAppStackRuntime = &AppStackRuntime{
 		RuleEngine:   re,
 		locker:       sync.Mutex{},
@@ -108,8 +108,8 @@ func StartApp(uuid string) error {
 			},
 		}, args)
 		if err == nil {
-			if app.KilledBy == "RULEX" {
-				glogger.GLogger.Infof("Application %s Killed By RULEX", app.UUID)
+			if app.KilledBy == "RHILEX" {
+				glogger.GLogger.Infof("Application %s Killed By RHILEX", app.UUID)
 			}
 			if app.KilledBy == "NORMAL" || app.KilledBy == "" {
 				glogger.GLogger.Infof("Application %s NORMAL Exited", app.UUID)
@@ -140,15 +140,15 @@ func StartApp(uuid string) error {
 			)
 		}
 		//
-		// 检查是自己死的还是被RULEX杀死
+		// 检查是自己死的还是被RHILEX杀死
 		// 1 正常结束
-		// 2 被rulex删除
+		// 2 被rhilex删除
 		// 3 跑飞了
 
 		// 中间出现异常挂了，此时要根据: auto start 来判断是否抢救
 		time.Sleep(5 * time.Second)
-		if app.KilledBy == "RULEX" {
-			glogger.GLogger.Infof("App %s Killed By RULEX, No need to rescue", app.UUID)
+		if app.KilledBy == "RHILEX" {
+			glogger.GLogger.Infof("App %s Killed By RHILEX, No need to rescue", app.UUID)
 			return
 		}
 		if app.KilledBy == "NORMAL" {
@@ -258,6 +258,6 @@ func Stop() {
 	glogger.GLogger.Info("Appstack stopped")
 
 }
-func GetRuleX() typex.RuleX {
+func GetRhilex() typex.Rhilex {
 	return __DefaultAppStackRuntime.RuleEngine
 }

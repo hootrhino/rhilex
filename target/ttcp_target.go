@@ -46,7 +46,7 @@ type TTcpTarget struct {
 * TCP 透传模式
 *
  */
-func NewTTcpTarget(e typex.RuleX) typex.XTarget {
+func NewTTcpTarget(e typex.Rhilex) typex.XTarget {
 	ht := new(TTcpTarget)
 	ht.RuleEngine = e
 	ht.mainConfig = _TcpMainConfig{

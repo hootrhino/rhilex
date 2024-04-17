@@ -18,21 +18,21 @@
 Actions =
 {
     function(args)
-        local dataT, err = rulexlib:J2T(data)
+        local dataT, err = rhilexlib:J2T(data)
         if (err ~= nil) then
             print('parse json error:', err)
             return true, args
         end
         for _, value in pairs(dataT) do
-            local MatchHexS = rulexlib:MatchUInt("temp:[0,1]", value['value'])
-            local ts = rulexlib:TsUnixNano()
-            local Json = rulexlib:T2J(
+            local MatchHexS = rhilexlib:MatchUInt("temp:[0,1]", value['value'])
+            local ts = rhilexlib:TsUnixNano()
+            local Json = rhilexlib:T2J(
                 {
                     timestamp = ts,
                     temp = MatchHexS['temp'] * 0.1,
                 }
             )
-            rulexlib:Debug(Json)
+            rhilexlib:Debug(Json)
         end
         return true, args
     end

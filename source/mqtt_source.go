@@ -19,7 +19,7 @@ type mqttInEndSource struct {
 	status     typex.SourceState
 }
 
-func NewMqttInEndSource(e typex.RuleX) typex.XSource {
+func NewMqttInEndSource(e typex.Rhilex) typex.XSource {
 	m := new(mqttInEndSource)
 	m.RuleEngine = e
 	return m
@@ -117,14 +117,6 @@ func (mm *mqttInEndSource) Test(inEndId string) bool {
 
 func (mm *mqttInEndSource) Details() *typex.InEnd {
 	return mm.RuleEngine.GetInEnd(mm.PointId)
-}
-func (*mqttInEndSource) Driver() typex.XExternalDriver {
-	return nil
-}
-
-// 拓扑
-func (*mqttInEndSource) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
 }
 
 // 来自外面的数据

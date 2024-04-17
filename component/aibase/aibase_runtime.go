@@ -32,7 +32,7 @@ var __DefaultAIRuntime *AlgorithmRuntime
  */
 
 type AlgorithmRuntime struct {
-	RuleEngine  typex.RuleX
+	RuleEngine  typex.Rhilex
 	locker      sync.Mutex
 	XAlgorithms map[string]XAlgorithm
 }
@@ -42,7 +42,7 @@ type AlgorithmRuntime struct {
 * 初始化
 *
  */
-func InitAlgorithmRuntime(re typex.RuleX) *AlgorithmRuntime {
+func InitAlgorithmRuntime(re typex.Rhilex) *AlgorithmRuntime {
 	__DefaultAIRuntime = new(AlgorithmRuntime)
 	__DefaultAIRuntime.RuleEngine = re
 	__DefaultAIRuntime.XAlgorithms = make(map[string]XAlgorithm)

@@ -128,7 +128,7 @@ type KDN_CNC struct {
 	mainConfig kdn_cnc_config
 }
 
-func NewKDN_CNC(e typex.RuleX) typex.XDevice {
+func NewKDN_CNC(e typex.Rhilex) typex.XDevice {
 	hd := new(KDN_CNC)
 	hd.RuleEngine = e
 	return hd
@@ -197,11 +197,6 @@ func (hd *KDN_CNC) Details() *typex.Device {
 func (hd *KDN_CNC) SetState(status typex.DeviceState) {
 	hd.status = status
 
-}
-
-// 驱动
-func (hd *KDN_CNC) Driver() typex.XExternalDriver {
-	return nil
 }
 
 // --------------------------------------------------------------------------------------------------

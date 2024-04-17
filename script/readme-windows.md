@@ -16,7 +16,7 @@
 -->
 
 # Windows 服务安装
-- 安装:rulex_install.bat
-- 卸载:rulex_uninstall.bat
+- 安装:rhilex_install.bat
+- 卸载:rhilex_uninstall.bat
 
 > 只支持windows10+

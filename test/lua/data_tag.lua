@@ -5,11 +5,11 @@
 
 function ParseData(args)
     -- data: {"in":"AA0011...","out":"AABBCDD..."}
-    local DataT, err = rulexlib:J2T(args)
+    local DataT, err = rhilexlib:J2T(args)
     if err ~= nil then
         return true, args
     end
     -- Do your business
-    rulexlib:log(DataT['in'])
-    rulexlib:log(DataT['out'])
+    rhilexlib:log(DataT['in'])
+    rhilexlib:log(DataT['out'])
 end

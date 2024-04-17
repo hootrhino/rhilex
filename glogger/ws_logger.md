@@ -9,11 +9,11 @@
 日志的格式如下：
 ```json
 {
-    "appId":"rulex",
-    "appName":"rulex",
+    "appId":"rhilex",
+    "appName":"rhilex",
     "topic": "app/UUID12345678/log",
     "file":"appstack_runtime.go:86",
-    "func":"github.com/hootrhino/rulex/appstack.(*AppStack).StartApp.func1",
+    "func":"github.com/hootrhino/rhilex/appstack.(*AppStack).StartApp.func1",
     "level":"debug",
     "msg":"Ready to run app:APPefeebdf253544730a9dc38e15354d2d4-AAAA-1.0.0",
     "time":"2023-06-29T16:46:00+08:00"
@@ -56,7 +56,7 @@ $$
 1. 测速
     ```json
     {
-        "appId":"rulex",
+        "appId":"rhilex",
         "level":"info",
         "msg":"[Count:3] Ping Reply From [192.168.1.1]: time=505.8µs ms TTL=128",
         "time":"2023-06-30T13:04:06+08:00",
@@ -66,9 +66,9 @@ $$
 2. Rule 调试 log
     ```json
     {
-        "appId":"rulex",
-        "file":"C:/Users/wangwenhai/workspace/rulex/plugin/http_server/rule_api.go:580",
-        "func":"github.com/hootrhino/rulex/component/rulex_api_server.TestSourceCallback",
+        "appId":"rhilex",
+        "file":"C:/Users/wangwenhai/workspace/rhilex/plugin/http_server/rule_api.go:580",
+        "func":"github.com/hootrhino/rhilex/component/rhilex_api_server.TestSourceCallback",
         "level":"debug",
         "msg":"string",
         "time":"2023-06-30T17:52:31+08:00",
@@ -78,9 +78,9 @@ $$
 3. Rule 运行时 log
     ```json
     {
-        "appId":"rulex",
-        "file":"C:/Users/wangwenhai/workspace/rulex/plugin/http_server/rule_api.go:580",
-        "func":"github.com/hootrhino/rulex/component/rulex_api_server.TestSourceCallback",
+        "appId":"rhilex",
+        "file":"C:/Users/wangwenhai/workspace/rhilex/plugin/http_server/rule_api.go:580",
+        "func":"github.com/hootrhino/rhilex/component/rhilex_api_server.TestSourceCallback",
         "level":"debug",
         "msg":"string",
         "time":"2023-06-30T17:52:31+08:00",
@@ -90,9 +90,9 @@ $$
 4. APP 运行输出
     ```json
     {
-        "appId":"rulex",
-        "file":"C:/Users/wangwenhai/workspace/rulex/rulexlib/log_lib.go:35",
-        "func":"github.com/hootrhino/rulex/rulexlib.DebugAPP.func1",
+        "appId":"rhilex",
+        "file":"C:/Users/wangwenhai/workspace/rhilex/rhilexlib/log_lib.go:35",
+        "func":"github.com/hootrhino/rhilex/rhilexlib.DebugAPP.func1",
         "level":"debug",
         "msg":"2023-06-30 17:31:35",
         "time":"2023-06-30T17:31:35+08:00",

@@ -17,7 +17,7 @@ RhinoPI自带一路红外接收器，当用遥控器的时候可以触发事件�
 Actions =
 {
     function(args)
-        rulexlib:Debug(data)
+        rhilexlib:Debug(data)
         return true, args
     end
 }

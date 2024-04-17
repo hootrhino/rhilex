@@ -3,7 +3,7 @@ Actions = {
         print('Received data from iothub:', data)
         local source = 'iothub-mqtt'
         local device = 'device-uuid'
-        local dataT, err = rulexlib:J2T(data)
+        local dataT, err = rhilexlib:J2T(data)
         if (err ~= nil) then
             print('parse json error:', err)
             return false, data
@@ -23,7 +23,7 @@ Actions = {
         if dataT['method'] == 'action' then
             local actionId = dataT['actionId']
             if actionId == 'Action get_state' then
-                local readData, err = rulexlib:ReadDevice(0, device)
+                local readData, err = rhilexlib:ReadDevice(0, device)
                 if (err ~= nil) then
                     print('Action get_state error:', err)
                     return false, data

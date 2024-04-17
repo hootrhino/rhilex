@@ -37,9 +37,9 @@ func GenCode(fields []Field, big bool, more bool) string {
 	for _, field := range fields {
 		expr += fmt.Sprintf("%v:%v ", field.Name, field.Len)
 	}
-	lua := fmt.Sprintf("\tlocal table = rulexlib:MB('%v', data, false)\n", strings.TrimSuffix(expr, " "))
+	lua := fmt.Sprintf("\tlocal table = rhilexlib:MB('%v', data, false)\n", strings.TrimSuffix(expr, " "))
 	for _, field := range fields {
-		lua += fmt.Sprintf("\ttable['%v'] = rulexlib:BTo%v(1, rulexlib:BSToB(tb['%v']))\n", field.Name, field.Type, field.Name)
+		lua += fmt.Sprintf("\ttable['%v'] = rhilexlib:BTo%v(1, rhilexlib:BSToB(tb['%v']))\n", field.Name, field.Type, field.Name)
 	}
 	return fmt.Sprintf(actions, strings.TrimSuffix(lua, "\n"))
 }

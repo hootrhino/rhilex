@@ -32,7 +32,7 @@ type videoCamera struct {
 * ARM32不支持
 *
  */
-func NewVideoCamera(e typex.RuleX) typex.XDevice {
+func NewVideoCamera(e typex.Rhilex) typex.XDevice {
 	hd := new(videoCamera)
 	hd.RuleEngine = e
 	return hd
@@ -81,11 +81,6 @@ func (hd *videoCamera) Details() *typex.Device {
 func (hd *videoCamera) SetState(status typex.DeviceState) {
 	hd.status = status
 
-}
-
-// 驱动
-func (hd *videoCamera) Driver() typex.XExternalDriver {
-	return nil
 }
 
 // --------------------------------------------------------------------------------------------------

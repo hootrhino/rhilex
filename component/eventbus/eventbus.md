@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rulex/component/eventbus"
+	"github.com/hootrhino/rhilex/component/eventbus"
 )
 
 func TestEventBus(t *testing.T) {

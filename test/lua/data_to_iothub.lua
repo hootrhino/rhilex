@@ -2,12 +2,12 @@
 --- 数据透传到Iothub, 其中数据需要按照物模型来
 -- Success
 function Success()
-    -- rulexlib:log("success")
+    -- rhilexlib:log("success")
 end
 
 -- Failed
 function Failed(error)
-    -- rulexlib:log("Error:", error)
+    -- rhilexlib:log("Error:", error)
 end
 
 -------------------------------------------------------------------------------

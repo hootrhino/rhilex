@@ -20,14 +20,14 @@ type modBusRtuDriver struct {
 	state      typex.DriverState
 	handler    *modbus.RTUClientHandler
 	client     modbus.Client
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	Registers  map[string]*common.RegisterRW
 	device     *typex.Device
 }
 
 func NewModBusRtuDriver(
 	d *typex.Device,
-	e typex.RuleX,
+	e typex.Rhilex,
 	Registers map[string]*common.RegisterRW,
 	handler *modbus.RTUClientHandler,
 	client modbus.Client) typex.XExternalDriver {

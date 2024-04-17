@@ -46,7 +46,7 @@ type UdpTarget struct {
 	status     typex.SourceState
 }
 
-func NewUdpTarget(e typex.RuleX) typex.XTarget {
+func NewUdpTarget(e typex.Rhilex) typex.XTarget {
 	udpT := new(UdpTarget)
 	udpT.RuleEngine = e
 	udpT.mainConfig = _UdpMainConfig{

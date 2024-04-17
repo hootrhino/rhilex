@@ -18,18 +18,18 @@ end
 
 -- Actions
 Actions = {function(args)
-    local t = rulexlib:J2T(data)
-    local V0 = rulexlib:MB(">{{.a}}:16 {{.b}}:16 {{.c}}:16 {{.d}}:16 {{.e}}:16", t['value'], false)
-    local a = rulexlib:T2J(V0['{{.a}}'])
-    local b = rulexlib:T2J(V0['{{.b}}'])
-    local c = rulexlib:T2J(V0['{{.c}}'])
-    local d = rulexlib:T2J(V0['{{.d}}'])
-    local e = rulexlib:T2J(V0['{{.e}}'])
-    print('{{.a}} ==> ', {{.a}}, ' ->', rulexlib:B2I64('>', rulexlib:BS2B(a)))
-    print('{{.b}} ==> ', {{.b}}, ' ->', rulexlib:B2I64('>', rulexlib:BS2B(b)))
-    print('{{.c}} ==> ', {{.c}}, ' ->', rulexlib:B2I64('>', rulexlib:BS2B(c)))
-    print('{{.d}} ==> ', {{.d}}, ' ->', rulexlib:B2I64('>', rulexlib:BS2B(d)))
-    print('{{.e}} ==> ', {{.e}}, ' ->', rulexlib:B2I64('>', rulexlib:BS2B(e)))
+    local t = rhilexlib:J2T(data)
+    local V0 = rhilexlib:MB(">{{.a}}:16 {{.b}}:16 {{.c}}:16 {{.d}}:16 {{.e}}:16", t['value'], false)
+    local a = rhilexlib:T2J(V0['{{.a}}'])
+    local b = rhilexlib:T2J(V0['{{.b}}'])
+    local c = rhilexlib:T2J(V0['{{.c}}'])
+    local d = rhilexlib:T2J(V0['{{.d}}'])
+    local e = rhilexlib:T2J(V0['{{.e}}'])
+    print('{{.a}} ==> ', {{.a}}, ' ->', rhilexlib:B2I64('>', rhilexlib:BS2B(a)))
+    print('{{.b}} ==> ', {{.b}}, ' ->', rhilexlib:B2I64('>', rhilexlib:BS2B(b)))
+    print('{{.c}} ==> ', {{.c}}, ' ->', rhilexlib:B2I64('>', rhilexlib:BS2B(c)))
+    print('{{.d}} ==> ', {{.d}}, ' ->', rhilexlib:B2I64('>', rhilexlib:BS2B(d)))
+    print('{{.e}} ==> ', {{.e}}, ' ->', rhilexlib:B2I64('>', rhilexlib:BS2B(e)))
     return true, args
 end}
 

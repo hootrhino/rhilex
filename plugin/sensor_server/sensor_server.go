@@ -33,7 +33,7 @@ func (dm *SensorServer) Init(config *ini.Section) error {
 	return nil
 }
 
-func (dm *SensorServer) Start(typex.RuleX) error {
+func (dm *SensorServer) Start(typex.Rhilex) error {
 	return dm.startSServer(dm.ctxMain, dm.cancelMain)
 }
 func (dm *SensorServer) Stop() error {

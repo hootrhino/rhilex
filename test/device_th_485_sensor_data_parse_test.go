@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/typex"
 
 	"google.golang.org/grpc"
@@ -47,15 +47,15 @@ func Test_modbus_485_sensor_data_parse(t *testing.T) {
 		`
 		Actions = {
 			function(args)
-				local table = rulexlib:J2T(data)
+				local table = rhilexlib:J2T(data)
 				local value = table['value']
-				local t = rulexlib:HsubToN(value, 5, 8)
-				local h = rulexlib:HsubToN(value, 0, 4)
-				local t1 = rulexlib:HToN(string.sub(value, 5, 8))
-				local h2 = rulexlib:HToN(string.sub(value, 0, 4))
-				print('Data ========> ', rulexlib:T2J({
+				local t = rhilexlib:HsubToN(value, 5, 8)
+				local h = rhilexlib:HsubToN(value, 0, 4)
+				local t1 = rhilexlib:HToN(string.sub(value, 5, 8))
+				local h2 = rhilexlib:HToN(string.sub(value, 0, 4))
+				print('Data ========> ', rhilexlib:T2J({
 					Device = "TH00000001",
-					Ts = rulexlib:TsUnix(),
+					Ts = rhilexlib:TsUnix(),
 					T = t,
 					H = h,
 					T1 = t1,
@@ -73,10 +73,10 @@ func Test_modbus_485_sensor_data_parse(t *testing.T) {
 		t.Errorf("grpc.Dial err: %v", err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 	rand.Seed(time.Now().Unix())
 	for i := 0; i < 2; i++ {
-		resp, err := client.Work(context.Background(), &rulexrpc.Data{
+		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: `
 			{
 				"tag":"data",
@@ -90,7 +90,7 @@ func Test_modbus_485_sensor_data_parse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		t.Logf("Rulex Rpc Call Result ====>>: %v --%v", resp.GetMessage(), i)
+		t.Logf("rhilex Rpc Call Result ====>>: %v --%v", resp.GetMessage(), i)
 
 	}
 

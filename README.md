@@ -1,6 +1,6 @@
-# RULEX Framework
+# RHILEX Framework
 
-### RULEX 是一个轻量级边缘网关开发框架，助力快速实现边缘数据处理和云边协同方案。
+### RHILEX 是一个轻量级边缘网关开发框架，助力快速实现边缘数据处理和云边协同方案。
 
 ## 架构设计
 
@@ -78,7 +78,7 @@ end
 ```lua
 Actions = {
     function(args)
-        print("return => ", rulexlib:JqSelect(".[] | select(.hum < 20)", data))
+        print("return => ", rhilexlib:JqSelect(".[] | select(.hum < 20)", data))
         return true, args
     end
 }
@@ -105,25 +105,25 @@ Actions = {
 
 - QQ群：608382561
 - 文档: <a href="https://hootrhino.github.io">[点我查看详细文档]</a>
-- 微信：nilyouth( 加好友后进群, 别忘了来个小星星, 暗号：RULEX )
+- 微信：nilyouth( 加好友后进群, 别忘了来个小星星, 暗号：RHILEX )
   <div style="text-align:center">
     <img src="./README_RES/wx.jpg" width="150px" />
   </div>
 
 ## 贡献者
-鸣谢各位给RULEX贡献代码的社区开发者。
+鸣谢各位给RHILEX贡献代码的社区开发者。
 
 <a href="#">
-  <img src="https://contributors-img.web.app/image?repo=hootrhino/rulex" />
+  <img src="https://contributors-img.web.app/image?repo=hootrhino/rhilex" />
 
 </a>
 
 <a href="#">
-  <img src="https://contributors-img.web.app/image?repo=hootrhino/rulex-dashboard-vue-old" />
+  <img src="https://contributors-img.web.app/image?repo=hootrhino/rhilex-dashboard-vue-old" />
 </a>
 
 > [!NOTE]
-> 如果您阅读过 RULEX 的源码，你会发现里面有很多很愚蠢的设计（比如对资源的状态管理、类型硬编码设计等），因为特殊历史原因导致了其设计上有一些很糟粕的地方，如有建议请不吝赐教，一起让这个框架更加优秀！同时未来随着版本的迭代，很多低级问题会逐步被重构完善。
+> 如果您阅读过 RHILEX 的源码，你会发现里面有很多很愚蠢的设计（比如对资源的状态管理、类型硬编码设计等），因为特殊历史原因导致了其设计上有一些很糟粕的地方，如有建议请不吝赐教，一起让这个框架更加优秀！同时未来随着版本的迭代，很多低级问题会逐步被重构完善。
 
 ## Star
-<img src="https://starchart.cc/hootrhino/rulex.svg">
+<img src="https://starchart.cc/hootrhino/rhilex.svg">

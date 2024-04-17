@@ -120,7 +120,7 @@ Actions = { function(args)
 end }
 ```
 ## 数据样例
-假设有一个设备发送了GNS报文,经过RULEX解析以后，规则脚本里面的 data 格式如下:
+假设有一个设备发送了GNS报文,经过RHILEX解析以后，规则脚本里面的 data 格式如下:
 - RMC数据
    ```json
    {

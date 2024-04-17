@@ -63,7 +63,7 @@ type HNC8_CNC struct {
 	status     typex.DeviceState
 }
 
-func NewHNC8_CNC(e typex.RuleX) typex.XDevice {
+func NewHNC8_CNC(e typex.Rhilex) typex.XDevice {
 	hnc8Cnc := new(HNC8_CNC)
 	hnc8Cnc.RuleEngine = e
 	AutoRequest := true
@@ -170,11 +170,6 @@ func (hnc8Cnc *HNC8_CNC) Details() *typex.Device {
 func (hnc8Cnc *HNC8_CNC) SetState(status typex.DeviceState) {
 	hnc8Cnc.status = status
 
-}
-
-// 驱动
-func (hnc8Cnc *HNC8_CNC) Driver() typex.XExternalDriver {
-	return nil
 }
 
 // --------------------------------------------------------------------------------------------------

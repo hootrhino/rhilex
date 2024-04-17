@@ -19,7 +19,7 @@ import (
 	"fmt"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rhilex/rulexlib"
+	"github.com/hootrhino/rhilex/rhilexlib"
 	"github.com/hootrhino/rhilex/typex"
 )
 
@@ -52,7 +52,7 @@ func ValidateLuaSyntax(bytes []byte) error {
 *
   - 分组加入函数
 */
-func AddAppLibToGroup(app *Application, rx typex.RuleX,
+func AddAppLibToGroup(app *Application, rx typex.Rhilex,
 	ModuleName string, funcs map[string]func(l *lua.LState) int) {
 	var table *lua.LTable
 	if ModuleName == "_G" {
@@ -67,193 +67,193 @@ func AddAppLibToGroup(app *Application, rx typex.RuleX,
 	app.vm.Push(table)
 }
 
-func LoadAppLibGroup(app *Application, e typex.RuleX) {
+func LoadAppLibGroup(app *Application, e typex.Rhilex) {
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"ToHttp":     rulexlib.DataToHttp(e),
-			"ToMqtt":     rulexlib.DataToMqtt(e),
-			"ToUdp":      rulexlib.DataToUdp(e),
-			"ToTcp":      rulexlib.DataToTcp(e),
-			"ToTdEngine": rulexlib.DataToTdEngine(e),
-			"ToMongo":    rulexlib.DataToMongo(e),
+			"ToHttp":     rhilexlib.DataToHttp(e),
+			"ToMqtt":     rhilexlib.DataToMqtt(e),
+			"ToUdp":      rhilexlib.DataToUdp(e),
+			"ToTcp":      rhilexlib.DataToTcp(e),
+			"ToTdEngine": rhilexlib.DataToTdEngine(e),
+			"ToMongo":    rhilexlib.DataToMongo(e),
 		}
 		AddAppLibToGroup(app, e, "data", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Debug": rulexlib.DebugAPP(e, app.UUID),
-			"Throw": rulexlib.Throw(e),
+			"Debug": rhilexlib.DebugAPP(e, app.UUID),
+			"Throw": rhilexlib.Throw(e),
 		}
 		AddAppLibToGroup(app, e, "_G", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"VSet":             rulexlib.StoreSet(e),
-			"VSetWithDuration": rulexlib.StoreSetWithDuration(e),
-			"VGet":             rulexlib.StoreGet(e),
-			"VDel":             rulexlib.StoreDelete(e),
+			"VSet":             rhilexlib.StoreSet(e),
+			"VSetWithDuration": rhilexlib.StoreSetWithDuration(e),
+			"VGet":             rhilexlib.StoreGet(e),
+			"VDel":             rhilexlib.StoreDelete(e),
 		}
 		AddAppLibToGroup(app, e, "kv", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Time":       rulexlib.Time(e),
-			"TimeMs":     rulexlib.TimeMs(e),
-			"TsUnix":     rulexlib.TsUnix(e),
-			"TsUnixNano": rulexlib.TsUnixNano(e),
-			"NtpTime":    rulexlib.NtpTime(e),
-			"Sleep":      rulexlib.Sleep(e),
+			"Time":       rhilexlib.Time(e),
+			"TimeMs":     rhilexlib.TimeMs(e),
+			"TsUnix":     rhilexlib.TsUnix(e),
+			"TsUnixNano": rhilexlib.TsUnixNano(e),
+			"NtpTime":    rhilexlib.NtpTime(e),
+			"Sleep":      rhilexlib.Sleep(e),
 		}
 		AddAppLibToGroup(app, e, "time", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"HToN":       rulexlib.HToN(e),
-			"HsubToN":    rulexlib.HsubToN(e),
-			"MatchHex":   rulexlib.MatchHex(e),
-			"MatchUInt":  rulexlib.MatchUInt(e),
-			"Bytes2Hexs": rulexlib.Bytes2Hexs(e),
-			"Hexs2Bytes": rulexlib.Hexs2Bytes(e),
-			"ABCD":       rulexlib.ABCD(e),
-			"DCBA":       rulexlib.DCBA(e),
-			"BADC":       rulexlib.BADC(e),
-			"CDAB":       rulexlib.CDAB(e),
+			"HToN":       rhilexlib.HToN(e),
+			"HsubToN":    rhilexlib.HsubToN(e),
+			"MatchHex":   rhilexlib.MatchHex(e),
+			"MatchUInt":  rhilexlib.MatchUInt(e),
+			"Bytes2Hexs": rhilexlib.Bytes2Hexs(e),
+			"Hexs2Bytes": rhilexlib.Hexs2Bytes(e),
+			"ABCD":       rhilexlib.ABCD(e),
+			"DCBA":       rhilexlib.DCBA(e),
+			"BADC":       rhilexlib.BADC(e),
+			"CDAB":       rhilexlib.CDAB(e),
 		}
 		AddAppLibToGroup(app, e, "hex", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"MB":            rulexlib.MatchBinary(e),
-			"MBHex":         rulexlib.MatchBinaryHex(e),
-			"B2BS":          rulexlib.ByteToBitString(e),
-			"Bit":           rulexlib.GetABitOnByte(e),
-			"B2I64":         rulexlib.ByteToInt64(e),
-			"B64S2B":        rulexlib.B64S2B(e),
-			"BS2B":          rulexlib.BitStringToBytes(e),
-			"Bin2F32":       rulexlib.BinToFloat32(e),
-			"Bin2F64":       rulexlib.BinToFloat64(e),
-			"Bin2F32Big":    rulexlib.BinToFloat32(e),
-			"Bin2F64Big":    rulexlib.BinToFloat64(e),
-			"Bin2F32Little": rulexlib.BinToFloat32Little(e),
-			"Bin2F64Little": rulexlib.BinToFloat64Little(e),
+			"MB":            rhilexlib.MatchBinary(e),
+			"MBHex":         rhilexlib.MatchBinaryHex(e),
+			"B2BS":          rhilexlib.ByteToBitString(e),
+			"Bit":           rhilexlib.GetABitOnByte(e),
+			"B2I64":         rhilexlib.ByteToInt64(e),
+			"B64S2B":        rhilexlib.B64S2B(e),
+			"BS2B":          rhilexlib.BitStringToBytes(e),
+			"Bin2F32":       rhilexlib.BinToFloat32(e),
+			"Bin2F64":       rhilexlib.BinToFloat64(e),
+			"Bin2F32Big":    rhilexlib.BinToFloat32(e),
+			"Bin2F64Big":    rhilexlib.BinToFloat64(e),
+			"Bin2F32Little": rhilexlib.BinToFloat32Little(e),
+			"Bin2F64Little": rhilexlib.BinToFloat64Little(e),
 		}
 		AddAppLibToGroup(app, e, "binary", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"T2J": rulexlib.JSONE(e),
-			"J2T": rulexlib.JSOND(e),
+			"T2J": rhilexlib.JSONE(e),
+			"J2T": rhilexlib.JSOND(e),
 		}
 		AddAppLibToGroup(app, e, "json", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"ReadDevice":  rulexlib.ReadDevice(e),
-			"WriteDevice": rulexlib.WriteDevice(e),
-			"CtrlDevice":  rulexlib.CtrlDevice(e),
-			"ReadSource":  rulexlib.ReadSource(e),
-			"WriteSource": rulexlib.WriteSource(e),
+			"ReadDevice":  rhilexlib.ReadDevice(e),
+			"WriteDevice": rhilexlib.WriteDevice(e),
+			"CtrlDevice":  rhilexlib.CtrlDevice(e),
+			"ReadSource":  rhilexlib.ReadSource(e),
+			"WriteSource": rhilexlib.WriteSource(e),
 		}
 		AddAppLibToGroup(app, e, "device", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"T2Str":   rulexlib.T2Str(e),
-			"Bin2Str": rulexlib.Bin2Str(e),
+			"T2Str":   rhilexlib.T2Str(e),
+			"Bin2Str": rhilexlib.Bin2Str(e),
 		}
 		AddAppLibToGroup(app, e, "string", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"F5":  rulexlib.F5(e),
-			"F6":  rulexlib.F6(e),
-			"F15": rulexlib.F15(e),
-			"F16": rulexlib.F16(e),
+			"F5":  rhilexlib.F5(e),
+			"F6":  rhilexlib.F6(e),
+			"F15": rhilexlib.F15(e),
+			"F16": rhilexlib.F16(e),
 		}
 		AddAppLibToGroup(app, e, "modbus", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"DO1Set":  rulexlib.H3DO1Set(e),
-			"DO1Get":  rulexlib.H3DO1Get(e),
-			"DO2Set":  rulexlib.H3DO2Set(e),
-			"DO2Get":  rulexlib.H3DO2Get(e),
-			"DI1Get":  rulexlib.H3DI1Get(e),
-			"DI2Get":  rulexlib.H3DI2Get(e),
-			"DI3Get":  rulexlib.H3DI3Get(e),
-			"Led1On":  rulexlib.Led1On(e),
-			"Led1Off": rulexlib.Led1Off(e),
+			"DO1Set":  rhilexlib.H3DO1Set(e),
+			"DO1Get":  rhilexlib.H3DO1Get(e),
+			"DO2Set":  rhilexlib.H3DO2Set(e),
+			"DO2Get":  rhilexlib.H3DO2Get(e),
+			"DI1Get":  rhilexlib.H3DI1Get(e),
+			"DI2Get":  rhilexlib.H3DI2Get(e),
+			"DI3Get":  rhilexlib.H3DI3Get(e),
+			"Led1On":  rhilexlib.Led1On(e),
+			"Led1Off": rhilexlib.Led1Off(e),
 		}
 		AddAppLibToGroup(app, e, "rhinopi", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"XOR":   rulexlib.XOR(e),
-			"CRC16": rulexlib.CRC16(e),
+			"XOR":   rhilexlib.XOR(e),
+			"CRC16": rhilexlib.CRC16(e),
 		}
 		AddAppLibToGroup(app, e, "misc", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"GPIOGet": rulexlib.RASPI4_GPIOGet(e),
-			"GPIOSet": rulexlib.RASPI4_GPIOSet(e),
+			"GPIOGet": rhilexlib.RASPI4_GPIOGet(e),
+			"GPIOSet": rhilexlib.RASPI4_GPIOSet(e),
 		}
 		AddAppLibToGroup(app, e, "raspi4b", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"GPIOGet": rulexlib.WKYWS1608_GPIOGet(e),
-			"GPIOSet": rulexlib.WKYWS1608_GPIOSet(e),
+			"GPIOGet": rhilexlib.WKYWS1608_GPIOGet(e),
+			"GPIOSet": rhilexlib.WKYWS1608_GPIOSet(e),
 		}
 		AddAppLibToGroup(app, e, "ws1608", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"TFloat": rulexlib.TruncateFloat(e),
+			"TFloat": rhilexlib.TruncateFloat(e),
 		}
 		AddAppLibToGroup(app, e, "math", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"PlayMusic": rulexlib.PlayMusic(e),
+			"PlayMusic": rhilexlib.PlayMusic(e),
 		}
 		AddAppLibToGroup(app, e, "audio", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Request": rulexlib.Request(e),
+			"Request": rhilexlib.Request(e),
 		}
 		AddAppLibToGroup(app, e, "rpc", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Execute": rulexlib.JqSelect(e),
+			"Execute": rhilexlib.JqSelect(e),
 		}
 		AddAppLibToGroup(app, e, "jq", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Ping": rulexlib.PingIp(e),
+			"Ping": rhilexlib.PingIp(e),
 		}
 		AddAppLibToGroup(app, e, "network", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Get":  rulexlib.HttpGet(e),
-			"Post": rulexlib.HttpPost(e),
+			"Get":  rhilexlib.HttpGet(e),
+			"Post": rhilexlib.HttpPost(e),
 		}
 		AddAppLibToGroup(app, e, "http", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"LedOn":  rulexlib.EN6400_LedOn(e),
-			"LedOff": rulexlib.EN6400_LedOff(e),
+			"LedOn":  rhilexlib.EN6400_LedOn(e),
+			"LedOff": rhilexlib.EN6400_LedOff(e),
 		}
 		AddAppLibToGroup(app, e, "en6400", Funcs)
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"Update": rulexlib.DataSchemaValueUpdate(e),
+			"Update": rhilexlib.DataSchemaValueUpdate(e),
 		}
 		AddAppLibToGroup(app, e, "dataschema", Funcs)
 	}

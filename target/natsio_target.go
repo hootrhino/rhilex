@@ -18,6 +18,7 @@ package target
 import (
 	"errors"
 	"fmt"
+
 	"github.com/hootrhino/rhilex/common"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -32,7 +33,7 @@ type natsTarget struct {
 	status        typex.SourceState
 }
 
-func NewNatsTarget(e typex.RuleX) typex.XTarget {
+func NewNatsTarget(e typex.Rhilex) typex.XTarget {
 	nt := &natsTarget{}
 	nt.RuleEngine = e
 	nt.mainConfig = common.NatsConfig{}

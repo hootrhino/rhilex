@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/typex"
 
 	"google.golang.org/grpc"
@@ -67,7 +67,7 @@ func Test_data_to_tdengine(t *testing.T) {
 	callback :=
 		`Actions = {
 			function(args)
-				local t = rulexlib:J2T(data)
+				local t = rhilexlib:J2T(data)
 				local Result = data:ToTdEngine('TD1', string.format("%d, %d, %d, %d", t['co2'], t['hum'], t['lex'], t['temp']))
 				print("data:ToTdEngine Result", Result==nil)
 				return false, data
@@ -94,16 +94,16 @@ func Test_data_to_tdengine(t *testing.T) {
 		t.Fatalf("grpc.Dial err: %v", err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 	rand.Seed(time.Now().Unix())
 	for i := 0; i < 3; i++ {
-		resp, err := client.Work(context.Background(), &rulexrpc.Data{
+		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: fmt.Sprintf(`{"co2":%v,"hum":%v,"lex":%v,"temp":%v}`, rand.Int63n(100), rand.Int63n(100), rand.Int63n(100), rand.Int63n(100)),
 		})
 		if err != nil {
 			t.Fatal(err)
 		}
-		t.Logf("Rulex Rpc Call Result ====>>: %v --%v", resp.GetMessage(), i)
+		t.Logf("rhilex Rpc Call Result ====>>: %v --%v", resp.GetMessage(), i)
 
 	}
 

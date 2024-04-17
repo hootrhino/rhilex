@@ -9,7 +9,7 @@ import (
 type Extlib struct {
 	Value []string `ini:"extlibs,,allowshadow" json:"extlibs"`
 }
-type RulexConfig struct {
+type RhilexConfig struct {
 	AppName               string `ini:"app_name" json:"appName"`
 	AppId                 string `ini:"app_id" json:"appId"`
 	MaxQueueSize          int    `ini:"max_queue_size" json:"maxQueueSize"`
@@ -26,12 +26,12 @@ type RulexConfig struct {
 	UpdateServer          string `ini:"update_server" json:"updateServer"`
 }
 
-// RuleX interface
-type RuleX interface {
+// Rhilex interface
+type Rhilex interface {
 	//
 	// 启动规则引擎
 	//
-	Start() *RulexConfig
+	Start() *RhilexConfig
 
 	//
 	// 执行任务
@@ -41,7 +41,7 @@ type RuleX interface {
 	//
 	// 获取配置
 	//
-	GetConfig() *RulexConfig
+	GetConfig() *RhilexConfig
 	//
 	// 加载输入
 	//
@@ -168,17 +168,4 @@ type RuleX interface {
 	SetDeviceStatus(uuid string, s DeviceState)
 	//
 	SetSourceStatus(uuid string, s SourceState)
-}
-
-// 拓扑接入点，比如 modbus 检测点等
-// UUID: gyh9uo7uh7o67u
-// Name: ModbusMeter001
-// Alive: true
-// Tag: modbus
-type TopologyPoint struct {
-	UUID   string `json:"uuid"`
-	Parent string `json:"parent"`
-	Name   string `json:"name"`
-	Alive  bool   `json:"alive"`
-	Tag    string `json:"tag"`
 }

@@ -29,7 +29,7 @@ type IcmpSender struct {
 	typex.XStatus
 	status     typex.DeviceState
 	mainConfig _IcmpSenderConfig
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 }
 
 // Example: 0x02 0x92 0xFF 0x98
@@ -38,7 +38,7 @@ type IcmpSender struct {
 * 温湿度传感器
 *
  */
-func NewIcmpSender(e typex.RuleX) typex.XDevice {
+func NewIcmpSender(e typex.Rhilex) typex.XDevice {
 	sender := new(IcmpSender)
 	sender.RuleEngine = e
 	sender.mainConfig = _IcmpSenderConfig{}
@@ -132,11 +132,6 @@ func (sender *IcmpSender) Details() *typex.Device {
 func (sender *IcmpSender) SetState(status typex.DeviceState) {
 	sender.status = status
 
-}
-
-// 驱动
-func (sender *IcmpSender) Driver() typex.XExternalDriver {
-	return nil
 }
 
 func (sender *IcmpSender) OnDCACall(UUID string, Command string, Args interface{}) typex.DCAResult {

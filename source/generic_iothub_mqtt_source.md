@@ -7,7 +7,7 @@
 Actions = {
     function(args)
         print('Data From IotHUB:', data)
-        local Json = rulexlib:T2J(
+        local Json = rhilexlib:T2J(
             {
                 method = 'report',
                 params = {

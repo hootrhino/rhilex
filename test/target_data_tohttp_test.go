@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/go-playground/assert/v2"
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulex_api_server/model"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilex_api_server/model"
 
 	"github.com/hootrhino/rhilex/typex"
 )

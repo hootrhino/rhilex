@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-const __DEFAULT_DB_PATH string = "./rulex_internal_datacenter.db"
+const __DEFAULT_DB_PATH string = "./rhilex_internal_datacenter.db"
 
 var __Sqlite *SqliteDAO
 
@@ -23,7 +23,7 @@ var __Sqlite *SqliteDAO
 *
  */
 type SqliteDAO struct {
-	engine typex.RuleX
+	engine typex.Rhilex
 	name   string   // 框架可以根据名称来选择不同的数据库驱动,为以后扩展准备
 	db     *gorm.DB // Sqlite 驱动
 }
@@ -33,7 +33,7 @@ type SqliteDAO struct {
 * 初始化DAO
 *
  */
-func InitSqliteDAO(engine typex.RuleX) *SqliteDAO {
+func InitSqliteDAO(engine typex.Rhilex) *SqliteDAO {
 	__Sqlite = &SqliteDAO{name: "Sqlite3", engine: engine}
 
 	var err error

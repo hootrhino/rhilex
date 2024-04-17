@@ -27,12 +27,12 @@ type XComponentMetaInfo struct {
 
 /*
 *
-* RULEX 系统组件
+* RHILEX 系统组件
 *
  */
 type XComponent interface {
 	Init(cfg map[string]any) error      // 配置
-	Start(r typex.RuleX) error          // 启动
+	Start(r typex.Rhilex) error         // 启动
 	Stop() error                        // 停止
 	PluginMetaInfo() XComponentMetaInfo // 元信息
 }

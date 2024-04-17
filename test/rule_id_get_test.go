@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
@@ -24,7 +24,7 @@ func Test_Get_RULE_ID(t *testing.T) {
 		glogger.GLogger.Fatal("Rule load failed:", err)
 	}
 	// Grpc Inend
-	grpcInend := typex.NewInEnd("GRPC", "Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 		"port": 2581,
 	})
 	ctx, cancelF := typex.NewCCTX() // ,ctx, cancelF
@@ -42,8 +42,8 @@ func Test_Get_RULE_ID(t *testing.T) {
 		`
 		Actions = {
 			function(args)
-				print('rulexlib:Time() =================> ', rulexlib:Time())
-				print('rulexlib:RUUID() =================> ', rulexlib:RUUID())
+				print('rhilexlib:Time() =================> ', rhilexlib:Time())
+				print('rhilexlib:RUUID() =================> ', rhilexlib:RUUID())
 				return true, args
 			end
 		}`,
@@ -56,9 +56,9 @@ func Test_Get_RULE_ID(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 
-	resp, err := client.Work(context.Background(), &rulexrpc.Data{
+	resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 		Value: string([]byte{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
 			10, 11, 12, 13, 14, 15, 16}),
@@ -66,7 +66,7 @@ func Test_Get_RULE_ID(t *testing.T) {
 	if err != nil {
 		glogger.GLogger.Error(err)
 	}
-	glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+	glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 
 	time.Sleep(1 * time.Second)
 	engine.Stop()

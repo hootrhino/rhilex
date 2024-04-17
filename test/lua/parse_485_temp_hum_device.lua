@@ -26,7 +26,7 @@
 --[[
 {
   "method":"report",
-  "clientToken":"rulex",
+  "clientToken":"rhilex",
   "timestamp":1677762028638,
   "params":{
     "tag":1,
@@ -41,15 +41,15 @@
 Actions =
 {
     function(args)
-        local dataT, err = rulexlib:J2T(data)
+        local dataT, err = rhilexlib:J2T(data)
         if (err ~= nil) then
             print('parse json error:', err)
             return true, args
         end
         for key, value in pairs(dataT) do
-            local MatchHexS = rulexlib:MatchUInt("temp:[0,1];hum:[2,3]", value['value'])
-            local ts = rulexlib:TsUnixNano()
-            local Json = rulexlib:T2J(
+            local MatchHexS = rhilexlib:MatchUInt("temp:[0,1];hum:[2,3]", value['value'])
+            local ts = rhilexlib:TsUnixNano()
+            local Json = rhilexlib:T2J(
                 {
                     method = 'report',
                     clientToken = ts,

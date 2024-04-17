@@ -14,7 +14,7 @@ type rawUartDriver struct {
 	state      typex.DriverState
 	serialPort serial.Port
 	ctx        context.Context
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	device     *typex.Device
 	locker     sync.Mutex
 }
@@ -22,7 +22,7 @@ type rawUartDriver struct {
 // 初始化一个驱动
 func NewRawUartDriver(
 	ctx context.Context,
-	e typex.RuleX,
+	e typex.Rhilex,
 	device *typex.Device,
 	serialPort serial.Port,
 ) typex.XExternalDriver {

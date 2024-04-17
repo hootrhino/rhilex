@@ -15,5 +15,5 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-# Rulex 安装脚本
-Linux下推荐使用 `rulex-daemon.sh`, 虽然说脚本之间区别不大，但是其他的没有经过大量测试不确定其稳定性。
+# rhilex 安装脚本
+Linux下推荐使用 `rhilex-daemon.sh`, 虽然说脚本之间区别不大，但是其他的没有经过大量测试不确定其稳定性。

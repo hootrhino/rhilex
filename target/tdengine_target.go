@@ -46,7 +46,7 @@ type tdHttpResult struct {
 	Desc   string `json:"desc"`
 }
 
-func NewTdEngineTarget(e typex.RuleX) typex.XTarget {
+func NewTdEngineTarget(e typex.Rhilex) typex.XTarget {
 	td := tdEngineTarget{
 		client:     http.Client{},
 		mainConfig: common.TDEngineConfig{},
@@ -116,14 +116,6 @@ func (td *tdEngineTarget) Details() *typex.OutEnd {
 
 }
 
-// 驱动接口, 通常用来和硬件交互
-func (td *tdEngineTarget) Driver() typex.XExternalDriver {
-	return nil
-}
-
-func (td *tdEngineTarget) Topology() []typex.TopologyPoint {
-	return []typex.TopologyPoint{}
-}
 
 // 停止资源, 用来释放资源
 func (td *tdEngineTarget) Stop() {

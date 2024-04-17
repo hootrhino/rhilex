@@ -36,7 +36,7 @@ type QueueData struct {
 	I     *typex.InEnd
 	O     *typex.OutEnd
 	D     *typex.Device
-	E     typex.RuleX
+	E     typex.Rhilex
 	Data  string
 }
 
@@ -60,16 +60,16 @@ type DataCacheQueue struct {
 	OutQueue    chan QueueData
 	InQueue     chan QueueData
 	DeviceQueue chan QueueData
-	rulex       typex.RuleX
+	rhilex      typex.Rhilex
 }
 
-func InitDataCacheQueue(rulex typex.RuleX, maxQueueSize int) XQueue {
+func InitDataCacheQueue(rhilex typex.Rhilex, maxQueueSize int) XQueue {
 	DefaultDataCacheQueue = &DataCacheQueue{
 		Queue:       make(chan QueueData, maxQueueSize),
 		OutQueue:    make(chan QueueData, maxQueueSize),
 		InQueue:     make(chan QueueData, maxQueueSize),
 		DeviceQueue: make(chan QueueData, maxQueueSize),
-		rulex:       rulex,
+		rhilex:      rhilex,
 	}
 	return DefaultDataCacheQueue
 }
@@ -113,7 +113,7 @@ func processQueueData(xQueue XQueue) {
 	}
 }
 
-func processOutQueueData(qd QueueData, e typex.RuleX) {
+func processOutQueueData(qd QueueData, e typex.Rhilex) {
 	if qd.O != nil {
 		v, ok := e.AllOutEnds().Load(qd.O.UUID)
 		if ok {
@@ -273,7 +273,7 @@ func (q *DataCacheQueue) PushQueue(qd QueueData) error {
  */
 func (q *DataCacheQueue) PushInQueue(in *typex.InEnd, data string) error {
 	qd := QueueData{
-		E:    q.rulex,
+		E:    q.rhilex,
 		I:    in,
 		O:    nil,
 		Data: data,
@@ -296,7 +296,7 @@ func (q *DataCacheQueue) PushInQueue(in *typex.InEnd, data string) error {
 func (q *DataCacheQueue) PushDeviceQueue(Device *typex.Device, data string) error {
 	qd := QueueData{
 		D:    Device,
-		E:    q.rulex,
+		E:    q.rhilex,
 		I:    nil,
 		O:    nil,
 		Data: data,
@@ -318,7 +318,7 @@ func (q *DataCacheQueue) PushDeviceQueue(Device *typex.Device, data string) erro
  */
 func (q *DataCacheQueue) PushOutQueue(out *typex.OutEnd, data string) error {
 	qd := QueueData{
-		E:    q.rulex,
+		E:    q.rhilex,
 		D:    nil,
 		I:    nil,
 		O:    out,

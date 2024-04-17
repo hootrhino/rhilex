@@ -3,8 +3,8 @@ package test
 import (
 	"context"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
@@ -23,7 +23,7 @@ func TestFullyRun(t *testing.T) {
 		glogger.GLogger.Fatal("Rule load failed:", err)
 	}
 	// Grpc Inend
-	grpcInend := typex.NewInEnd("GRPC", "Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 		"host": "127.0.0.1",
 		"port": 2581,
 	})
@@ -86,7 +86,7 @@ func TestFullyRun(t *testing.T) {
 		"rule4",
 		grpcInend.UUID,
 		"",
-		`function Success() print("[rulexlib:J2T(data) Success Callback]=> OK") end`,
+		`function Success() print("[rhilexlib:J2T(data) Success Callback]=> OK") end`,
 		`
 		Actions = {
 			function(args)
@@ -97,11 +97,11 @@ func TestFullyRun(t *testing.T) {
 			    return true, args
 			end,
 			function(args)
-			    print(rulexlib:Time())
+			    print(rhilexlib:Time())
 			    return true, args
 			end
 		}`,
-		`function Failed(error) print("[rulexlib:J2T(data) Failed Callback]", error) end`)
+		`function Failed(error) print("[rhilexlib:J2T(data) Failed Callback]", error) end`)
 	if err := engine.LoadRule(rule1); err != nil {
 		glogger.GLogger.Error(err)
 	}
@@ -119,10 +119,10 @@ func TestFullyRun(t *testing.T) {
 		glogger.GLogger.Error(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 	for i := 0; i < 30; i++ {
 		glogger.GLogger.Infof("Test count ==========================>>: %v", i)
-		resp, err := client.Work(context.Background(), &rulexrpc.Data{
+		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: `
 					[
 						{"co2":10,"hum":30,"lex":22,"temp":100},
@@ -134,7 +134,7 @@ func TestFullyRun(t *testing.T) {
 		if err != nil {
 			glogger.GLogger.Error(err)
 		}
-		glogger.GLogger.Infof("Rulex Rpc Call Result ====>>: %v", resp.GetMessage())
+		glogger.GLogger.Infof("rhilex Rpc Call Result ====>>: %v", resp.GetMessage())
 	}
 
 	glogger.GLogger.Info("Test Http system Api===> " + HttpGet("http://127.0.0.1:2580/api/v1/system"))

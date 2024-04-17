@@ -19,22 +19,22 @@
 ---@diagnostic disable: undefined-global
 -- Success
 function Success()
-    -- rulexlib:log("success")
+    -- rhilexlib:log("success")
 end
 -- Failed
 function Failed(error)
-    rulexlib:log("Error:", error)
+    rhilexlib:log("Error:", error)
 end
 
 -- Actions
 Actions = {function(args)
-    local jt = rulexlib:J2T(data)
+    local jt = rhilexlib:J2T(data)
     for k, v in pairs(jt) do
-        local ht = rulexlib:MB('>hv:16 tv:16', v['value'], false)
+        local ht = rhilexlib:MB('>hv:16 tv:16', v['value'], false)
         print(k, "Raw value:", ht['hv'], ht['tv'])
-        local humi = rulexlib:B2I64('>', rulexlib:BS2B(ht['hv']))
-        local temp = rulexlib:B2I64('>', rulexlib:BS2B(ht['tv']))
-        local ts = rulexlib:TsUnixNano()
+        local humi = rhilexlib:B2I64('>', rhilexlib:BS2B(ht['hv']))
+        local temp = rhilexlib:B2I64('>', rhilexlib:BS2B(ht['tv']))
+        local ts = rhilexlib:TsUnixNano()
         local jsont = {
             method = 'report',
             clientToken = ts,
@@ -44,7 +44,7 @@ Actions = {function(args)
                 humi = humi
             }
         }
-        print(k, "Parsed value:", rulexlib:T2J(jsont))
+        print(k, "Parsed value:", rhilexlib:T2J(jsont))
     end
     return true, args
 end}

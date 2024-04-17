@@ -25,11 +25,11 @@ import (
 
 /*
 *
-* Stop RULEX
+* Stop RHILEX
 *
  */
-func StopRulex() error {
-	pid, err1 := GetEarliestProcessPID("rulex")
+func StopRhilex() error {
+	pid, err1 := GetEarliestProcessPID("rhilex")
 	if err1 != nil {
 		return err1
 	}
@@ -45,13 +45,13 @@ func StopRulex() error {
 * 重启, 依赖于守护进程脚本, 因此这个不是通用的
 *
  */
-func RestartRulex() error {
-	cmd := exec.Command("/etc/init.d/rulex.service", "restart")
+func RestartRhilex() error {
+	cmd := exec.Command("/etc/init.d/rhilex.service", "restart")
 	cmd.SysProcAttr = NewSysProcAttr()
 	cmd.Env = os.Environ()
 	err := cmd.Start()
 	if err != nil {
-		log.Println("Restart Rulex Failed:", err)
+		log.Println("Restart rhilex Failed:", err)
 		return err
 	}
 	return nil
@@ -60,12 +60,12 @@ func RestartRulex() error {
 /*
 *
 * 恢复上传的DB
-1 停止RULEX
+1 停止RHILEX
 2 删除老DB
 3 复制新DB到路径
 3 删除PID,停止守护进程
 4 重启(脚本会新建PID)
-- path: /usr/local/rulex, args: recover=true
+- path: /usr/local/rhilex, args: recover=true
 *
 */
 func FileExists(filename string) bool {
@@ -79,7 +79,7 @@ func FileExists(filename string) bool {
 *
  */
 func StartRecoverProcess() {
-	cmd := exec.Command("./rulex", "recover", "-recover=true")
+	cmd := exec.Command("./rhilex", "recover", "-recover=true")
 	cmd.SysProcAttr = NewSysProcAttr()
 	cmd.Env = os.Environ()
 	err := cmd.Start()
@@ -96,7 +96,7 @@ func StartRecoverProcess() {
 *
  */
 func StartUpgradeProcess() {
-	cmd := exec.Command("./rulex", "upgrade", "-upgrade=true")
+	cmd := exec.Command("./rhilex", "upgrade", "-upgrade=true")
 	cmd.SysProcAttr = NewSysProcAttr()
 	cmd.Env = os.Environ()
 	err := cmd.Start()

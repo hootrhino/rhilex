@@ -90,12 +90,12 @@ func Flush() {
 type ShellyDeviceRegistry struct {
 	Slots      map[string]map[string]ShellyDevice // MAC : {MAC, Info}
 	keys       []string
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	locker     sync.RWMutex
 	status     string // SCANNING | DONE
 }
 
-func InitShellyDeviceRegistry(ruleEngine typex.RuleX) *ShellyDeviceRegistry {
+func InitShellyDeviceRegistry(ruleEngine typex.Rhilex) *ShellyDeviceRegistry {
 	__DefaultShellyDeviceRegistry = &ShellyDeviceRegistry{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]ShellyDevice{},

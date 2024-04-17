@@ -25,7 +25,7 @@ type MqttServer struct {
 	Port       int
 	mqttServer *mqtt.Server
 	topics     map[string][]_topic // Topic 订阅表
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	uuid       string
 }
 
@@ -34,7 +34,7 @@ func NewMqttServer() typex.XPlugin {
 		Host:   "127.0.0.1",
 		Port:   1884,
 		topics: map[string][]_topic{},
-		uuid:   "RULEX-MqttServer",
+		uuid:   "RHILEX-MqttServer",
 	}
 }
 
@@ -48,7 +48,7 @@ func (s *MqttServer) Init(config *ini.Section) error {
 	return nil
 }
 
-func (s *MqttServer) Start(r typex.RuleX) error {
+func (s *MqttServer) Start(r typex.Rhilex) error {
 	s.ruleEngine = r
 	zlog := zerolog.New(glogger.GLogger.Writer()).With().Logger()
 

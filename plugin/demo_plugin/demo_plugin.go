@@ -19,7 +19,7 @@ func (dm *DemoPlugin) Init(config *ini.Section) error {
 	return nil
 }
 
-func (dm *DemoPlugin) Start(typex.RuleX) error {
+func (dm *DemoPlugin) Start(typex.Rhilex) error {
 	return nil
 }
 func (dm *DemoPlugin) Stop() error {

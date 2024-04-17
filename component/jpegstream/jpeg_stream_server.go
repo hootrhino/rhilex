@@ -34,7 +34,7 @@ type JpegStreamServer struct {
 * 初始化
 *
  */
-func InitJpegStreamServer(rulex typex.RuleX) {
+func InitJpegStreamServer(rhilex typex.Rhilex) {
 	if core.GlobalConfig.AppDebugMode {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -47,7 +47,7 @@ func InitJpegStreamServer(rulex typex.RuleX) {
 		wsPort:      9401,
 	}
 	__DefaultJpegStreamServer.Init(map[string]any{})
-	__DefaultJpegStreamServer.Start(rulex)
+	__DefaultJpegStreamServer.Start(rhilex)
 }
 
 /*
@@ -226,7 +226,7 @@ func (s *JpegStreamServer) Init(cfg map[string]any) error {
 	})
 	return nil
 }
-func (s *JpegStreamServer) Start(r typex.RuleX) error {
+func (s *JpegStreamServer) Start(r typex.Rhilex) error {
 	go func(ctx context.Context) {
 		listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", __DefaultJpegStreamServer.wsPort))
 		if err != nil {

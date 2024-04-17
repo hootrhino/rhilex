@@ -34,7 +34,7 @@ func (ms *modbusCRCCalculator) Init(config *ini.Section) error {
 	return nil
 }
 
-func (ms *modbusCRCCalculator) Start(typex.RuleX) error {
+func (ms *modbusCRCCalculator) Start(typex.Rhilex) error {
 	return nil
 }
 func (ms *modbusCRCCalculator) Stop() error {

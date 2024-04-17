@@ -5,7 +5,7 @@ import (
 
 	"github.com/hootrhino/rhilex/common"
 	"github.com/hootrhino/rhilex/component/appstack"
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 
 	"testing"
 

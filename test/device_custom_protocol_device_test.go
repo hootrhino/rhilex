@@ -9,8 +9,8 @@ import (
 
 	serial "github.com/wwhai/tarmserial"
 
-	httpserver "github.com/hootrhino/rhilex/component/rulex_api_server"
-	"github.com/hootrhino/rhilex/component/rulexrpc"
+	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	"github.com/hootrhino/rhilex/component/rhilexrpc"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
 	"google.golang.org/grpc"
@@ -52,7 +52,7 @@ func TestCustomProtocolDevice(t *testing.T) {
 	}
 	// Grpc Inend
 	grpcInend := typex.NewInEnd(typex.GRPC,
-		"Rulex Grpc InEnd", "Rulex Grpc InEnd", map[string]interface{}{
+		"rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
 			"port": 2581,
 			"host": "127.0.0.1",
 		})
@@ -127,9 +127,9 @@ func TestCustomProtocolDevice(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer conn.Close()
-	client := rulexrpc.NewRulexRpcClient(conn)
+	client := rhilexrpc.NewRhilexRpcClient(conn)
 
-	resp, err := client.Work(context.Background(), &rulexrpc.Data{
+	resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 		Value: `get_uuid`,
 	})
 	if err != nil {

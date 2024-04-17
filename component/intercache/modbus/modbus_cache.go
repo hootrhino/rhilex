@@ -61,11 +61,11 @@ func Flush() {
 
 type ModbusPointCache struct {
 	Slots      map[string]map[string]RegisterPoint
-	ruleEngine typex.RuleX
+	ruleEngine typex.Rhilex
 	locker     sync.Mutex
 }
 
-func InitModbusPointCache(ruleEngine typex.RuleX) intercache.InterCache {
+func InitModbusPointCache(ruleEngine typex.Rhilex) intercache.InterCache {
 	__DefaultModbusPointCache = &ModbusPointCache{
 		ruleEngine: ruleEngine,
 		Slots:      map[string]map[string]RegisterPoint{},

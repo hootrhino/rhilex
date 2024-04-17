@@ -20,14 +20,14 @@ type modBusTCPDriver struct {
 	state      typex.DriverState
 	handler    *modbus.TCPClientHandler
 	client     modbus.Client
-	RuleEngine typex.RuleX
+	RuleEngine typex.Rhilex
 	Registers  map[string]*common.RegisterRW
 	device     *typex.Device
 }
 
 func NewModBusTCPDriver(
 	d *typex.Device,
-	e typex.RuleX,
+	e typex.Rhilex,
 	Registers map[string]*common.RegisterRW,
 	handler *modbus.TCPClientHandler,
 	client modbus.Client) typex.XExternalDriver {

@@ -40,7 +40,7 @@ type mqttOutEndTarget struct {
 	status     typex.SourceState
 }
 
-func NewMqttTarget(e typex.RuleX) typex.XTarget {
+func NewMqttTarget(e typex.Rhilex) typex.XTarget {
 	m := new(mqttOutEndTarget)
 	m.RuleEngine = e
 	m.mainConfig = common.MqttConfig{
@@ -50,9 +50,7 @@ func NewMqttTarget(e typex.RuleX) typex.XTarget {
 	m.status = typex.SOURCE_DOWN
 	return m
 }
-func (*mqttOutEndTarget) Driver() typex.XExternalDriver {
-	return nil
-}
+
 func (mq *mqttOutEndTarget) Init(outEndId string, configMap map[string]interface{}) error {
 	mq.PointId = outEndId
 	if err := utils.BindSourceConfig(configMap, &mq.mainConfig); err != nil {
@@ -80,8 +78,8 @@ func (mq *mqttOutEndTarget) Start(cctx typex.CCTX) error {
 	opts.OnConnect = connectHandler
 	opts.OnConnectionLost = connectLostHandler
 	opts.CleanSession = true
-	opts.SetAutoReconnect(false)    //不需要自动重连, 交给RULEX管理
-	opts.SetMaxReconnectInterval(0) // 不需要自动重连, 交给RULEX管理
+	opts.SetAutoReconnect(false)    //不需要自动重连, 交给RHILEX管理
+	opts.SetMaxReconnectInterval(0) // 不需要自动重连, 交给RHILEX管理
 	mq.client = mqtt.NewClient(opts)
 	token := mq.client.Connect()
 	if token.Wait() && token.Error() != nil {
