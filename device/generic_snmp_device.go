@@ -213,12 +213,12 @@ func (sd *genericSnmpDevice) Status() typex.DeviceState {
 
 // 停止设备
 func (sd *genericSnmpDevice) Stop() {
-	snmpCache.UnRegisterSlot(sd.PointId)
-	dataschema.UnRegisterSlot(sd.PointId)
 	sd.status = typex.DEV_DOWN
 	if sd.CancelCTX != nil {
 		sd.CancelCTX()
 	}
+	snmpCache.UnRegisterSlot(sd.PointId)
+	dataschema.UnRegisterSlot(sd.PointId)
 }
 
 // 真实设备
