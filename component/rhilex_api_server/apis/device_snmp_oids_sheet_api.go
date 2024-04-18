@@ -135,33 +135,35 @@ func SnmpSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	recordsVo := []SnmpOidVo{}
-
-	for _, record := range records {
-		Slot := snmpCache.GetSlot(deviceUuid)
-		Value, ok := Slot[record.UUID]
-		Vo := SnmpOidVo{
-			UUID:       record.UUID,
-			Oid:        record.Oid,
-			DeviceUUID: record.DeviceUuid,
-			Tag:        record.Tag,
-			Alias:      record.Alias,
-			Frequency:  &record.Frequency,
-			ErrMsg:     Value.ErrMsg,
-		}
-		if ok {
-			Vo.Status = func() int {
-				if Value.Value == "" {
-					return 0
-				}
-				return 1
-			}() // 运行时
-			Vo.LastFetchTime = Value.LastFetchTime // 运行时
-			Vo.Value = Value.Value                 // 运行时
-			recordsVo = append(recordsVo, Vo)
-		} else {
-			recordsVo = append(recordsVo, Vo)
+	Slot := snmpCache.GetSlot(deviceUuid)
+	if Slot != nil {
+		for _, record := range records {
+			Value, ok := Slot[record.UUID]
+			Vo := SnmpOidVo{
+				UUID:       record.UUID,
+				Oid:        record.Oid,
+				DeviceUUID: record.DeviceUuid,
+				Tag:        record.Tag,
+				Alias:      record.Alias,
+				Frequency:  &record.Frequency,
+				ErrMsg:     Value.ErrMsg,
+			}
+			if ok {
+				Vo.Status = func() int {
+					if Value.Value == "" {
+						return 0
+					}
+					return 1
+				}() // 运行时
+				Vo.LastFetchTime = Value.LastFetchTime // 运行时
+				Vo.Value = Value.Value                 // 运行时
+				recordsVo = append(recordsVo, Vo)
+			} else {
+				recordsVo = append(recordsVo, Vo)
+			}
 		}
 	}
+
 	Result := service.WrapPageResult(*pager, recordsVo, count)
 	c.JSON(common.HTTP_OK, common.OkWithData(Result))
 }
