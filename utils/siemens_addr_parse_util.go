@@ -48,7 +48,7 @@ type AddressInfo struct {
 
 func (O AddressInfo) String() string {
 	if bytes, err := json.Marshal(O); err != nil {
-		return ""
+		return "{}"
 	} else {
 		return string(bytes)
 	}

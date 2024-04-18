@@ -198,6 +198,7 @@ func (hs *ApiServerPlugin) Init(config *ini.Section) error {
 		&model.MHnc8DataPoint{},
 		&model.MKnd8DataPoint{},
 		&model.MSnmpOid{},
+		&model.MBacnetNode{},
 	)
 	// 初始化所有预制参数
 	server.DefaultApiServer.InitializeGenericOSData()
@@ -501,13 +502,15 @@ func (hs *ApiServerPlugin) LoadRoute() {
 	//New Api
 	//
 	shelly.InitShellyRoute()
+	//
+	apis.InitSnmpRoute()
 }
 
 // ApiServerPlugin Start
 func (hs *ApiServerPlugin) Start(r typex.Rhilex) error {
 	hs.ruleEngine = r
 	hs.LoadRoute()
-	glogger.GLogger.Infof("Http server started on :%v", 2580)
+	glogger.GLogger.Infof("Http server started on :%v", hs.mainConfig.Port)
 	return nil
 }
 

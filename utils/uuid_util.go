@@ -63,6 +63,11 @@ func SiemensPointUUID() string {
 	return MakeUUID("SIMTB")
 }
 
+// MakeUUID
+func SnmpOidUUID() string {
+	return MakeUUID("SNMP")
+}
+
 // 凯帝恩
 func KDNPointUUID() string {
 	return MakeUUID("KDNC")

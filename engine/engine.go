@@ -27,6 +27,7 @@ import (
 	"github.com/hootrhino/rhilex/component/appstack"
 	dataschema "github.com/hootrhino/rhilex/component/dataschema"
 	"github.com/hootrhino/rhilex/component/hwportmanager"
+	bacnetCache "github.com/hootrhino/rhilex/component/intercache/bacnet"
 	hnccnc "github.com/hootrhino/rhilex/component/intercache/hnccnc"
 	kdncnc "github.com/hootrhino/rhilex/component/intercache/kdncnc"
 	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
@@ -109,6 +110,8 @@ func InitRuleEngine(config typex.RhilexConfig) typex.Rhilex {
 	hnccnc.InitHnc8CnCPointCache(__DefaultRuleEngine)
 	// HNC CNC
 	kdncnc.InitKdnCnCPointCache(__DefaultRuleEngine)
+	// Init CacheValueCache
+	bacnetCache.InitBacnetCache(__DefaultRuleEngine)
 	// Internal Bus
 	internotify.InitInternalEventBus(__DefaultRuleEngine, core.GlobalConfig.MaxQueueSize)
 	// Internal Schema
@@ -226,6 +229,8 @@ func (e *RuleEngine) Stop() {
 	hnccnc.Flush()
 	glogger.GLogger.Info("Flush Data Schema Cache")
 	dataschema.Flush()
+	glogger.GLogger.Info("Flush Bacnet Cache")
+	bacnetCache.Flush()
 	glogger.GLogger.Info("Stop AI Runtime")
 	aibase.Stop()
 	glogger.GLogger.Info("[√] Stop rhilex successfully")

@@ -43,8 +43,7 @@ func (dog *genericWatchDog) Init(config *ini.Section) error {
 }
 
 func (dog *genericWatchDog) Start(typex.Rhilex) error {
-
-	return nil
+	return fmt.Errorf("OS Not Support Soft WatchDog:%s", runtime.GOOS)
 }
 func (dog *genericWatchDog) Stop() error {
 	return nil

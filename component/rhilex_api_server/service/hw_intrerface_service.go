@@ -47,7 +47,7 @@ type HwPortDto struct {
 
 func (u UartConfigDto) JsonString() string {
 	if bytes, err := json.Marshal(u); err != nil {
-		return ""
+		return "{}"
 	} else {
 		return string(bytes)
 	}

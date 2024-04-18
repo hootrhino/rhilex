@@ -27,7 +27,9 @@ type snmpOid struct {
 	Value     any    `json:"value"` // 运行时的值
 }
 type _SNMPCommonConfig struct {
-	AutoRequest *bool `json:"autoRequest" validate:"required"`
+	AutoRequest *bool `json:"autoRequest" validate:"required"` // 自动请求
+	Timeout     *int  `json:"timeout" validate:"required"`     // 请求超时
+	Frequency   *int  `json:"frequency"`                       // 请求频率
 }
 
 type _GSNMPConfig struct {
@@ -56,7 +58,22 @@ func NewGenericSnmpDevice(e typex.Rhilex) typex.XDevice {
 	sd := new(genericSnmpDevice)
 	sd.RuleEngine = e
 	sd.locker = &sync.Mutex{}
-	sd.mainConfig = _GSNMPConfig{}
+	sd.mainConfig = _GSNMPConfig{
+		CommonConfig: _SNMPCommonConfig{
+			AutoRequest: func() *bool {
+				b := true
+				return &b
+			}(),
+			Timeout: func() *int {
+				a := 5000
+				return &a
+			}(), // ms
+			Frequency: func() *int {
+				a := 5000
+				return &a
+			}(), // ms
+		},
+	}
 	sd.snmpOids = map[string]snmpOid{}
 	return sd
 }
@@ -163,6 +180,9 @@ func (sd *genericSnmpDevice) Start(cctx typex.CCTX) error {
 				glogger.GLogger.Error(err)
 				continue
 			}
+			if len(snmpOids) < 1 {
+				continue
+			}
 			if bytes, err := json.Marshal(snmpOids); err != nil {
 				glogger.GLogger.Error(err)
 			} else {
@@ -189,7 +209,7 @@ func (sd *genericSnmpDevice) OnWrite(cmd []byte, _ []byte) (int, error) {
 
 // 设备当前状态
 func (sd *genericSnmpDevice) Status() typex.DeviceState {
-	return typex.DEV_UP
+	return sd.status
 }
 
 // 停止设备

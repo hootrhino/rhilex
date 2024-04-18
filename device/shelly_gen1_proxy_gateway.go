@@ -44,10 +44,11 @@ import (
 
 type ShellyGen1ProxyGateway struct {
 	typex.XStatus
-	status     typex.DeviceState
-	mainConfig ShellyGen1ProxyGatewayConfig
-	BlackList  map[string]string
-	locker     sync.Mutex
+	status              typex.DeviceState
+	mainConfig          ShellyGen1ProxyGatewayConfig
+	BlackList           map[string]string
+	locker              sync.Mutex
+	shellyWebHookServer *shellymanager.ShellyWebHookServer
 }
 
 /*
@@ -64,6 +65,8 @@ type ShellyGen1ProxyGatewayConfig struct {
 	ScanTimeout int `json:"timeout" validate:"required"`
 	// Request Frequency, default 5 second
 	Frequency int64 `json:"frequency" validate:"required"`
+	// WebHook Listen Port
+	WebHookPort int `json:"webHookPort" validate:"required"`
 }
 
 /*
@@ -83,8 +86,10 @@ func NewShellyGen1ProxyGateway(e typex.Rhilex) typex.XDevice {
 		}(),
 		ScanTimeout: 3000, //ms
 		Frequency:   5000, //ms
+		WebHookPort: 6400,
 	}
 	Shelly.RuleEngine = e
+
 	return Shelly
 }
 
@@ -96,6 +101,10 @@ func (Shelly *ShellyGen1ProxyGateway) Init(devId string, configMap map[string]in
 		return err
 	}
 	shellymanager.RegisterSlot(devId)
+	Shelly.shellyWebHookServer = shellymanager.NewShellyWebHookServer(
+		Shelly.RuleEngine,
+		Shelly.mainConfig.WebHookPort,
+	)
 	return nil
 }
 
@@ -103,6 +112,7 @@ func (Shelly *ShellyGen1ProxyGateway) Init(devId string, configMap map[string]in
 func (Shelly *ShellyGen1ProxyGateway) Start(cctx typex.CCTX) error {
 	Shelly.Ctx = cctx.Ctx
 	Shelly.CancelCTX = cctx.CancelCTX
+	Shelly.shellyWebHookServer.StartServer(Shelly.Ctx)
 	go func() {
 		ticker := time.NewTicker(30 * time.Second)
 		defer ticker.Stop()
@@ -135,6 +145,7 @@ func (Shelly *ShellyGen1ProxyGateway) Stop() {
 	Shelly.status = typex.DEV_DOWN
 	Shelly.CancelCTX()
 	shellymanager.UnRegisterSlot(Shelly.PointId)
+	Shelly.shellyWebHookServer.Stop()
 }
 
 func (Shelly *ShellyGen1ProxyGateway) OnRead(cmd []byte, data []byte) (int, error) {

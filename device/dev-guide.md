@@ -99,6 +99,8 @@ func (hd *TemplateDevice) OnCtrl(cmd []byte, args []byte) ([]byte, error) {
   主要工作线程，比如客户端可以在这里开启。
 - Stop() error
   停止的时候回调，用来释放资源
+- Status() typex.DeviceState
+  状态回调，决定了运行时对资源的生命周期控制时机。
 
 ## 运行时数据
 运行时数据使用cache模块，比如Modbus初始化时向缓存器注册一个槽位：

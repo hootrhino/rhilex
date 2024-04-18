@@ -71,15 +71,18 @@ func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 	}
 	staticFs := WWWRoot("")
 	server.ginEngine.Use(static.Serve("/", staticFs))
-	// server.ginEngine.GET("/logo.svg", func(c *gin.Context) {
-	// 	c.Header("Content-Type", "image/svg+xml")
-	// 	c.FileFromFS("/logo.svg", staticFs)
-	// })
 	server.ginEngine.Use(Authorize())
 	server.ginEngine.Use(CheckLicense())
-	// server.ginEngine.Use(RateLimit())
 	server.ginEngine.Use(Cros())
 	server.ginEngine.GET("/ws", glogger.WsLogger)
+	server.ginEngine.GET("/logo.svg", func(c *gin.Context) {
+		c.Header("Content-Type", "image/svg+xml")
+		c.FileFromFS("logo.svg", staticFs)
+	})
+	server.ginEngine.GET("/favicon.svg", func(c *gin.Context) {
+		c.Header("Content-Type", "image/svg+xml")
+		c.FileFromFS("favicon.svg", staticFs)
+	})
 	server.ginEngine.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
 		if core.GlobalConfig.AppDebugMode {
 			debug.PrintStack()
@@ -109,15 +112,14 @@ func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 	go func(ctx context.Context, port int) {
 		listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 		if err != nil {
-			glogger.GLogger.Fatalf("httpserver listen error: %s", err)
+			glogger.GLogger.Fatalf("Http Api Server listen error: %s", err)
 		}
 		defer listener.Close()
 		if err := server.ginEngine.RunListener(listener); err != nil {
-			glogger.GLogger.Fatalf("httpserver listen error: %s", err)
+			glogger.GLogger.Fatalf("Http Api Server listen error: %s", err)
 		}
 	}(typex.GCTX, server.config.Port)
-	glogger.GLogger.Infof("httpserver listen on: %d", server.config.Port)
-
+	glogger.GLogger.Infof("Http Api Server listen on: %s", fmt.Sprintf("0.0.0.0:%d", port))
 	DefaultApiServer = &server
 }
 
