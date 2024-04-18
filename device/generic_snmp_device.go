@@ -24,7 +24,6 @@ type snmpOid struct {
 	Tag       string `json:"tag"`   // temp
 	Alias     string `json:"alias"` // 温度
 	Frequency *int   `json:"-"`     // 请求频率
-	Value     any    `json:"value"` // 运行时的值
 }
 type _SNMPCommonConfig struct {
 	AutoRequest *bool `json:"autoRequest" validate:"required"` // 自动请求
@@ -286,28 +285,23 @@ func (sd *genericSnmpDevice) readData() ([]snmpOid, error) {
 				// glogger.GLogger.Debug("SNMP Walk:", snmpOid.Oid, variable)
 				// 目前先考虑这么多类型，其他的好像没见过
 				if variable.Type == gosnmp.OctetString {
-					snmpOid.Value = string(variable.Value.([]byte))
-					Value = fmt.Sprintf("%v", snmpOid.Value)
+					Value = fmt.Sprintf("%v", string(variable.Value.([]byte)))
 					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.Integer {
-					snmpOid.Value = int64(variable.Value.(int))
-					Value = fmt.Sprintf("%v", snmpOid.Value)
+					Value = fmt.Sprintf("%v", int64(variable.Value.(int)))
 					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.Boolean {
-					snmpOid.Value = bool(variable.Value.(bool))
-					Value = fmt.Sprintf("%v", snmpOid.Value)
+					Value = fmt.Sprintf("%v", bool(variable.Value.(bool)))
 					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.IPAddress {
-					snmpOid.Value = string(variable.Value.([]byte))
-					Value = fmt.Sprintf("%v", snmpOid.Value)
+					Value = fmt.Sprintf("%v", string(variable.Value.([]byte)))
 					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.Null {
-					snmpOid.Value = "Null"
-					Value = fmt.Sprintf("%v", snmpOid.Value)
+					Value = "Null"
 					result = append(result, snmpOid)
 				}
 				return nil
