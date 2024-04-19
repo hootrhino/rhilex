@@ -45,8 +45,8 @@ func InitSnmpRoute() {
 		Route.GET(("/sheetExport"), server.AddRoute(SnmpOidsExport))
 		Route.GET(("/list"), server.AddRoute(SnmpSheetPageList))
 		Route.POST(("/update"), server.AddRoute(SnmpSheetUpdate))
-		Route.DELETE(("/delIds"), server.AddRoute(SnmpSheetDelete))
 		Route.DELETE(("/delAll"), server.AddRoute(SnmpSheetDeleteAll))
+		Route.DELETE(("/delIds"), server.AddRoute(SnmpSheetDeleteByUUIDs))
 	}
 }
 
@@ -173,7 +173,7 @@ func SnmpSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 * 删除单行
 *
  */
-func SnmpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
+func SnmpSheetDeleteByUUIDs(c *gin.Context, ruleEngine typex.Rhilex) {
 	type Form struct {
 		UUIDs      []string `json:"uuids"`
 		DeviceUUID string   `json:"device_uuid"`
@@ -198,9 +198,8 @@ func SnmpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
 *删除
 *
  */
-func SnmpSheetDelete(c *gin.Context, ruleEngine typex.Rhilex) {
+func SnmpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
 	type Form struct {
-		UUIDs      []string `json:"uuids"`
 		DeviceUUID string   `json:"device_uuid"`
 	}
 	form := Form{}
