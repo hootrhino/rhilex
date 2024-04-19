@@ -15,48 +15,66 @@
 package server
 
 import (
-	"context"
-	"sync/atomic"
-	"time"
-
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
-var timeout int32 = 300
-
-func decreaseRateTime() {
-	atomic.AddInt32(&timeout, -1)
+type Info struct {
+	Limit         uint
+	RateLimited   bool
+	ResetTime     time.Time
+	RemainingHits uint
 }
 
-func reInitRateTime() {
-	atomic.StoreInt32(&timeout, 300)
+type Store interface {
+	// Limit takes in a key and *gin.Context and should return whether that key is allowed to make another request
+	Limit(key string, c *gin.Context) Info
 }
-func StartRateLimiter(ctx context.Context) {
-	ticker := time.NewTicker(100 * time.Millisecond)
-	defer ticker.Stop()
 
-	for {
-		select {
-		case <-ticker.C:
-			if atomic.LoadInt32(&timeout) > 0 {
-				decreaseRateTime()
-			}
-		case <-ctx.Done():
-			return // Stop the rate limiter when the context is cancelled
+type Options struct {
+	ErrorHandler func(*gin.Context, Info)
+	KeyFunc      func(*gin.Context) string
+	// a function that lets you check the rate limiting info and modify the response
+	BeforeResponse func(c *gin.Context, info Info)
+}
+
+// RateLimiter is a function to get gin.HandlerFunc
+func RateLimiter(s Store, options *Options) gin.HandlerFunc {
+	if options == nil {
+		options = &Options{}
+	}
+	if options.ErrorHandler == nil {
+		options.ErrorHandler = func(c *gin.Context, info Info) {
+			c.Header("X-Rate-Limit-Limit", fmt.Sprintf("%d", info.Limit))
+			c.Header("X-Rate-Limit-Reset", fmt.Sprintf("%d", info.ResetTime.Unix()))
+			c.String(429, "Too many requests")
 		}
 	}
-}
-
-func RateLimit() gin.HandlerFunc {
+	if options.BeforeResponse == nil {
+		options.BeforeResponse = func(c *gin.Context, info Info) {
+			c.Header("X-Rate-Limit-Limit", fmt.Sprintf("%d", info.Limit))
+			c.Header("X-Rate-Limit-Remaining", fmt.Sprintf("%v", info.RemainingHits))
+			c.Header("X-Rate-Limit-Reset", fmt.Sprintf("%d", info.ResetTime.Unix()))
+		}
+	}
+	if options.KeyFunc == nil {
+		options.KeyFunc = func(c *gin.Context) string {
+			return c.ClientIP() + c.FullPath()
+		}
+	}
 	return func(c *gin.Context) {
-		if atomic.LoadInt32(&timeout) <= 0 {
-			reInitRateTime()
-			c.Next()
+		key := options.KeyFunc(c)
+		info := s.Limit(key, c)
+		options.BeforeResponse(c, info)
+		if c.IsAborted() {
+			return
+		}
+		if info.RateLimited {
+			options.ErrorHandler(c, info)
+			c.Abort()
 		} else {
-			c.AbortWithStatusJSON(429, map[string]interface{}{
-				"code": 4001,
-				"msg":  "Excessive operating frequency!",
-			})
+			c.Next()
 		}
 	}
 }

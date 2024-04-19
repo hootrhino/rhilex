@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime/debug"
+	"time"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -58,6 +59,12 @@ var err1crash = errors.New("http server crash, try to recovery")
 * 开启Server
 *
  */
+func keyFunc(c *gin.Context) string {
+	return c.ClientIP()
+}
+func errorHandler(c *gin.Context, info Info) {
+	c.JSON(400, response.Error("Too many requests. Try again in 3s"))
+}
 func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 	if core.GlobalConfig.AppDebugMode {
 		gin.SetMode(gin.DebugMode)
@@ -69,6 +76,11 @@ func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 		ruleEngine: ruleEngine,
 		config:     serverConfig{Port: port},
 	}
+	RateLimiter := RateLimiter(InMemoryStore(&InMemoryOptions{
+		Rate: time.Second, Limit: 5}), &Options{
+		ErrorHandler: errorHandler, KeyFunc: keyFunc,
+	})
+	server.ginEngine.Use(RateLimiter)
 	staticFs := WWWRoot("")
 	server.ginEngine.Use(static.Serve("/", staticFs))
 	server.ginEngine.Use(Authorize())
@@ -108,7 +120,6 @@ func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 	//
 	// Http server
 	//
-	go StartRateLimiter(typex.GCTX)
 	go func(ctx context.Context, port int) {
 		listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 		if err != nil {
