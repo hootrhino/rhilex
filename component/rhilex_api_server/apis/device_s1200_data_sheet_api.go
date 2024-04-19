@@ -434,7 +434,7 @@ func parseSiemensPointExcel(
 		if Weight == 0 {
 			Weight = 1 // 防止解析异常的时候系数0
 		}
-		frequency, _ := strconv.ParseUint(row[6], 10, 8)
+		frequency, _ := strconv.ParseUint(row[6], 10, 64)
 		Frequency := int64(frequency)
 		_, errParse1 := utils.ParseSiemensDB(SiemensAddress)
 		if errParse1 != nil {

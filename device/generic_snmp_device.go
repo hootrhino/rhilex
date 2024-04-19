@@ -142,9 +142,9 @@ func (sd *genericSnmpDevice) Start(cctx typex.CCTX) error {
 		Transport:          "udp",
 		Community:          sd.mainConfig.SNMPConfig.Community,
 		Version:            0x1,
-		Timeout:            time.Duration(2) * time.Second,
-		Retries:            2,
-		ExponentialTimeout: true,
+		Timeout:            time.Duration(3) * time.Second,
+		Retries:            1,
+		ExponentialTimeout: false,
 		MaxOids:            60,
 	}
 	err := sd.client.Connect()
@@ -270,42 +270,44 @@ func (sd *genericSnmpDevice) OnCtrl(cmd []byte, args []byte) ([]byte, error) {
 //	EndOfMibView      Asn1BER = 0x82
 //
 
-func (sd *genericSnmpDevice) readData() ([]snmpOid, error) {
+type ReadSnmpOidValue struct {
+	Tag   string `json:"tag"`   // temp
+	Alias string `json:"alias"` // 温度
+	Value any    `json:"value"`
+}
+
+func (sd *genericSnmpDevice) readData() ([]ReadSnmpOidValue, error) {
 	if err1 := sd.client.Connect(); err1 != nil {
 		return nil, err1
 	}
-	result := []snmpOid{}
+	result := []ReadSnmpOidValue{}
 	wg := sync.WaitGroup{}
 	wg.Add(len(sd.snmpOids))
 	for _, oid := range sd.snmpOids {
 		go func(snmpOid snmpOid) {
 			defer wg.Done()
 			Value := ""
+			glogger.GLogger.Debug("SNMP Walk:", snmpOid.Oid)
 			err2 := sd.client.Walk(snmpOid.Oid, func(variable gosnmp.SnmpPDU) error {
-				// glogger.GLogger.Debug("SNMP Walk:", snmpOid.Oid, variable)
 				// 目前先考虑这么多类型，其他的好像没见过
 				if variable.Type == gosnmp.OctetString {
 					Value = fmt.Sprintf("%v", string(variable.Value.([]byte)))
-					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.Integer {
 					Value = fmt.Sprintf("%v", int64(variable.Value.(int)))
-					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.Boolean {
 					Value = fmt.Sprintf("%v", bool(variable.Value.(bool)))
-					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.IPAddress {
 					Value = fmt.Sprintf("%v", string(variable.Value.([]byte)))
-					result = append(result, snmpOid)
 				}
 				if variable.Type == gosnmp.Null {
 					Value = "Null"
-					result = append(result, snmpOid)
 				}
 				return nil
 			})
+
 			lastTimes := uint64(time.Now().UnixMilli())
 			NewValue := snmpCache.SnmpOid{
 				UUID:          snmpOid.UUID,
@@ -321,6 +323,11 @@ func (sd *genericSnmpDevice) readData() ([]snmpOid, error) {
 				NewValue.ErrMsg = ""
 				NewValue.Value = Value
 				NewValue.Status = 1
+				result = append(result, ReadSnmpOidValue{
+					Tag:   snmpOid.Tag,
+					Alias: snmpOid.Alias,
+					Value: Value,
+				})
 			}
 			snmpCache.SetValue(sd.PointId, snmpOid.UUID, NewValue)
 		}(oid)

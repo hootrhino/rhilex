@@ -51,16 +51,16 @@ func InitSnmpRoute() {
 }
 
 type SnmpOidVo struct {
-	UUID          string `json:"uuid,omitempty"`
-	DeviceUUID    string `json:"device_uuid"`
-	Oid           string `json:"oid"`
-	Tag           string `json:"tag"`
-	Alias         string `json:"alias"`
-	Frequency     *int   `json:"frequency"`
-	ErrMsg        string `json:"errMsg"`        // 运行时数据
-	Status        int    `json:"status"`        // 运行时数据
-	LastFetchTime uint64 `json:"lastFetchTime"` // 运行时数据
-	Value         string `json:"value"`         // 运行时数据
+	UUID          string  `json:"uuid,omitempty"`
+	DeviceUUID    string  `json:"device_uuid"`
+	Oid           string  `json:"oid"`
+	Tag           string  `json:"tag"`
+	Alias         string  `json:"alias"`
+	Frequency     *uint64 `json:"frequency"`
+	ErrMsg        string  `json:"errMsg"`        // 运行时数据
+	Status        int     `json:"status"`        // 运行时数据
+	LastFetchTime uint64  `json:"lastFetchTime"` // 运行时数据
+	Value         string  `json:"value"`         // 运行时数据
 }
 
 /*
@@ -200,7 +200,7 @@ func SnmpSheetDeleteByUUIDs(c *gin.Context, ruleEngine typex.Rhilex) {
  */
 func SnmpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
 	type Form struct {
-		DeviceUUID string   `json:"device_uuid"`
+		DeviceUUID string `json:"device_uuid"`
 	}
 	form := Form{}
 	if Error := c.ShouldBindJSON(&form); Error != nil {
@@ -392,13 +392,12 @@ func parseSnmpOidExcel(r io.Reader, sheetName string,
 		oid := row[0]
 		tag := row[1]
 		alias := row[2]
-		frequency, _ := strconv.ParseUint(row[3], 10, 8)
-		Frequency := int(frequency)
+		frequency, _ := strconv.ParseUint(row[3], 10, 64)
 		if err := checkSnmpOids(SnmpOidVo{
 			Oid:       oid,
 			Tag:       tag,
 			Alias:     alias,
-			Frequency: &Frequency,
+			Frequency: &frequency,
 		}); err != nil {
 			return nil, err
 		}
@@ -409,7 +408,7 @@ func parseSnmpOidExcel(r io.Reader, sheetName string,
 			Oid:        oid,
 			Tag:        tag,
 			Alias:      alias,
-			Frequency:  Frequency,
+			Frequency:  frequency,
 		}
 		list = append(list, model)
 	}

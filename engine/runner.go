@@ -25,7 +25,6 @@ import (
 	modbusscrc "github.com/hootrhino/rhilex/plugin/modbus_crc_tools"
 	modbusscanner "github.com/hootrhino/rhilex/plugin/modbus_scanner"
 	mqttserver "github.com/hootrhino/rhilex/plugin/mqtt_server"
-	netdiscover "github.com/hootrhino/rhilex/plugin/net_discover"
 	ttyterminal "github.com/hootrhino/rhilex/plugin/ttyd_terminal"
 	usbmonitor "github.com/hootrhino/rhilex/plugin/usb_monitor"
 	"gopkg.in/ini.v1"
@@ -108,9 +107,6 @@ func loadPlugin(engine typex.Rhilex) {
 		}
 		if name == "icmpsender" {
 			plugin = icmpsender.NewICMPSender()
-		}
-		if name == "netdiscover" {
-			plugin = netdiscover.NewNetDiscover()
 		}
 		if name == "modbus_scanner" {
 			plugin = modbusscanner.NewModbusScanner()
