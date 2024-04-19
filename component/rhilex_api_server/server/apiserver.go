@@ -52,8 +52,6 @@ type serverConfig struct {
 	Port int    `ini:"port"`
 }
 
-var err1crash = errors.New("http server crash, try to recovery")
-
 /*
 *
 * 开启Server
@@ -77,35 +75,39 @@ func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 		config:     serverConfig{Port: port},
 	}
 	RateLimiter := RateLimiter(InMemoryStore(&InMemoryOptions{
-		Rate: time.Second, Limit: 5}), &Options{
+		Rate: time.Second, Limit: 30}), &Options{
 		ErrorHandler: errorHandler, KeyFunc: keyFunc,
 	})
 	server.ginEngine.Use(RateLimiter)
 	staticFs := WWWRoot("")
+	// Logo 静态资源路由
+	server.ginEngine.Use(func(ctx *gin.Context) {
+		if ctx.Request.RequestURI == "/logo.svg" {
+			ctx.Header("Content-Type", "image/svg+xml")
+			ctx.FileFromFS("logo.svg", staticFs)
+			ctx.Writer.Flush()
+			return
+		}
+		if ctx.Request.RequestURI == "/favicon.svg" {
+			ctx.Header("Content-Type", "image/svg+xml")
+			ctx.FileFromFS("favicon.svg", staticFs)
+			ctx.Writer.Flush()
+			return
+		}
+		ctx.Next()
+	})
 	server.ginEngine.Use(static.Serve("/", staticFs))
 	server.ginEngine.Use(Authorize())
 	server.ginEngine.Use(CheckLicense())
 	server.ginEngine.Use(Cros())
 	server.ginEngine.GET("/ws", glogger.WsLogger)
-	server.ginEngine.GET("/logo.svg", func(c *gin.Context) {
-		c.Header("Content-Type", "image/svg+xml")
-		c.FileFromFS("logo.svg", staticFs)
-	})
-	server.ginEngine.GET("/favicon.svg", func(c *gin.Context) {
-		c.Header("Content-Type", "image/svg+xml")
-		c.FileFromFS("favicon.svg", staticFs)
-	})
 	server.ginEngine.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
 		if core.GlobalConfig.AppDebugMode {
 			debug.PrintStack()
 		}
-		c.JSON(200, response.Error500(err1crash))
+		c.JSON(500, response.Error500(errors.New("http server crash, try to recovery")))
 	}))
-	/*
-	*
-	* 解决浏览器刷新被重定向问题
-	*
-	 */
+	// 解决浏览器刷新被重定向问题
 	server.ginEngine.NoRoute(func(c *gin.Context) {
 		if c.ContentType() == "application/json" {
 			c.Writer.WriteHeader(http.StatusNotFound)
@@ -117,9 +119,6 @@ func StartRhilexApiServer(ruleEngine typex.Rhilex, port int) {
 		c.Writer.Write(indexHTML)
 		c.Writer.Flush()
 	})
-	//
-	// Http server
-	//
 	go func(ctx context.Context, port int) {
 		listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
 		if err != nil {

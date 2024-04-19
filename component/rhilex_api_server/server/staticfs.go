@@ -19,18 +19,18 @@ var files embed.FS
 //go:embed  www/index.html
 var indexHTML []byte
 
-type WWWFS struct {
+type EmbedWebFs struct {
 	http.FileSystem
 }
 
-func (f WWWFS) Exists(prefix string, filepath string) bool {
+func (f EmbedWebFs) Exists(prefix string, filepath string) bool {
 	_, err := f.Open(path.Join(prefix, filepath))
 	return err == nil
 }
 
-func WWWRoot(dir string) static.ServeFileSystem {
-	if sub, err := fs.Sub(files, path.Join("www", dir)); err == nil {
-		return WWWFS{http.FS(sub)}
+func WWWRoot(subDir string) static.ServeFileSystem {
+	if sub, err := fs.Sub(files, path.Join("www", subDir)); err == nil {
+		return EmbedWebFs{http.FS(sub)}
 	}
 	return nil
 }
