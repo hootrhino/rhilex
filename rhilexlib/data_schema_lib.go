@@ -17,10 +17,11 @@ package rhilexlib
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rhilex/component/dataschema"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/typex"
 )
 
@@ -35,7 +36,7 @@ func DataSchemaValueUpdate(rx typex.Rhilex) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		deviceId := l.ToString(2)
 		SchemaValue := l.ToString(3)
-		IoTPropertySlotMap := dataschema.GetSlot(deviceId)
+		IoTPropertySlotMap := intercache.GetSlot(deviceId)
 		if IoTPropertySlotMap == nil {
 			l.Push(lua.LString("Iot Schema Slot Not Exists"))
 			return 1
@@ -48,9 +49,9 @@ func DataSchemaValueUpdate(rx typex.Rhilex) func(l *lua.LState) int {
 		}
 		for K, V := range LuaArgsJson {
 			IoTPropertyValue := IoTPropertySlotMap[K]
-			IoTPropertyValue.Value = V
+			IoTPropertyValue.Value = fmt.Sprintf("%v", V)
 			IoTPropertyValue.LastFetchTime = uint64(time.Now().UnixMilli())
-			dataschema.SetValue(deviceId, K, IoTPropertyValue)
+			intercache.SetValue(deviceId, K, IoTPropertyValue)
 		}
 		l.Push(lua.LNil)
 		return 1

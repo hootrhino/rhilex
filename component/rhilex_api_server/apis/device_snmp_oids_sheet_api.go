@@ -18,7 +18,6 @@ package apis
 import (
 	"errors"
 	"fmt"
-	snmpCache "github.com/hootrhino/rhilex/component/intercache/snmp"
 	"io"
 	"strconv"
 	"time"
@@ -26,6 +25,7 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 
 	common "github.com/hootrhino/rhilex/component/rhilex_api_server/common"
@@ -135,7 +135,7 @@ func SnmpSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	recordsVo := []SnmpOidVo{}
-	Slot := snmpCache.GetSlot(deviceUuid)
+	Slot := intercache.GetSlot(deviceUuid)
 	if Slot != nil {
 		for _, record := range records {
 			Value, ok := Slot[record.UUID]

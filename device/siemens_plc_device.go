@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	siemenscache "github.com/hootrhino/rhilex/component/intercache/siemens"
+	"github.com/hootrhino/rhilex/component/intercache"
 
 	"github.com/jinzhu/copier"
 
@@ -98,7 +98,7 @@ func NewSIEMENS_PLC(e typex.Rhilex) typex.XDevice {
 // 初始化
 func (s1200 *SIEMENS_PLC) Init(devId string, configMap map[string]interface{}) error {
 	s1200.PointId = devId
-	siemenscache.RegisterSlot(s1200.PointId)
+	intercache.RegisterSlot(s1200.PointId)
 	if err := utils.BindSourceConfig(configMap, &s1200.mainConfig); err != nil {
 		glogger.GLogger.Error(err)
 		return err
@@ -134,7 +134,7 @@ func (s1200 *SIEMENS_PLC) Init(devId string, configMap map[string]interface{}) e
 		NewSiemensDataPoint := __SiemensDataPoint{}
 		copier.Copy(&NewSiemensDataPoint, &SiemensDataPoint)
 		s1200.__SiemensDataPoints[SiemensDataPoint.UUID] = &NewSiemensDataPoint
-		siemenscache.SetValue(s1200.PointId, SiemensDataPoint.UUID, siemenscache.SiemensPoint{
+		intercache.SetValue(s1200.PointId, SiemensDataPoint.UUID, intercache.CacheValue{
 			UUID:          SiemensDataPoint.UUID,
 			Status:        0,
 			LastFetchTime: 0,
@@ -245,7 +245,7 @@ func (s1200 *SIEMENS_PLC) Stop() {
 	if s1200.handler != nil {
 		s1200.handler.Close()
 	}
-	siemenscache.UnRegisterSlot(s1200.PointId)
+	intercache.UnRegisterSlot(s1200.PointId)
 }
 
 // 真实设备
@@ -293,7 +293,7 @@ func (s1200 *SIEMENS_PLC) Read(cmd []byte, data []byte) (int, error) {
 			if err := s1200.client.AGReadDB(db.DataBlockNumber,
 				db.ElementNumber, db.DataSize, rData[:]); err != nil {
 				glogger.GLogger.Error(err)
-				siemenscache.SetValue(s1200.PointId, uuid, siemenscache.SiemensPoint{
+				intercache.SetValue(s1200.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        1,
 					LastFetchTime: lastTimes,
@@ -312,7 +312,7 @@ func (s1200 *SIEMENS_PLC) Read(cmd []byte, data []byte) (int, error) {
 				Value:         Value,
 				LastFetchTime: lastTimes,
 			})
-			siemenscache.SetValue(s1200.PointId, uuid, siemenscache.SiemensPoint{
+			intercache.SetValue(s1200.PointId, uuid, intercache.CacheValue{
 				UUID:          uuid,
 				Status:        0,
 				LastFetchTime: lastTimes,

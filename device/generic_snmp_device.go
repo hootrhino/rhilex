@@ -8,8 +8,7 @@ import (
 
 	"github.com/gosnmp/gosnmp"
 	"github.com/hootrhino/rhilex/common"
-	"github.com/hootrhino/rhilex/component/dataschema"
-	snmpCache "github.com/hootrhino/rhilex/component/intercache/snmp"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 
 	"github.com/hootrhino/rhilex/glogger"
@@ -80,7 +79,7 @@ func NewGenericSnmpDevice(e typex.Rhilex) typex.XDevice {
 //  初始化
 func (sd *genericSnmpDevice) Init(devId string, configMap map[string]interface{}) error {
 	sd.PointId = devId
-	snmpCache.RegisterSlot(devId)
+	intercache.RegisterSlot(devId)
 	if err := utils.BindSourceConfig(configMap, &sd.mainConfig); err != nil {
 		return err
 	}
@@ -99,7 +98,7 @@ func (sd *genericSnmpDevice) Init(devId string, configMap map[string]interface{}
 			Frequency: oid.Frequency,
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
-		snmpCache.SetValue(sd.PointId, oid.UUID, snmpCache.SnmpOid{
+		intercache.SetValue(sd.PointId, oid.UUID, intercache.CacheValue{
 			UUID:          oid.UUID,
 			Status:        0,
 			LastFetchTime: LastFetchTime,
@@ -108,7 +107,7 @@ func (sd *genericSnmpDevice) Init(devId string, configMap map[string]interface{}
 		})
 	}
 	if sd.mainConfig.SchemaId != "" {
-		dataschema.RegisterSlot(sd.PointId)
+		intercache.RegisterSlot(sd.PointId)
 		var SchemaProperties []SchemaProperty
 		dataSchemaLoadError := interdb.DB().Table("m_iot_properties").
 			Where("schema_id=?", sd.mainConfig.SchemaId).Find(&SchemaProperties).Error
@@ -117,10 +116,9 @@ func (sd *genericSnmpDevice) Init(devId string, configMap map[string]interface{}
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
 		for _, MSchemaProperty := range SchemaProperties {
-			dataschema.SetValue(sd.PointId, MSchemaProperty.Name,
-				dataschema.DataSchemaValue{
+			intercache.SetValue(sd.PointId, MSchemaProperty.Name,
+				intercache.CacheValue{
 					UUID:          MSchemaProperty.UUID,
-					Name:          MSchemaProperty.Name,
 					LastFetchTime: LastFetchTime,
 					Value:         "-",
 				})
@@ -217,8 +215,7 @@ func (sd *genericSnmpDevice) Stop() {
 	if sd.CancelCTX != nil {
 		sd.CancelCTX()
 	}
-	snmpCache.UnRegisterSlot(sd.PointId)
-	dataschema.UnRegisterSlot(sd.PointId)
+	intercache.UnRegisterSlot(sd.PointId)
 }
 
 // 真实设备
@@ -309,7 +306,7 @@ func (sd *genericSnmpDevice) readData() ([]ReadSnmpOidValue, error) {
 			})
 
 			lastTimes := uint64(time.Now().UnixMilli())
-			NewValue := snmpCache.SnmpOid{
+			NewValue := intercache.CacheValue{
 				UUID:          snmpOid.UUID,
 				Status:        0,
 				LastFetchTime: lastTimes,
@@ -329,7 +326,7 @@ func (sd *genericSnmpDevice) readData() ([]ReadSnmpOidValue, error) {
 					Value: Value,
 				})
 			}
-			snmpCache.SetValue(sd.PointId, snmpOid.UUID, NewValue)
+			intercache.SetValue(sd.PointId, snmpOid.UUID, NewValue)
 		}(oid)
 	}
 	wg.Wait()

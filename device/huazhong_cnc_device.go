@@ -19,7 +19,8 @@ import (
 	"context"
 	"time"
 
-	hnc8cache "github.com/hootrhino/rhilex/component/intercache/hnccnc"
+	"github.com/hootrhino/rhilex/component/intercache"
+
 	"github.com/hootrhino/rhilex/component/interdb"
 
 	"github.com/hootrhino/rhilex/glogger"
@@ -81,7 +82,7 @@ func NewHNC8_CNC(e typex.Rhilex) typex.XDevice {
 //  初始化
 func (hnc8Cnc *HNC8_CNC) Init(devId string, configMap map[string]interface{}) error {
 	hnc8Cnc.PointId = devId
-	hnc8cache.RegisterSlot(hnc8Cnc.PointId)
+	intercache.RegisterSlot(hnc8Cnc.PointId)
 	if err := utils.BindSourceConfig(configMap, &hnc8Cnc.mainConfig); err != nil {
 		glogger.GLogger.Error(err)
 		return err
@@ -103,8 +104,8 @@ func (hnc8Cnc *HNC8_CNC) Init(devId string, configMap map[string]interface{}) er
 			Address:     MHncDataPoint.Address,
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
-		hnc8cache.SetValue(hnc8Cnc.PointId,
-			MHncDataPoint.UUID, hnc8cache.Hnc8RegisterPoint{
+		intercache.SetValue(hnc8Cnc.PointId,
+			MHncDataPoint.UUID, intercache.CacheValue{
 				UUID:          MHncDataPoint.UUID,
 				Status:        0,
 				LastFetchTime: LastFetchTime,
@@ -158,7 +159,7 @@ func (hnc8Cnc *HNC8_CNC) Stop() {
 	if hnc8Cnc.CancelCTX != nil {
 		hnc8Cnc.CancelCTX()
 	}
-	hnc8cache.UnRegisterSlot(hnc8Cnc.PointId)
+	intercache.UnRegisterSlot(hnc8Cnc.PointId)
 }
 
 // 真实设备

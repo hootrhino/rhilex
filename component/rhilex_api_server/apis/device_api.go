@@ -3,7 +3,7 @@ package apis
 import (
 	"fmt"
 
-	"github.com/hootrhino/rhilex/component/dataschema"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 	common "github.com/hootrhino/rhilex/component/rhilex_api_server/common"
 	"github.com/hootrhino/rhilex/component/rhilex_api_server/model"
@@ -382,7 +382,7 @@ func DevicePropertiesPage(c *gin.Context, ruleEngine typex.Rhilex) {
 	// 2 从物模型缓存器里面拿数据
 	// 3 构造view vo
 	// 如果缓存器里面有数据
-	DataSchemaCacheValueSlot := dataschema.GetSlot(uuid)
+	DataSchemaCacheValueSlot := intercache.GetSlot(uuid)
 	for _, record := range records {
 		IoTPropertyRuleVo := IoTPropertyRuleVo{}
 		if err0 := IoTPropertyRuleVo.ParseRuleFromModel(record.Rule); err0 != nil {

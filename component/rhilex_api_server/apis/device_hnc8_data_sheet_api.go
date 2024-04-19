@@ -25,7 +25,7 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
-	hnccnc "github.com/hootrhino/rhilex/component/intercache/hnccnc"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 
 	common "github.com/hootrhino/rhilex/component/rhilex_api_server/common"
@@ -122,7 +122,7 @@ func Hnc8SheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 	recordsVo := []Hnc8PointVo{}
 
 	for _, record := range records {
-		Slot := hnccnc.GetSlot(deviceUuid)
+		Slot := intercache.GetSlot(deviceUuid)
 		Value, ok := Slot[record.UUID]
 		Vo := Hnc8PointVo{
 			UUID:        record.UUID,

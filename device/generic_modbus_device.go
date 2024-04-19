@@ -28,9 +28,8 @@ import (
 	"time"
 
 	"github.com/hootrhino/rhilex/common"
-	"github.com/hootrhino/rhilex/component/dataschema"
 	"github.com/hootrhino/rhilex/component/hwportmanager"
-	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
+	intercache "github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 
 	"github.com/hootrhino/rhilex/core"
@@ -171,7 +170,7 @@ func NewGenericModbusDevice(e typex.Rhilex) typex.XDevice {
 //  初始化
 func (mdev *generic_modbus_device) Init(devId string, configMap map[string]interface{}) error {
 	mdev.PointId = devId
-	modbuscache.RegisterSlot(mdev.PointId)
+	intercache.RegisterSlot(mdev.PointId)
 	if err := utils.BindSourceConfig(configMap, &mdev.mainConfig); err != nil {
 		return err
 	}
@@ -204,7 +203,7 @@ func (mdev *generic_modbus_device) Init(devId string, configMap map[string]inter
 			Weight:    ModbusPoint.Weight,
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
-		modbuscache.SetValue(mdev.PointId, ModbusPoint.UUID, modbuscache.RegisterPoint{
+		intercache.SetValue(mdev.PointId, ModbusPoint.UUID, intercache.CacheValue{
 			UUID:          ModbusPoint.UUID,
 			Status:        0,
 			LastFetchTime: LastFetchTime,
@@ -221,7 +220,7 @@ func (mdev *generic_modbus_device) Init(devId string, configMap map[string]inter
 	// dataschema.SetValue(mdev.PointId, K, V)
 	//
 	if mdev.mainConfig.SchemaId != "" {
-		dataschema.RegisterSlot(mdev.PointId)
+		intercache.RegisterSlot(mdev.PointId)
 		var SchemaProperties []SchemaProperty
 		dataSchemaLoadError := interdb.DB().Table("m_iot_properties").
 			Where("schema_id=?", mdev.mainConfig.SchemaId).Find(&SchemaProperties).Error
@@ -231,10 +230,9 @@ func (mdev *generic_modbus_device) Init(devId string, configMap map[string]inter
 		LastFetchTime := uint64(time.Now().UnixMilli())
 
 		for _, MSchemaProperty := range SchemaProperties {
-			dataschema.SetValue(mdev.PointId, MSchemaProperty.Name,
-				dataschema.DataSchemaValue{
+			intercache.SetValue(mdev.PointId, MSchemaProperty.Name,
+				intercache.CacheValue{
 					UUID:          MSchemaProperty.UUID,
-					Name:          MSchemaProperty.Name,
 					LastFetchTime: LastFetchTime,
 					Value:         "-",
 				})
@@ -528,8 +526,7 @@ func (mdev *generic_modbus_device) Stop() {
 			mdev.tcpHandler.Close()
 		}
 	}
-	modbuscache.UnRegisterSlot(mdev.PointId) // 卸载点位表
-	dataschema.UnRegisterSlot(mdev.PointId)  // 卸载数据模型插槽
+	intercache.UnRegisterSlot(mdev.PointId) // 卸载点位表
 }
 
 // 真实设备
@@ -603,7 +600,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				count--
 				glogger.GLogger.Error(err)
 				mdev.retryTimes++
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        1,
 					Value:         "",
@@ -623,7 +620,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				LastFetchTime: lastTimes,
 			}
 			RegisterRWs = append(RegisterRWs, Reg)
-			modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+			intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 				UUID:          uuid,
 				Status:        0,
 				Value:         Value,
@@ -639,7 +636,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				count--
 				glogger.GLogger.Error(err)
 				mdev.retryTimes++
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        1,
 					Value:         "",
@@ -659,7 +656,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				LastFetchTime: lastTimes,
 			}
 			RegisterRWs = append(RegisterRWs, Reg)
-			modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+			intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 				UUID:          uuid,
 				Status:        0,
 				Value:         Value,
@@ -676,7 +673,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				count--
 				glogger.GLogger.Error(err)
 				mdev.retryTimes++
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        1,
 					Value:         "",
@@ -697,7 +694,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				LastFetchTime: lastTimes,
 			}
 			RegisterRWs = append(RegisterRWs, Reg)
-			modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+			intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 				UUID:          uuid,
 				Status:        0,
 				Value:         Value,
@@ -714,7 +711,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				count--
 				glogger.GLogger.Error(err)
 				mdev.retryTimes++
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        1,
 					Value:         "",
@@ -734,7 +731,7 @@ func (mdev *generic_modbus_device) modbusSingleRead(buffer []byte) (int, error) 
 				LastFetchTime: lastTimes,
 			}
 			RegisterRWs = append(RegisterRWs, Reg)
-			modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+			intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 				UUID:          uuid,
 				Status:        0,
 				Value:         Value,
@@ -781,7 +778,7 @@ func (mdev *generic_modbus_device) modbusGroupRead(buffer []byte) (int, error) {
 					LastFetchTime: uint64(ts),
 				}
 				jsonValueGroups = append(jsonValueGroups, jsonVal)
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        0,
 					Value:         strconv.Itoa(int(value)),
@@ -812,7 +809,7 @@ func (mdev *generic_modbus_device) modbusGroupRead(buffer []byte) (int, error) {
 					LastFetchTime: uint64(ts),
 				}
 				jsonValueGroups = append(jsonValueGroups, jsonVal)
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        0,
 					Value:         strconv.Itoa(int(value)),
@@ -844,7 +841,7 @@ func (mdev *generic_modbus_device) modbusGroupRead(buffer []byte) (int, error) {
 				}
 				jsonValueGroups = append(jsonValueGroups, jsonVal)
 
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        0,
 					Value:         value,
@@ -876,7 +873,7 @@ func (mdev *generic_modbus_device) modbusGroupRead(buffer []byte) (int, error) {
 				}
 				jsonValueGroups = append(jsonValueGroups, jsonVal)
 
-				modbuscache.SetValue(mdev.PointId, uuid, modbuscache.RegisterPoint{
+				intercache.SetValue(mdev.PointId, uuid, intercache.CacheValue{
 					UUID:          uuid,
 					Status:        0,
 					Value:         value,

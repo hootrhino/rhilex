@@ -25,14 +25,10 @@ import (
 	lua "github.com/hootrhino/gopher-lua"
 	"github.com/hootrhino/rhilex/component/aibase"
 	"github.com/hootrhino/rhilex/component/appstack"
-	dataschema "github.com/hootrhino/rhilex/component/dataschema"
 	"github.com/hootrhino/rhilex/component/hwportmanager"
-	bacnetCache "github.com/hootrhino/rhilex/component/intercache/bacnet"
-	hnccnc "github.com/hootrhino/rhilex/component/intercache/hnccnc"
-	kdncnc "github.com/hootrhino/rhilex/component/intercache/kdncnc"
-	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
-	siemenscache "github.com/hootrhino/rhilex/component/intercache/siemens"
-	snmpCache "github.com/hootrhino/rhilex/component/intercache/snmp"
+
+	intercache "github.com/hootrhino/rhilex/component/intercache"
+
 	"github.com/hootrhino/rhilex/component/shellymanager"
 	supervisor "github.com/hootrhino/rhilex/component/supervisor"
 
@@ -100,22 +96,10 @@ func InitRuleEngine(config typex.RhilexConfig) typex.Rhilex {
 	shellymanager.InitShellyDeviceRegistry(__DefaultRuleEngine)
 	// SuperVisor Admin
 	supervisor.InitResourceSuperVisorAdmin(__DefaultRuleEngine)
-	// Init Modbus Point Cache
-	modbuscache.InitModbusPointCache(__DefaultRuleEngine)
-	// Init Siemens Point Cache
-	siemenscache.InitSiemensPointCache(__DefaultRuleEngine)
-	// Init Snmp OidCache
-	snmpCache.InitSnmpOidCache(__DefaultRuleEngine)
-	// KDN CNC
-	hnccnc.InitHnc8CnCPointCache(__DefaultRuleEngine)
-	// HNC CNC
-	kdncnc.InitKdnCnCPointCache(__DefaultRuleEngine)
-	// Init CacheValueCache
-	bacnetCache.InitBacnetCache(__DefaultRuleEngine)
+	// Init Global Value Registry
+	intercache.InitGlobalValueRegistry(__DefaultRuleEngine)
 	// Internal Bus
 	internotify.InitInternalEventBus(__DefaultRuleEngine, core.GlobalConfig.MaxQueueSize)
-	// Internal Schema
-	dataschema.InitIotSchemaCache(__DefaultRuleEngine)
 	// Load hardware Port Manager
 	hwportmanager.InitHwPortsManager(__DefaultRuleEngine)
 	// Internal Metric
@@ -218,19 +202,7 @@ func (e *RuleEngine) Stop() {
 	glogger.GLogger.Info("Flush Shelly Device Cache")
 	shellymanager.Flush()
 	glogger.GLogger.Info("Flush Modbus Point sheet Cache")
-	modbuscache.Flush()
-	glogger.GLogger.Info("Flush Siemens Point sheet Cache")
-	siemenscache.Flush()
-	glogger.GLogger.Info("Flush SNMP Oids Cache")
-	snmpCache.Flush()
-	glogger.GLogger.Info("Flush KDN CNC Cache")
-	kdncnc.Flush()
-	glogger.GLogger.Info("Flush HNC Cache")
-	hnccnc.Flush()
-	glogger.GLogger.Info("Flush Data Schema Cache")
-	dataschema.Flush()
-	glogger.GLogger.Info("Flush Bacnet Cache")
-	bacnetCache.Flush()
+	intercache.Flush()
 	glogger.GLogger.Info("Stop AI Runtime")
 	aibase.Stop()
 	glogger.GLogger.Info("[√] Stop rhilex successfully")

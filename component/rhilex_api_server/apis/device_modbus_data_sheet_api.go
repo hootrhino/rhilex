@@ -26,7 +26,7 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
-	modbuscache "github.com/hootrhino/rhilex/component/intercache/modbus"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 	common "github.com/hootrhino/rhilex/component/rhilex_api_server/common"
 	"github.com/hootrhino/rhilex/component/rhilex_api_server/model"
@@ -141,7 +141,7 @@ func ModbusSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 	recordsVo := []ModbusPointVo{}
 
 	for _, record := range records {
-		Slot := modbuscache.GetSlot(deviceUuid)
+		Slot := intercache.GetSlot(deviceUuid)
 		Value, ok := Slot[record.UUID]
 		Vo := ModbusPointVo{
 			UUID:          record.UUID,

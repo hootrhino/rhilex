@@ -26,7 +26,7 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
-	siemenscache "github.com/hootrhino/rhilex/component/intercache/siemens"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 	common "github.com/hootrhino/rhilex/component/rhilex_api_server/common"
 
@@ -136,7 +136,7 @@ func SiemensSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	recordsVo := []SiemensPointVo{}
 	for _, record := range records {
-		Slot := siemenscache.GetSlot(deviceUuid)
+		Slot := intercache.GetSlot(deviceUuid)
 		Value, ok := Slot[record.UUID]
 		Vo := SiemensPointVo{
 			UUID:           record.UUID,
