@@ -10,7 +10,7 @@ import (
 * 设备功能调用
 *
  */
-func DCACall(rx typex.Rhilex) func(*lua.LState) int {
+func DCACall(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		UUID := l.ToString(2)
 		Command := l.ToString(3)

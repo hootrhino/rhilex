@@ -11,7 +11,7 @@ import (
 * 数据转发到具体的目的地：local err: = data:ToTarget(uuid, data)
 *
  */
-func DataToTarget(rx typex.Rhilex) func(*lua.LState) int {
+func DataToTarget(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		id := l.ToString(2)
 		data := l.ToString(3)

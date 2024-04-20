@@ -18,7 +18,7 @@ import (
  */
 // var errType error = errors.New("tensor type error, must be [][]float table")
 
-func Infer(rx typex.Rhilex) func(*lua.LState) int {
+func Infer(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		return 0
 	}

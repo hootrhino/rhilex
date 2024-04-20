@@ -11,7 +11,7 @@ import (
 * 改变模型值
 *
  */
-func SetModelValue(rx typex.Rhilex) func(*lua.LState) int {
+func SetModelValue(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)
 		name := l.ToString(3)

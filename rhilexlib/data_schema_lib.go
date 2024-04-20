@@ -32,7 +32,7 @@ import (
 
 *
 */
-func DataSchemaValueUpdate(rx typex.Rhilex) func(l *lua.LState) int {
+func DataSchemaValueUpdate(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		deviceId := l.ToString(2)
 		SchemaValue := l.ToString(3)

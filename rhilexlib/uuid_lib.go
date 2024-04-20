@@ -25,7 +25,7 @@ import (
 * 生成uuid: local uuid = uuid:make()
 *
  */
-func MakeUUID(rx typex.Rhilex) func(l *lua.LState) int {
+func MakeUUID(rx typex.Rhilex, Uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		l.Push(lua.LString(uuid.NewString()))
 		return 1

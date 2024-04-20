@@ -38,7 +38,7 @@ import (
 * Ping
 *
  */
-func PingIp(rx typex.Rhilex) func(l *lua.LState) int {
+func PingIp(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		ip := l.ToString(2)
 		Duration, err := pingQ(ip, 5000*time.Millisecond)

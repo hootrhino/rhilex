@@ -31,14 +31,14 @@ import (
 * HTTP GET
 *
  */
-func HttpGet(rx typex.Rhilex) func(*lua.LState) int {
+func HttpGet(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		url := l.ToString(2)
 		l.Push(lua.LString(__HttpGet(url)))
 		return 1
 	}
 }
-func HttpPost(rx typex.Rhilex) func(*lua.LState) int {
+func HttpPost(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		url := l.ToString(2)
 		body := l.ToString(3)

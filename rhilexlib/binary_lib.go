@@ -29,7 +29,7 @@ var regExpr *regexp.Regexp = regexp.MustCompile(pattern)
 * 其中K是字符串, V是二进制字符串
 *
  */
-func MatchBinary(rx typex.Rhilex) func(*lua.LState) int {
+func MatchBinary(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(state *lua.LState) int {
 		expr := state.ToString(2)
 		data := state.ToString(3)
@@ -48,7 +48,7 @@ func MatchBinary(rx typex.Rhilex) func(*lua.LState) int {
 * 二进制串转成十六进制串
 *
  */
-func MatchBinaryHex(rx typex.Rhilex) func(*lua.LState) int {
+func MatchBinaryHex(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(state *lua.LState) int {
 		expr := state.ToString(2)
 		data := state.ToString(3)
@@ -62,7 +62,7 @@ func MatchBinaryHex(rx typex.Rhilex) func(*lua.LState) int {
 	}
 }
 
-func GetABitOnByte(rx typex.Rhilex) func(*lua.LState) int {
+func GetABitOnByte(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(state *lua.LState) int {
 		if state.Get(2).Type() != lua.LTNumber {
 			state.Push(nil)
@@ -79,7 +79,7 @@ func GetABitOnByte(rx typex.Rhilex) func(*lua.LState) int {
 	}
 }
 
-func ByteToBitString(rx typex.Rhilex) func(*lua.LState) int {
+func ByteToBitString(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(state *lua.LState) int {
 		data := state.ToString(2)
 		state.Push(lua.LValue(lua.LString(byteToBitString([]byte(data)))))
@@ -142,7 +142,7 @@ func (k Kl) ToByte() []byte {
 // Little-Endian [<]=87654321: 低位字节放在内存的低地址段, 高位字节放在内存的高地址端
 //
 
-func ByteToInt64(rx typex.Rhilex) func(*lua.LState) int {
+func ByteToInt64(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(state *lua.LState) int {
 		endian := state.ToString(2)
 		data := state.ToString(3)
@@ -212,7 +212,7 @@ func ByteToInt(b []byte, order binary.ByteOrder) uint64 {
 *
  */
 
-func BitStringToBytes(rx typex.Rhilex) func(*lua.LState) int {
+func BitStringToBytes(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(state *lua.LState) int {
 		data := strings.Replace(state.ToString(2), "\"", "", -1)
 		// data 可能有 '"' 字符
@@ -460,7 +460,7 @@ func isMark(r rune) bool {
 * Hex to number
 *
  */
-func HToN(rx typex.Rhilex) func(*lua.LState) int {
+func HToN(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		s := l.ToString(2)
 		if iv, err := HexToNumber(s); err != nil {
@@ -477,7 +477,7 @@ func HToN(rx typex.Rhilex) func(*lua.LState) int {
 * 取某个Hex字符串的子串转换成数字
 *
  */
-func HsubToN(rx typex.Rhilex) func(*lua.LState) int {
+func HsubToN(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		s := l.ToString(2)
 		start := l.ToInt(3)
@@ -512,7 +512,7 @@ func HexToNumber(s string) (int64, error) {
 *
  */
 
-func BinToFloat32(rx typex.Rhilex) func(*lua.LState) int {
+func BinToFloat32(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		bin := l.ToString(2)
 		dBytes, err := hex.DecodeString(bin)
@@ -534,7 +534,7 @@ func BinToFloat32(rx typex.Rhilex) func(*lua.LState) int {
 * 二进制转浮点数
 *
  */
-func BinToFloat64(rx typex.Rhilex) func(*lua.LState) int {
+func BinToFloat64(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		bin := l.ToString(2)
 		dBytes, err := hex.DecodeString(bin)
@@ -556,7 +556,7 @@ func BinToFloat64(rx typex.Rhilex) func(*lua.LState) int {
 * 二进制转浮点小端
 *
  */
-func BinToFloat32Little(rx typex.Rhilex) func(*lua.LState) int {
+func BinToFloat32Little(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		bin := l.ToString(2)
 		dBytes, err := hex.DecodeString(bin)
@@ -578,7 +578,7 @@ func BinToFloat32Little(rx typex.Rhilex) func(*lua.LState) int {
 * 二进制转8字节浮点小端
 *
  */
-func BinToFloat64Little(rx typex.Rhilex) func(*lua.LState) int {
+func BinToFloat64Little(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		bin := l.ToString(2)
 		dBytes, err := hex.DecodeString(bin)
@@ -600,7 +600,7 @@ func BinToFloat64Little(rx typex.Rhilex) func(*lua.LState) int {
 * Base64 to byte: 用来处理golang的JSON转换byte[]问题
 *
  */
-func B64S2B(rx typex.Rhilex) func(*lua.LState) int {
+func B64S2B(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		b64s := l.ToString(2)
 		bss, err := base64.StdEncoding.DecodeString(b64s)

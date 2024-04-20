@@ -10,7 +10,7 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 )
 
-func DataToMqtt(rx typex.Rhilex) func(*lua.LState) int {
+func DataToMqtt(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		id := l.ToString(2)
 		data := l.ToString(3)
@@ -23,7 +23,7 @@ func DataToMqtt(rx typex.Rhilex) func(*lua.LState) int {
 		return 1
 	}
 }
-func DataToMqttTopic(rx typex.Rhilex) func(*lua.LState) int {
+func DataToMqttTopic(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		id := l.ToString(2)
 		topic := l.ToString(3)

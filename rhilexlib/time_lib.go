@@ -16,7 +16,7 @@ import (
 * Unix 时间戳
 *
  */
-func TsUnix(rx typex.Rhilex) func(l *lua.LState) int {
+func TsUnix(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		l.Push(lua.LString(fmt.Sprintf("%v", time.Now().Unix())))
 		return 1
@@ -28,7 +28,7 @@ func TsUnix(rx typex.Rhilex) func(l *lua.LState) int {
 * 等待毫秒
 *
  */
-func Sleep(rx typex.Rhilex) func(l *lua.LState) int {
+func Sleep(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		ts := l.ToNumber(2)
 		time.Sleep(time.Millisecond * time.Duration(ts))
@@ -41,7 +41,7 @@ func Sleep(rx typex.Rhilex) func(l *lua.LState) int {
 * Unix 纳秒时间戳
 *
  */
-func TsUnixNano(rx typex.Rhilex) func(l *lua.LState) int {
+func TsUnixNano(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		l.Push(lua.LString(fmt.Sprintf("%v", time.Now().UnixNano())))
 		return 1
@@ -53,13 +53,13 @@ func TsUnixNano(rx typex.Rhilex) func(l *lua.LState) int {
 * 时间字符串 2006-01-02 15:04:05
 *
  */
-func Time(rx typex.Rhilex) func(l *lua.LState) int {
+func Time(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		l.Push(lua.LString(time.Now().Format("2006-01-02 15:04:05")))
 		return 1
 	}
 }
-func TimeMs(rx typex.Rhilex) func(l *lua.LState) int {
+func TimeMs(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		l.Push(lua.LString(time.Now().Format("2006-01-02 15:04:05.000")))
 		return 1
@@ -72,7 +72,7 @@ func TimeMs(rx typex.Rhilex) func(l *lua.LState) int {
 * return: ntp time string, error
 *
  */
-func NtpTime(rx typex.Rhilex) func(l *lua.LState) int {
+func NtpTime(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 
 	return func(l *lua.LState) int {
 		// Ntp server:

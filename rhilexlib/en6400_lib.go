@@ -21,7 +21,7 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 )
 
-func EN6400_LedOn(rx typex.Rhilex) func(*lua.LState) int {
+func EN6400_LedOn(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		err := archsupport.EN6400_GPIO231Set(int(1))
 		if err != nil {
@@ -33,7 +33,7 @@ func EN6400_LedOn(rx typex.Rhilex) func(*lua.LState) int {
 	}
 
 }
-func EN6400_LedOff(rx typex.Rhilex) func(*lua.LState) int {
+func EN6400_LedOff(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		err := archsupport.EN6400_GPIO231Set(int(0))
 		if err != nil {

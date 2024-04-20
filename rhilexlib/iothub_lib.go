@@ -45,7 +45,7 @@ func returnR(inend *typex.InEnd, bytes []byte, l *lua.LState) int {
 * 属性下发到设备，回复成功
 *
  */
-func PropertyReplySuccess(rx typex.Rhilex) func(l *lua.LState) int {
+func PropertyReplySuccess(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)      // Iothub 资源ID
 		requestId := l.ToString(3) // 请求ID
@@ -69,7 +69,7 @@ func PropertyReplySuccess(rx typex.Rhilex) func(l *lua.LState) int {
 * 属性下发到设备，回复失败
 *
  */
-func PropertyReplyFailed(rx typex.Rhilex) func(l *lua.LState) int {
+func PropertyReplyFailed(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)      // Iothub 资源ID
 		requestId := l.ToString(3) // 请求ID
@@ -100,7 +100,7 @@ func PropertyReplyFailed(rx typex.Rhilex) func(l *lua.LState) int {
 * }
 *
  */
-func ActionReplySuccess(rx typex.Rhilex) func(*lua.LState) int {
+func ActionReplySuccess(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)      // Iothub 资源ID
 		requestId := l.ToString(3) // 请求ID
@@ -133,7 +133,7 @@ func ActionReplySuccess(rx typex.Rhilex) func(*lua.LState) int {
 * }
 *
  */
-func ActionReplyFailed(rx typex.Rhilex) func(*lua.LState) int {
+func ActionReplyFailed(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)      // Iothub 资源ID
 		requestId := l.ToString(3) // 请求ID

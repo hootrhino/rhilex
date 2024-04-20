@@ -28,7 +28,7 @@ import (
 * 数据中心本地执行
 *
  */
-func LocalDBQuery(rx typex.Rhilex) func(*lua.LState) int {
+func LocalDBQuery(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		sql := l.ToString(2)
 		Map, err := datacenter.Query("rhilex_internal_datacenter", sql)

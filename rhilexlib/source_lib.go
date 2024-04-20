@@ -15,7 +15,7 @@ var sourceReadBuffer []byte = []byte{}
 * 向资源写入数据
 *
  */
-func WriteSource(rx typex.Rhilex) func(l *lua.LState) int {
+func WriteSource(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)
 		data := l.ToString(3)
@@ -43,7 +43,7 @@ func WriteSource(rx typex.Rhilex) func(l *lua.LState) int {
 * 从资源里面读数据出来
 *
  */
-func ReadSource(rx typex.Rhilex) func(*lua.LState) int {
+func ReadSource(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 
 	return func(l *lua.LState) int {
 		uuid := l.ToString(2)

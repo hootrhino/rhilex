@@ -8,7 +8,7 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 )
 
-func StoreSet(rx typex.Rhilex) func(l *lua.LState) int {
+func StoreSet(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		k := l.ToString(2)
 		v := l.ToString(3)
@@ -16,7 +16,7 @@ func StoreSet(rx typex.Rhilex) func(l *lua.LState) int {
 		return 0
 	}
 }
-func StoreGet(rx typex.Rhilex) func(l *lua.LState) int {
+func StoreGet(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		k := l.ToString(2)
 		v := core.GlobalStore.Get(k)
@@ -29,7 +29,7 @@ func StoreGet(rx typex.Rhilex) func(l *lua.LState) int {
 	}
 
 }
-func StoreDelete(rx typex.Rhilex) func(l *lua.LState) int {
+func StoreDelete(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		k := l.ToString(2)
 		core.GlobalStore.Delete(k)
@@ -37,7 +37,7 @@ func StoreDelete(rx typex.Rhilex) func(l *lua.LState) int {
 	}
 }
 
-func StoreSetWithDuration(rx typex.Rhilex) func(l *lua.LState) int {
+func StoreSetWithDuration(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		k := l.ToString(2)
 		v := l.ToString(3)

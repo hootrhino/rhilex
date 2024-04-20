@@ -13,7 +13,7 @@ import (
 *
  */
 
-func FinishCmd(rx typex.Rhilex) func(*lua.LState) int {
+func FinishCmd(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		cmdId := l.ToString(2)
 		stateTargetId := l.ToString(3)
@@ -32,7 +32,7 @@ func FinishCmd(rx typex.Rhilex) func(*lua.LState) int {
 *
  */
 
-func FailedCmd(rx typex.Rhilex) func(*lua.LState) int {
+func FailedCmd(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		cmdId := l.ToString(2)
 		stateTargetId := l.ToString(3)

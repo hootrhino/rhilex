@@ -25,7 +25,7 @@ func NewJsonEncodeLib() typex.XLib {
 func (l *JsonEncodeLib) Name() string {
 	return "JsonEncode"
 }
-func (l *JsonEncodeLib) LibFun(rx typex.Rhilex) func(*lua.LState) int {
+func (l *JsonEncodeLib) LibFun(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return apiEncode
 }
 
@@ -44,16 +44,16 @@ func NewJsonDecodeLib() typex.XLib {
 func (l *JsonDecodeLib) Name() string {
 	return "JsonDecode"
 }
-func (l *JsonDecodeLib) LibFun(rx typex.Rhilex) func(*lua.LState) int {
+func (l *JsonDecodeLib) LibFun(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return apiDecode
 }
-func JSONE(rx typex.Rhilex) func(l *lua.LState) int {
+func JSONE(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return apiEncode
 }
-func JSOND(rx typex.Rhilex) func(l *lua.LState) int {
+func JSOND(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return apiDecode
 }
-func Base64J2T(rx typex.Rhilex) func(l *lua.LState) int {
+func Base64J2T(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return apiBase64JsonToTable
 }
 

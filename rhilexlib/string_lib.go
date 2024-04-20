@@ -14,7 +14,7 @@ import (
 * Table 转成 String
 *
  */
-func T2Str(rx typex.Rhilex) func(l *lua.LState) int {
+func T2Str(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		table := l.ToTable(2)
 		args := []string{}
@@ -34,7 +34,7 @@ func T2Str(rx typex.Rhilex) func(l *lua.LState) int {
  */
 var result1 = [1024 * 100]byte{}
 
-func Bin2Str(rx typex.Rhilex) func(l *lua.LState) int {
+func Bin2Str(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		table := l.ToTable(2)
 		acc := 0

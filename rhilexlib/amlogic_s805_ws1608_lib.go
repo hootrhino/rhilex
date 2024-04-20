@@ -12,7 +12,7 @@ import (
 * 读GPIO， lua的函数调用应该是这样: ws1608:GPIOGet(pin) -> v,error
 *
  */
-func WKYWS1608_GPIOGet(rx typex.Rhilex) func(*lua.LState) int {
+func WKYWS1608_GPIOGet(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		pin := l.ToString(2)
 		if !strings.SliceContains([]string{"red", "green", "blue"}, pin) {
@@ -37,7 +37,7 @@ func WKYWS1608_GPIOGet(rx typex.Rhilex) func(*lua.LState) int {
 * 写GPIO， lua的函数调用应该是这样: ws1608:GPIOSet(pin, v) -> error
 *
  */
-func WKYWS1608_GPIOSet(rx typex.Rhilex) func(*lua.LState) int {
+func WKYWS1608_GPIOSet(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		pin := l.ToString(2)
 		value := l.ToNumber(3)

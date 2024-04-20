@@ -60,7 +60,7 @@ func __MPVPlay(filePath string, duration time.Duration) error {
 * applib:PlayMusic('001.mp3')
 *
  */
-func PlayMusic(rx typex.Rhilex) func(l *lua.LState) int {
+func PlayMusic(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		filename := l.ToString(2)
 		if filename != "" {

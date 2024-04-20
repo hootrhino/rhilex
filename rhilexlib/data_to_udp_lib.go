@@ -11,7 +11,7 @@ import (
 * 数据转发到 UDP：local err: = data:ToUdp(uuid, data)
 *
  */
-func DataToUdp(rx typex.Rhilex) func(*lua.LState) int {
+func DataToUdp(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		id := l.ToString(2)
 		data := l.ToString(3)

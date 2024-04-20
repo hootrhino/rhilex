@@ -13,11 +13,11 @@ import (
 * GRPC 解码
 *
  */
-func Request(rx typex.Rhilex) func(*lua.LState) int {
-	return request(rx)
+func Request(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+	return request(rx, uuid)
 }
-func RPCDecode(rx typex.Rhilex) func(*lua.LState) int {
-	return request(rx)
+func RPCDecode(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+	return request(rx, uuid)
 }
 
 /*
@@ -25,10 +25,10 @@ func RPCDecode(rx typex.Rhilex) func(*lua.LState) int {
 * GRPC 编码
 *
  */
-func RPCEncode(rx typex.Rhilex) func(*lua.LState) int {
-	return request(rx)
+func RPCEncode(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+	return request(rx, uuid)
 }
-func request(rx typex.Rhilex) func(*lua.LState) int {
+func request(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		id := l.ToString(2)               // UUID
 		data := l.ToString(3)             // Data

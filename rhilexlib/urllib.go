@@ -16,7 +16,7 @@ var rBracket *regexp.Regexp = regexp.MustCompile(`\\[\\]$`)
 
 // parse,
 
-func UrlParse(rx typex.Rhilex) func(*lua.LState) int {
+func UrlParse(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return parse
 }
 
@@ -25,7 +25,7 @@ func UrlParse(rx typex.Rhilex) func(*lua.LState) int {
 * build
 *
  */
-func UrlBuild(rx typex.Rhilex) func(*lua.LState) int {
+func UrlBuild(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return build
 }
 
@@ -35,7 +35,7 @@ func UrlBuild(rx typex.Rhilex) func(*lua.LState) int {
 *
  */
 
-func UrlBuildQS(rx typex.Rhilex) func(*lua.LState) int {
+func UrlBuildQS(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return buildQueryString
 }
 
@@ -45,7 +45,7 @@ func UrlBuildQS(rx typex.Rhilex) func(*lua.LState) int {
 *
  */
 
-func UrlResolve(rx typex.Rhilex) func(*lua.LState) int {
+func UrlResolve(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return resolve
 }
 

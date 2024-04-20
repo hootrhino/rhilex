@@ -26,7 +26,7 @@ import (
 * 可能是个 websocket，也可能是个 TCP 或者 UDP Server。
 *
  */
-func Output(rx typex.Rhilex) func(l *lua.LState) int {
+func Output(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		// TODO
 		return 0

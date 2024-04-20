@@ -17,7 +17,7 @@ import (
 
 var deviceReadBuffer []byte = make([]byte, common.T_4KB)
 
-func ReadDevice(rx typex.Rhilex) func(*lua.LState) int {
+func ReadDevice(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		devUUID := l.ToString(2)
 		cmd := l.ToString(3)
@@ -54,7 +54,7 @@ func ReadDevice(rx typex.Rhilex) func(*lua.LState) int {
 * 写数据
 *
  */
-func WriteDevice(rx typex.Rhilex) func(*lua.LState) int {
+func WriteDevice(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		// write(uuid,cmd,data)
 		devUUID := l.ToString(2)
@@ -91,7 +91,7 @@ func WriteDevice(rx typex.Rhilex) func(*lua.LState) int {
 * 控制操作[2023年4月16日新增, 需求来自总线控制多个不对等设备]
 *
  */
-func CtrlDevice(rx typex.Rhilex) func(*lua.LState) int {
+func CtrlDevice(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		// write(uuid,cmd,data)
 		devUUID := l.ToString(2)

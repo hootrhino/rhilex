@@ -10,7 +10,7 @@ import (
 	"github.com/itchyny/gojq"
 )
 
-func JqSelect(rx typex.Rhilex) func(*lua.LState) int {
+func JqSelect(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(stateStack *lua.LState) int {
 		// LUA Args: Jq, Data ->
 		// stack:  ------------

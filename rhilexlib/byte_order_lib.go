@@ -22,7 +22,7 @@ import (
 * 处理ABCD序
 *
  */
-func ABCD(rx typex.Rhilex) func(*lua.LState) int {
+func ABCD(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		data := l.ToString(2)
 		start := l.ToInt(3)
@@ -41,7 +41,7 @@ func ABCD(rx typex.Rhilex) func(*lua.LState) int {
 }
 
 // DCBA 将十六进制串里的N个字节"ABCD"逆序成"DCBA"
-func DCBA(rx typex.Rhilex) func(*lua.LState) int {
+func DCBA(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		data := l.ToString(2)
 		start := l.ToInt(3)
@@ -60,7 +60,7 @@ func DCBA(rx typex.Rhilex) func(*lua.LState) int {
 }
 
 // BADC 将十六进制串里的N个字节"ABCD"逆序成"BADC"
-func BADC(rx typex.Rhilex) func(*lua.LState) int {
+func BADC(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		data := l.ToString(2)
 		start := l.ToInt(3)
@@ -79,7 +79,7 @@ func BADC(rx typex.Rhilex) func(*lua.LState) int {
 }
 
 // CDAB 将十六进制串里的2个字节"ABCD"转化成"CDAB"
-func CDAB(rx typex.Rhilex) func(*lua.LState) int {
+func CDAB(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		data := l.ToString(2)
 		start := l.ToInt(3)

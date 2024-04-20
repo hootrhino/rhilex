@@ -33,7 +33,7 @@ func truncateFloat(number float64, decimalPlaces int) float64 {
 * 取小数位 applib:Float(number, decimalPlaces) -> float
 *
  */
-func TruncateFloat(rx typex.Rhilex) func(*lua.LState) int {
+func TruncateFloat(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		number := l.ToNumber(2)
 		decimalPlaces := l.ToInt(3)

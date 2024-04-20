@@ -6,7 +6,7 @@ import (
 	lua "github.com/hootrhino/gopher-lua"
 )
 
-func Throw(rx typex.Rhilex) func(l *lua.LState) int {
+func Throw(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		l.RaiseError(l.ToString(2))
 		return 0

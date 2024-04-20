@@ -17,7 +17,7 @@ import (
 * 十六进制字符串转byte数组
 *
  */
-func Hexs2Bytes(rx typex.Rhilex) func(*lua.LState) int {
+func Hexs2Bytes(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		hexs := l.ToString(2)
 		s, e := hex.DecodeString(hexs)
@@ -41,7 +41,7 @@ func Hexs2Bytes(rx typex.Rhilex) func(*lua.LState) int {
 * byte数组转十六进制字符串
 *
  */
-func Bytes2Hexs(rx typex.Rhilex) func(*lua.LState) int {
+func Bytes2Hexs(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		bytes := l.ToString(2)
 		l.Push(lua.LString(hex.EncodeToString([]byte(bytes))))
@@ -55,7 +55,7 @@ func Bytes2Hexs(rx typex.Rhilex) func(*lua.LState) int {
 * 十六进制字符串匹配: MatchHex("FFFFFF014CB2AA55", "age:[1,232];sex:[4,5]")
 *---------------------------------------------------------------------------
  */
-func MatchHex(rx typex.Rhilex) func(*lua.LState) int {
+func MatchHex(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		exprS := l.ToString(2)
 		hexS := l.ToString(3)
@@ -75,7 +75,7 @@ func MatchHex(rx typex.Rhilex) func(*lua.LState) int {
 *  MatchHex("FFFFFF014CB2AA55", "age:[1,1];sex:[4,5]")
 *
  */
-func MatchUInt(rx typex.Rhilex) func(*lua.LState) int {
+func MatchUInt(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		exprS := l.ToString(2)
 		hexS := l.ToString(3)

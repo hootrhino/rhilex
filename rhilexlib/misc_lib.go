@@ -13,7 +13,7 @@ import (
 * XOR 校验
 *
  */
-func XOR(rx typex.Rhilex) func(*lua.LState) int {
+func XOR(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		hexs := l.ToString(2)
 		vb, err := hex.DecodeString(hexs)
@@ -36,7 +36,7 @@ func XOR(rx typex.Rhilex) func(*lua.LState) int {
 * CRC16校验
 *
  */
-func CRC16(rx typex.Rhilex) func(*lua.LState) int {
+func CRC16(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		hexs := l.ToString(2)
 		vb, err := hex.DecodeString(hexs)
