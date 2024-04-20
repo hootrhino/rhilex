@@ -26,6 +26,7 @@ type snmpOid struct {
 }
 type _SNMPCommonConfig struct {
 	AutoRequest *bool `json:"autoRequest" validate:"required"` // 自动请求
+	EnableGroup *bool `json:"enableGroup" validate:"required"` // 并发请求, 注意: 这个开关可能会把目标设备搞挂了, 根据设备性能量力而行
 	Timeout     *int  `json:"timeout" validate:"required"`     // 请求超时
 	Frequency   *int  `json:"frequency"`                       // 请求频率
 }
@@ -58,6 +59,10 @@ func NewGenericSnmpDevice(e typex.Rhilex) typex.XDevice {
 	sd.locker = &sync.Mutex{}
 	sd.mainConfig = _GSNMPConfig{
 		CommonConfig: _SNMPCommonConfig{
+			EnableGroup: func() *bool {
+				b := false
+				return &b
+			}(),
 			AutoRequest: func() *bool {
 				b := true
 				return &b
@@ -175,10 +180,10 @@ func (sd *genericSnmpDevice) Start(cctx typex.CCTX) error {
 			snmpOids, err := sd.readData()
 			if err != nil {
 				glogger.GLogger.Error(err)
-				continue
+				goto END
 			}
 			if len(snmpOids) < 1 {
-				continue
+				goto END
 			}
 			if bytes, err := json.Marshal(snmpOids); err != nil {
 				glogger.GLogger.Error(err)
@@ -186,6 +191,7 @@ func (sd *genericSnmpDevice) Start(cctx typex.CCTX) error {
 				glogger.GLogger.Debug(string(bytes))
 				sd.RuleEngine.WorkDevice(sd.Details(), string(bytes))
 			}
+		END:
 			<-ticker.C
 		}
 
@@ -278,6 +284,16 @@ func (sd *genericSnmpDevice) readData() ([]ReadSnmpOidValue, error) {
 		return nil, err1
 	}
 	result := []ReadSnmpOidValue{}
+
+	if !*sd.mainConfig.CommonConfig.EnableGroup {
+		for _, oid := range sd.snmpOids {
+			R, ok := sd.walk(oid)
+			if ok {
+				result = append(result, R)
+			}
+		}
+		return result, nil
+	}
 	wg := sync.WaitGroup{}
 	wg.Add(len(sd.snmpOids))
 	for _, oid := range sd.snmpOids {
@@ -330,5 +346,55 @@ func (sd *genericSnmpDevice) readData() ([]ReadSnmpOidValue, error) {
 		}(oid)
 	}
 	wg.Wait()
+
 	return result, nil
+}
+func (sd *genericSnmpDevice) walk(snmpOid snmpOid) (ReadSnmpOidValue, bool) {
+	result := ReadSnmpOidValue{}
+	Value := ""
+	glogger.GLogger.Debug("SNMP Walk:", snmpOid.Oid)
+	err2 := sd.client.Walk(snmpOid.Oid, func(variable gosnmp.SnmpPDU) error {
+		// 目前先考虑这么多类型，其他的好像没见过
+		if variable.Type == gosnmp.OctetString {
+			Value = fmt.Sprintf("%v", string(variable.Value.([]byte)))
+		}
+		if variable.Type == gosnmp.Integer {
+			Value = fmt.Sprintf("%v", int64(variable.Value.(int)))
+		}
+		if variable.Type == gosnmp.Boolean {
+			Value = fmt.Sprintf("%v", bool(variable.Value.(bool)))
+		}
+		if variable.Type == gosnmp.IPAddress {
+			Value = fmt.Sprintf("%v", string(variable.Value.([]byte)))
+		}
+		if variable.Type == gosnmp.Null {
+			Value = "Null"
+		}
+		return nil
+	})
+
+	lastTimes := uint64(time.Now().UnixMilli())
+	NewValue := intercache.CacheValue{
+		UUID:          snmpOid.UUID,
+		Status:        0,
+		LastFetchTime: lastTimes,
+		Value:         "",
+		ErrMsg:        "",
+	}
+	if err2 != nil {
+		glogger.GLogger.Error(err2)
+		NewValue.ErrMsg = err2.Error()
+	} else {
+		NewValue.ErrMsg = ""
+		NewValue.Value = Value
+		NewValue.Status = 1
+	}
+	intercache.SetValue(sd.PointId, snmpOid.UUID, NewValue)
+	if err2 != nil {
+		return result, false
+	}
+	result.Tag = snmpOid.Tag
+	result.Alias = snmpOid.Alias
+	result.Value = Value
+	return result, true
 }
