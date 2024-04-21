@@ -3,11 +3,11 @@ package test
 import (
 	"testing"
 
-	core "github.com/hootrhino/rhilex/config"
+	ruleengine "github.com/hootrhino/rhilex/ruleengine"
 )
 
 func Test_get_set(t *testing.T) {
-	core.StartStore(1024)
-	core.GlobalStore.Set("k", "v")
-	t.Log(core.GlobalStore.Get("k"))
+	ruleengine.StartStore(1024)
+	ruleengine.GlobalStore.Set("k", "v")
+	t.Log(ruleengine.GlobalStore.Get("k"))
 }

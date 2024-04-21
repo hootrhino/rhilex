@@ -6,6 +6,7 @@ import (
 	"syscall"
 	"testing"
 
+	"github.com/hootrhino/rhilex/component/ruleengine"
 	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/typex"
@@ -40,7 +41,7 @@ func TestLuaSyntax1(t *testing.T) {
 		}`,
 		`function Failed(error) print("[LUA Failed]==========================> OK", error) end`,
 	)
-	err := core.VerifyLuaSyntax(rule)
+	err := ruleengine.VerifyLuaSyntax(rule)
 	t.Log(err)
 }
 func TestLuaSyntax2(t *testing.T) {
@@ -76,6 +77,6 @@ func TestLuaSyntax2(t *testing.T) {
 		}`,
 		`function Failed(error) print("[LUA Failed]==========================> OK", error) end`,
 	)
-	err := core.VerifyLuaSyntax(rule)
+	err := ruleengine.VerifyLuaSyntax(rule)
 	t.Log(err)
 }
