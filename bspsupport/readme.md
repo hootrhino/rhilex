@@ -4,9 +4,9 @@
 
 ## 当前兼容
 
-### EEKIT 网关
+### RHINOPI 网关
 
-EEKIT 是 RHILEX 团队的默认硬件，操作系统为 `64位OpenWrt、Armbian`, CPU 架构为 `64位全志H3`。EEKIT 网关的lua标准库命名空间为 `eekit`。
+RHINOPI 是 RHILEX 团队的默认硬件，操作系统为 `64位OpenWrt、Armbian`, CPU 架构为 `64位全志H3`。RHINOPI 网关的lua标准库命名空间为 `rhinopi`。
 
 ### 树莓派4B+
 
@@ -14,19 +14,19 @@ EEKIT 是 RHILEX 团队的默认硬件，操作系统为 `64位OpenWrt、Armbian
 
 ## 环境变量
 
-如果要启用硬件特性，需要在启动的时候加入 `ARCHSUPPORT` 环境变量来指定运行的版本, 例如要在 EEKIT-H3网关上运行：
+如果要启用硬件特性，需要在启动的时候加入 `ARCHSUPPORT` 环境变量来指定运行的版本, 例如要在 RHINOPI-H3网关上运行：
 
 ```sh
-ARCHSUPPORT=EEKITH3 rhilex run
+ARCHSUPPORT=RHINOPI rhilex run
 ```
 
 ## 支持硬件列表
 
 | 硬件名             | 环境参数  | 示例                              |
 | ------------------ | --------- | --------------------------------- |
-| EEKIT H3版本网关   | EEKITH3   | `ARCHSUPPORT=EEKITH3 rhilex run`   |
-| EEKIT T507版本网关 | EEKITT507 | `ARCHSUPPORT=EEKITT507 rhilex run` |
-| EEKIT T113版本网关 | EEKITT113 | `ARCHSUPPORT=EEKITT113 rhilex run` |
+| RHINOPI H3版本网关   | RHINOPI   | `ARCHSUPPORT=RHINOPI rhilex run`   |
+| RHINOPI T507版本网关 | EEKITT507 | `ARCHSUPPORT=EEKITT507 rhilex run` |
+| RHINOPI T113版本网关 | EEKITT113 | `ARCHSUPPORT=EEKITT113 rhilex run` |
 | 树莓派4B、4B+      | RPI4      | `ARCHSUPPORT=RPI4B rhilex run`     |
 | 玩客云S805         | WKYS805   | `ARCHSUPPORT=WKYS805 rhilex run`   |
 
@@ -34,7 +34,7 @@ ARCHSUPPORT=EEKITH3 rhilex run
 
 ## 常见函数
 
-### EEKIT H3版本网关
+### RHINOPI H3版本网关
 
 1. GPIO 设置
 
@@ -71,7 +71,7 @@ end
 ```
 >必须使用这个系统：Linux aml-s812 5.9.0-rc7-aml-s812 #20.12 SMP Sun Dec 13 22:50:05 CST 2020 armv7l GNU/Linux, Armbian 20.12 Buster \l
 
-1. EEKIT 网关
+1. RHINOPI 网关
 ```lua
 function Main(arg)
     while true do

@@ -29,32 +29,32 @@ import (
 */
 const (
 	// DO
-	eekit_DO1 string = "6"
-	eekit_DO2 string = "7"
+	rhinopi_DO1 string = "6"
+	rhinopi_DO2 string = "7"
 	// DI
-	eekit_DI1 string = "8"
-	eekit_DI2 string = "9"
-	eekit_DI3 string = "10"
+	rhinopi_DI1 string = "8"
+	rhinopi_DI2 string = "9"
+	rhinopi_DI3 string = "10"
 	// Use LED
-	eekit_USER_GPIO string = "20"
+	rhinopi_USER_GPIO string = "20"
 )
 
 const (
-	eekit_Out string = "out"
-	eekit_In  string = "in"
+	rhinopi_Out string = "out"
+	rhinopi_In  string = "in"
 )
 
 func init() {
 	env := os.Getenv("ARCHSUPPORT")
-	if env == "EEKITH3" {
-		_EEKIT_GPIOAllInit()
+	if env == "RHINOPI" {
+		_RHINOPI_GPIOAllInit()
 	}
 }
 
 /*
 explain:init all gpio
 */
-func _EEKIT_GPIOAllInit() int {
+func _RHINOPI_GPIOAllInit() int {
 	gpio6 := "/sys/class/gpio/gpio6/value"
 	gpio7 := "/sys/class/gpio/gpio7/value"
 	gpio8 := "/sys/class/gpio/gpio8/value"
@@ -69,37 +69,37 @@ func _EEKIT_GPIOAllInit() int {
 	_, err6 := os.Stat(gpio20)
 	if err1 != nil {
 		if strings.Contains(err1.Error(), "no such file or directory") {
-			_EEKIT_GPIOInit(eekit_DO1, eekit_Out)
+			_RHINOPI_GPIOInit(rhinopi_DO1, rhinopi_Out)
 			fmt.Println("EEKIT_GPIOAllInit DO1 Out Mode Ok")
 		}
 	}
 	if err2 != nil {
 		if strings.Contains(err2.Error(), "no such file or directory") {
-			_EEKIT_GPIOInit(eekit_DO2, eekit_Out)
+			_RHINOPI_GPIOInit(rhinopi_DO2, rhinopi_Out)
 			fmt.Println("EEKIT_GPIOAllInit DO2 Out Mode Ok")
 		}
 	}
 	if err3 != nil {
 		if strings.Contains(err3.Error(), "no such file or directory") {
-			_EEKIT_GPIOInit(eekit_DI1, eekit_In)
+			_RHINOPI_GPIOInit(rhinopi_DI1, rhinopi_In)
 			fmt.Println("EEKIT_GPIOAllInit DI1 In Mode Ok")
 		}
 	}
 	if err4 != nil {
 		if strings.Contains(err4.Error(), "no such file or directory") {
-			_EEKIT_GPIOInit(eekit_DI2, eekit_In)
+			_RHINOPI_GPIOInit(rhinopi_DI2, rhinopi_In)
 			fmt.Println("EEKIT_GPIOAllInit DI2 In Mode Ok")
 		}
 	}
 	if err5 != nil {
 		if strings.Contains(err5.Error(), "no such file or directory") {
-			_EEKIT_GPIOInit(eekit_DI3, eekit_In)
+			_RHINOPI_GPIOInit(rhinopi_DI3, rhinopi_In)
 			fmt.Println("EEKIT_GPIOAllInit DI3 In Mode Ok")
 		}
 	}
 	if err6 != nil {
 		if strings.Contains(err5.Error(), "no such file or directory") {
-			_EEKIT_GPIOInit(eekit_USER_GPIO, eekit_Out)
+			_RHINOPI_GPIOInit(rhinopi_USER_GPIO, rhinopi_Out)
 			fmt.Println("EEKIT_GPIOAllInit USER_GPIO Out Mode Ok")
 		}
 	}
@@ -112,7 +112,7 @@ explain:init gpio
 Pin: gpio pin
 direction:gpio direction in or out
 */
-func _EEKIT_GPIOInit(Pin string, direction string) {
+func _RHINOPI_GPIOInit(Pin string, direction string) {
 	//gpio export
 	cmd := fmt.Sprintf("echo %s > /sys/class/gpio/export", Pin)
 	output, err := exec.Command("sh", "-c", cmd).CombinedOutput()

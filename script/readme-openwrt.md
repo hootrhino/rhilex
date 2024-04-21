@@ -34,5 +34,5 @@ unzip rhilex-arm32linux-$VERSION.zip -d rhilex
 # 打开crontab
 sudo crontab -e
 # 输入
-@reboot (export ARCHSUPPORT=EEKITH3 && /etc/init.d/rhilex.service start > /var/log/rhilex.log 2>&1)
+@reboot (export ARCHSUPPORT=RHINOPI && /etc/init.d/rhilex.service start > /var/log/rhilex.log 2>&1)
 ```

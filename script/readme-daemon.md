@@ -4,7 +4,7 @@
 ## 环境准备
 在执行脚本前，请确保已正确设置环境变量ARCHSUPPORT，例如：
 ```sh
-export ARCHSUPPORT=EEKITH3
+export ARCHSUPPORT=RHINOPI
 ```
 ## 基础使用
 ### 下载和安装

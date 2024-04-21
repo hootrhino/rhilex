@@ -37,7 +37,7 @@ type DeviceTree struct {
  */
 func GetDeviceCtrlTree() DeviceTree {
 	env := os.Getenv("ARCHSUPPORT")
-	if env == "EEKITH3" {
+	if env == "RHINOPI" {
 		return DeviceTree{
 			Network: []DeviceNode{
 				{"eth0", "ethernet", 1},
