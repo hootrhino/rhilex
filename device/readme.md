@@ -1,6 +1,63 @@
 # 设备接入模块开发指南
 ## 概述
 主要阐述如何快速开发一个设备接入模块。
+## 设备接口
+```go
+
+// XDevice 接口定义了一系列方法，这些方法用于与XDevice设备交互。
+// 包括初始化、启动、读取数据、写入数据、控制命令处理、状态查询等功能。
+type XDevice interface {
+   // Init方法用于初始化设备，通常用于获取设备的配置信息。
+   // devId是设备ID，configMap是设备配置信息的映射。
+   // 返回初始化是否成功的错误信息。
+   Init(devId string, configMap map[string]interface{}) error
+
+   // Start方法用于启动设备的工作进程，使设备开始正常运作。
+   // CCTX是上下文，具体作用取决于设备的实现。
+   // 返回启动是否成功的错误信息。
+   Start(CCTX context.Context) error
+
+   // OnRead方法用于从设备中读取数据。
+   // cmd是指令类型的字节切片，data是用于存放读取数据的字节切片。
+   // 返回实际读取的数据长度和错误信息。
+   OnRead(cmd []byte, data []byte) (int, error)
+
+   // OnWrite方法用于将数据写入设备。
+   // cmd是指令类型的字节切片，data是要写入的数据的字节切片。
+   // 返回实际写入的数据长度和错误信息。
+   OnWrite(cmd []byte, data []byte) (int, error)
+
+   // OnCtrl方法用于处理设备的控制命令。
+   // cmd是控制命令的字节切片，args是控制命令的参数。
+   // 返回执行后的结果和错误信息。
+   OnCtrl(cmd []byte, args []byte) ([]byte, error)
+
+   // Status方法用于获取设备的当前状态。
+   Status() DeviceState
+
+   // Stop方法用于停止设备，释放相关资源。
+   // 通常先将设备状态设置为STOP，然后调用CancelContext()来取消上下文。
+   Stop()
+
+   // Reload方法用于重新加载设备配置，可能会导致设备重启。
+   // 返回重新加载是否成功的错误信息。
+   Reload() error
+
+   // Details方法用于获取指向真实设备的详细信息，并保存在内存中。
+   // 这些信息与SQLite数据库中的数据相对应。
+   Details() *Device
+
+   // SetState方法用于设置设备的状态。
+   // 这是一个高级接口，目前未启用，但预留用于未来可能的分布式部署场景。
+   SetState(state DeviceState)
+
+   // OnDCACall方法用于处理来自DCACall服务的调用。
+   // UUID是调用方的唯一标识符，Command是要执行的命令，Args是命令参数。
+   // 返回DCAResult，包含命令执行结果和错误信息。
+   OnDCACall(UUID string, Command string, Args interface{}) DCAResult
+}
+
+```
 ## 模板
 下面是一个设备的基础模板。
 ```go
