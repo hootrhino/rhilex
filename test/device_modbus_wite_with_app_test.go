@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/hootrhino/rhilex/common"
+	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 	"github.com/hootrhino/rhilex/component/appstack"
-	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 
 	"testing"
 

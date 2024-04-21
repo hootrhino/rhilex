@@ -18,7 +18,7 @@ package engine
 import (
 	"sync"
 
-	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/component/ruleengine"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 )
@@ -27,7 +27,7 @@ import (
 // 使用MAP来记录RULE的绑定关系, KEY是UUID, Value是规则
 func (e *RuleEngine) LoadRule(r *typex.Rule) error {
 	// 前置语法验证
-	if err := core.VerifyLuaSyntax(r); err != nil {
+	if err := ruleengine.VerifyLuaSyntax(r); err != nil {
 		return err
 	}
 	// 前置自定义库校验

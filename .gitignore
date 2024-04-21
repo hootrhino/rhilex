@@ -24,4 +24,4 @@ apps/*.lua
 test/script/_temp/*
 upload/*
 go.sum
-component/rhilex_api_server/server/www/*
+component/apiserver/server/www/*

@@ -150,9 +150,9 @@ fetch_dashboard() {
     echo "[√] Download complete. Tag: $tag"
 
     # 解压 www.zip 文件到指定目录
-    unzip -o www.zip -d /plugin/rhilex_api_server/server/www/
+    unzip -o www.zip -d /plugin/apiserver/server/www/
 
-    echo "[√] Extraction complete. www.zip contents have been overwritten to /plugin/rhilex_api_server/server/www/."
+    echo "[√] Extraction complete. www.zip contents have been overwritten to /plugin/apiserver/server/www/."
 }
 
 #

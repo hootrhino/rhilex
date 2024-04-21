@@ -29,7 +29,8 @@ import (
 	usbmonitor "github.com/hootrhino/rhilex/plugin/usb_monitor"
 	"gopkg.in/ini.v1"
 
-	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/apiserver"
+	"github.com/hootrhino/rhilex/component/interkv"
 	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/glogger"
 	icmpsender "github.com/hootrhino/rhilex/plugin/icmp_sender"
@@ -54,7 +55,7 @@ func RunRhilex(iniPath string) {
 	//----------------------------------------------------------------------------------------------
 	// Init Component
 	//----------------------------------------------------------------------------------------------
-	core.StartStore(core.GlobalConfig.MaxQueueSize)
+	interkv.StartStore(core.GlobalConfig.MaxQueueSize)
 	core.SetDebugMode(mainConfig.EnablePProf)
 	core.SetGomaxProcs(mainConfig.GomaxProcs)
 	//

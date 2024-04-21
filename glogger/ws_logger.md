@@ -65,7 +65,7 @@ $$
     {
         "appId":"rhilex",
         "file":"C:/Users/wangwenhai/workspace/rhilex/plugin/http_server/rule_api.go:580",
-        "func":"github.com/hootrhino/rhilex/component/rhilex_api_server.TestSourceCallback",
+        "func":"github.com/hootrhino/rhilex/component/apiserver.TestSourceCallback",
         "level":"debug",
         "msg":"string",
         "time":"2023-06-30T17:52:31+08:00",
@@ -77,7 +77,7 @@ $$
     {
         "appId":"rhilex",
         "file":"C:/Users/wangwenhai/workspace/rhilex/plugin/http_server/rule_api.go:580",
-        "func":"github.com/hootrhino/rhilex/component/rhilex_api_server.TestSourceCallback",
+        "func":"github.com/hootrhino/rhilex/component/apiserver.TestSourceCallback",
         "level":"debug",
         "msg":"string",
         "time":"2023-06-30T17:52:31+08:00",

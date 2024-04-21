@@ -17,7 +17,6 @@ package engine
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"runtime"
 	"sync"
@@ -26,6 +25,8 @@ import (
 	"github.com/hootrhino/rhilex/component/aibase"
 	"github.com/hootrhino/rhilex/component/appstack"
 	"github.com/hootrhino/rhilex/component/hwportmanager"
+	"github.com/hootrhino/rhilex/component/rhilexmanager"
+	"github.com/hootrhino/rhilex/component/ruleengine"
 
 	intercache "github.com/hootrhino/rhilex/component/intercache"
 
@@ -62,31 +63,27 @@ const __DEFAULT_DB_PATH string = "./rhilex.db"
 // 规则引擎
 type RuleEngine struct {
 	locker            sync.Mutex
-	Hooks             *sync.Map            `json:"hooks"`
-	Rules             *sync.Map            `json:"rules"`
-	Plugins           *sync.Map            `json:"plugins"`
-	InEnds            *sync.Map            `json:"inends"`
-	OutEnds           *sync.Map            `json:"outends"`
-	Drivers           *sync.Map            `json:"drivers"`
-	Devices           *sync.Map            `json:"devices"`
-	Config            *typex.RhilexConfig  `json:"config"`
-	DeviceTypeManager typex.DeviceRegistry `json:"-"` // 待迁移组件
-	SourceTypeManager typex.SourceRegistry `json:"-"` // 待迁移组件
-	TargetTypeManager typex.TargetRegistry `json:"-"` // 待迁移组件
+	Rules             *sync.Map                        `json:"rules"`
+	Plugins           *sync.Map                        `json:"plugins"`
+	InEnds            *sync.Map                        `json:"inends"`
+	OutEnds           *sync.Map                        `json:"outends"`
+	Devices           *sync.Map                        `json:"devices"`
+	Config            *typex.RhilexConfig              `json:"config"`
+	DeviceTypeManager *rhilexmanager.DeviceTypeManager `json:"-"` // 待迁移组件: component/rhilexmanager
+	SourceTypeManager *rhilexmanager.SourceTypeManager `json:"-"` // 待迁移组件: component/rhilexmanager
+	TargetTypeManager *rhilexmanager.TargetTypeManager `json:"-"` // 待迁移组件: component/rhilexmanager
 }
 
 func InitRuleEngine(config typex.RhilexConfig) typex.Rhilex {
 	__DefaultRuleEngine = &RuleEngine{
 		locker:            sync.Mutex{},
-		DeviceTypeManager: core.NewDeviceTypeManager(),
-		SourceTypeManager: core.NewSourceTypeManager(),
-		TargetTypeManager: core.NewTargetTypeManager(),
+		DeviceTypeManager: rhilexmanager.NewDeviceTypeManager(),
+		SourceTypeManager: rhilexmanager.NewSourceTypeManager(),
+		TargetTypeManager: rhilexmanager.NewTargetTypeManager(),
 		Plugins:           &sync.Map{},
-		Hooks:             &sync.Map{},
 		Rules:             &sync.Map{},
 		InEnds:            &sync.Map{},
 		OutEnds:           &sync.Map{},
-		Drivers:           &sync.Map{},
 		Devices:           &sync.Map{},
 		Config:            &config,
 	}
@@ -236,7 +233,7 @@ func (e *RuleEngine) RunSourceCallbacks(in *typex.InEnd, callbackArgs string) {
 	// 执行来自资源的脚本
 	for _, rule := range in.BindRules {
 		if rule.Status == typex.RULE_RUNNING {
-			_, errA := core.ExecuteActions(&rule, lua.LString(callbackArgs))
+			_, errA := ruleengine.ExecuteActions(&rule, lua.LString(callbackArgs))
 			if errA != nil {
 				Debugger, Ok := rule.LuaVM.GetStack(1)
 				if Ok {
@@ -261,12 +258,12 @@ func (e *RuleEngine) RunSourceCallbacks(in *typex.InEnd, callbackArgs string) {
 						LastCall.Name, errA.Error(),
 					)
 				}
-				_, err0 := core.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
+				_, err0 := ruleengine.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
 				if err0 != nil {
 					glogger.GLogger.Error(err0)
 				}
 			} else {
-				_, errS := core.ExecuteSuccess(rule.LuaVM)
+				_, errS := ruleengine.ExecuteSuccess(rule.LuaVM)
 				if errS != nil {
 					glogger.GLogger.Error(errS)
 					return // lua 是规则链，有短路原则，中途出错会中断
@@ -283,7 +280,7 @@ func (e *RuleEngine) RunSourceCallbacks(in *typex.InEnd, callbackArgs string) {
  */
 func (e *RuleEngine) RunDeviceCallbacks(Device *typex.Device, callbackArgs string) {
 	for _, rule := range Device.BindRules {
-		_, errA := core.ExecuteActions(&rule, lua.LString(callbackArgs))
+		_, errA := ruleengine.ExecuteActions(&rule, lua.LString(callbackArgs))
 		if errA != nil {
 			Debugger, Ok := rule.LuaVM.GetStack(1)
 			if Ok {
@@ -308,12 +305,12 @@ func (e *RuleEngine) RunDeviceCallbacks(Device *typex.Device, callbackArgs strin
 					LastCall.Name, errA.Error(),
 				)
 			}
-			_, err1 := core.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
+			_, err1 := ruleengine.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
 			if err1 != nil {
 				glogger.GLogger.Error(err1)
 			}
 		} else {
-			_, err2 := core.ExecuteSuccess(rule.LuaVM)
+			_, err2 := ruleengine.ExecuteSuccess(rule.LuaVM)
 			if err2 != nil {
 				glogger.GLogger.WithFields(logrus.Fields{
 					"topic": "rule/log/" + rule.UUID,
@@ -322,30 +319,6 @@ func (e *RuleEngine) RunDeviceCallbacks(Device *typex.Device, callbackArgs strin
 			}
 		}
 	}
-}
-
-// LoadHook
-func (e *RuleEngine) LoadHook(h typex.XHook) error {
-	value, _ := e.Hooks.Load(h.Name())
-	if value != nil {
-		return errors.New("hook have been loaded:" + h.Name())
-	}
-	e.Hooks.Store(h.Name(), h)
-	return nil
-
-}
-
-// RunHooks
-func (e *RuleEngine) RunHooks(data string) {
-	e.Hooks.Range(func(key, value interface{}) bool {
-		if err := runHook(value.(typex.XHook), data); err != nil {
-			value.(typex.XHook).Error(err)
-		}
-		return true
-	})
-}
-func runHook(h typex.XHook, data string) error {
-	return h.Work(data)
 }
 
 func (e *RuleEngine) GetInEnd(uuid string) *typex.InEnd {

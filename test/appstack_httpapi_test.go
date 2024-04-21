@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/go-playground/assert/v2"
-	"github.com/hootrhino/rhilex/component/rhilex_api_server/model"
+	"github.com/hootrhino/rhilex/component/apiserver/model"
 )
 
 /*

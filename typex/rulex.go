@@ -83,10 +83,6 @@ type Rhilex interface {
 	//
 	RemoveOutEnd(string)
 	//
-	// 加载Hook
-	//
-	LoadHook(XHook) error
-	//
 	// 加载插件
 	//
 	LoadPlugin(string, XPlugin) error
@@ -115,10 +111,6 @@ type Rhilex interface {
 	//
 	RunSourceCallbacks(*InEnd, string)
 	RunDeviceCallbacks(*Device, string)
-	//
-	// 运行 hook
-	//
-	RunHooks(string) //TODO Hook 未来某个版本会加强,主要用来加载本地动态库
 	//
 	// 获取版本
 	//

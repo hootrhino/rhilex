@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
+	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 	"github.com/hootrhino/rhilex/device"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"

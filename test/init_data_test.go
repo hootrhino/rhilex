@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
-	"github.com/hootrhino/rhilex/component/rhilex_api_server/model"
-	"github.com/hootrhino/rhilex/component/rhilex_api_server/service"
+	httpserver "github.com/hootrhino/rhilex/component/apiserver"
+	"github.com/hootrhino/rhilex/component/apiserver/model"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/glogger"

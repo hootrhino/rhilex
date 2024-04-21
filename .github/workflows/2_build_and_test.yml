@@ -24,8 +24,8 @@ jobs:
                gcc-mips-linux-gnu \
                gcc-mingw-w64 \
                gcc-aarch64-linux-gnu -y
-          mkdir ./component/rhilex_api_server/server/www
-          echo "hello">./component/rhilex_api_server/server/www/index.html
+          mkdir ./component/apiserver/server/www
+          echo "hello">./component/apiserver/server/www/index.html
           go get
           go get -t github.com/hootrhino/rhilex/test
           git clone https://github.com/hybridgroup/gocv.git

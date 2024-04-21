@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 	"github.com/hootrhino/rhilex/component/appstack"
-	httpserver "github.com/hootrhino/rhilex/component/rhilex_api_server"
 	"github.com/hootrhino/rhilex/typex"
 )
 
