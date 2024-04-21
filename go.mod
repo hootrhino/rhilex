@@ -132,15 +132,11 @@ require (
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/notnoobmaster/luautil v1.4.11 // indirect
-	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.2.0 // indirect
 	github.com/pion/dtls/v2 v2.2.8-0.20240201071732-2597464081c8 // indirect
 	github.com/pion/logging v0.2.2 // indirect
-	github.com/pion/transport v0.13.0 // indirect
 	github.com/pion/transport/v3 v3.0.1 // indirect
-	github.com/pion/udp v0.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/plgd-dev/kit v0.0.0-20200819113605-d5fcf3e94f63 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/client_golang v1.4.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
