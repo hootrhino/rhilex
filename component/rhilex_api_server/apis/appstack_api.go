@@ -115,8 +115,8 @@ func CreateApp(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("App Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	newUUID := utils.AppUuid()
@@ -163,8 +163,8 @@ func UpdateApp(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("App Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	// 校验语法

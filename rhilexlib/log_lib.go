@@ -9,13 +9,11 @@ import (
 
 // | Ws log topic                     | 用途               |
 // | -------------------------------- | ------------------ |
-// | plugin/ICMPSenderPing/ICMPSender | 网络测速插件的日志 |
-// | rule/test/${uuid}                | 规则测试日志       |
+// | plugin/${name}/${uuid}           | 插件的日志 |
 // | rule/log/${uuid}                 | 规则运行时的日志   |
-// | app/console/${uuid}              | app                |
+// | app/console/${uuid}              | app运行地址         |
 // | device/rule/test/${uuid}         | Test device        |
 // | inend/rule/test/${uuid}          | Test inend         |
-// | outend/rule/test/${uuid}         | Test outend        |
 
 /*
 *

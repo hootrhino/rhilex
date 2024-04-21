@@ -95,8 +95,8 @@ func CreateRule(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("Rule Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	if !utils.SContains([]string{"lua"}, form.Type) {
@@ -299,8 +299,8 @@ func UpdateRule(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("Rule Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	// tmpRule 是一个一次性的临时rule，用来验证规则，这么做主要是为了防止真实Lua Vm 被污染

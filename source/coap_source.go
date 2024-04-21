@@ -3,18 +3,18 @@ package source
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/hootrhino/rhilex/common"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
-
-	"github.com/plgd-dev/go-coap/v2/message"
-	"github.com/plgd-dev/go-coap/v2/message/codes"
-
-	"github.com/plgd-dev/go-coap/v2"
-	"github.com/plgd-dev/go-coap/v2/mux"
+	coap "github.com/plgd-dev/go-coap/v3"
+	"github.com/plgd-dev/go-coap/v3/message"
+	"github.com/plgd-dev/go-coap/v3/message/codes"
+	"github.com/plgd-dev/go-coap/v3/mux"
 )
 
 type coAPInEndSource struct {
@@ -40,26 +40,38 @@ func (cc *coAPInEndSource) Init(inEndId string, configMap map[string]interface{}
 
 	return nil
 }
+
+// 输入数据
+type InData struct {
+	Ts      uint64 `json:"ts"`
+	Type    string `json:"type"`
+	Payload string `json:"payload"`
+}
+
 func (cc *coAPInEndSource) Start(cctx typex.CCTX) error {
 	cc.Ctx = cctx.Ctx
 	cc.CancelCTX = cctx.CancelCTX
 	port := fmt.Sprintf(":%v", cc.mainConfig.Port)
-	cc.router.Use(func(next mux.Handler) mux.Handler {
-		return mux.HandlerFunc(func(w mux.ResponseWriter, r *mux.Message) {
-			// glogger.GLogger.Debugf("Client Address %v, %v\n", w.Client().RemoteAddr(), r.String())
-			next.ServeCOAP(w, r)
-		})
-	})
-	//
-	// /in
-	//
-	cc.router.Handle("/in", mux.HandlerFunc(func(w mux.ResponseWriter, msg *mux.Message) {
-		// glogger.GLogger.Debugf("Received Coap Data: %#v", msg)
-		work, err := cc.RuleEngine.WorkInEnd(cc.RuleEngine.GetInEnd(cc.PointId), msg.String())
-		if !work {
+	cc.router.Handle("/", mux.HandlerFunc(func(w mux.ResponseWriter, msg *mux.Message) {
+		Body, err := msg.ReadBody()
+		if err != nil {
 			glogger.GLogger.Error(err)
+			return
 		}
-		if err := w.SetResponse(codes.Content, message.TextPlain, bytes.NewReader([]byte("ok"))); err != nil {
+		// glogger.GLogger.Debug(msg.RouteParams.Vars, "; ", string(Body), "; ", w.Conn().RemoteAddr())
+		Payload := InData{
+			Ts:      uint64(time.Now().UnixMilli()),
+			Type:    "POST",
+			Payload: string(Body),
+		}
+		if bites, err := json.Marshal(Payload); err != nil {
+			glogger.GLogger.Error(err)
+		} else {
+			glogger.GLogger.Debug(string(bites))
+			cc.RuleEngine.WorkInEnd(cc.RuleEngine.GetInEnd(cc.PointId), string(bites))
+		}
+		if err := w.SetResponse(codes.Content, message.AppOctets,
+			bytes.NewReader([]byte{200})); err != nil {
 			glogger.GLogger.Errorf("Cannot set response: %v", err)
 		}
 	}))
@@ -99,12 +111,10 @@ func (cc *coAPInEndSource) Details() *typex.InEnd {
 	return cc.RuleEngine.GetInEnd(cc.PointId)
 }
 
-// 来自外面的数据
 func (*coAPInEndSource) DownStream([]byte) (int, error) {
 	return 0, nil
 }
 
-// 上行数据
 func (*coAPInEndSource) UpStream([]byte) (int, error) {
 	return 0, nil
 }

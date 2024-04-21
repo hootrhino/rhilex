@@ -247,8 +247,8 @@ func CreateDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error("Device Name Duplicated"))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("Device Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	isSingle := false
@@ -308,8 +308,8 @@ func UpdateDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("Device Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	//

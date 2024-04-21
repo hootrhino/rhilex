@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -35,14 +36,17 @@ func SContains(slice []string, e string) bool {
 	}
 	return false
 }
+func IsValidNameLength(username string) (bool, string) {
+	const minLen = 4
+	const maxLen = 64
 
-/*
-*
-* 合法名称
-*
- */
-func IsValidName(username string) bool {
-	return (len(username) < 4 || len(username) > 64)
+	if len(username) < minLen {
+		return false, fmt.Sprintf("Name is too short (minimum %d characters)", minLen)
+	} else if len(username) > maxLen {
+		return false, fmt.Sprintf("Name is too long (maximum %d characters)", maxLen)
+	}
+
+	return true, ""
 }
 
 /*

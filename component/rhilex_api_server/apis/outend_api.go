@@ -122,8 +122,8 @@ func CreateOutEnd(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err0))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("OutEnd Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	configJson, err1 := json.Marshal(form.Config)
@@ -180,8 +180,8 @@ func UpdateOutEnd(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if !utils.IsValidName(form.Name) {
-		c.JSON(common.HTTP_OK, common.Error("OutEnd Name Invalid, Must Between 4-64 characters"))
+	if ok, r := utils.IsValidNameLength(form.Name); !ok {
+		c.JSON(common.HTTP_OK, common.Error(r))
 		return
 	}
 	// 更新的时候从数据库往外面拿
