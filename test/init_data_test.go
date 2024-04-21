@@ -7,7 +7,7 @@ import (
 	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
-	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
@@ -15,7 +15,7 @@ import (
 
 // 初始化一些测试数据
 func TestInitData(t *testing.T) {
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("config/rhilex.ini"))
 	engine.Start()
 	hh := httpserver.NewHttpApiServer(engine)
 	// HttpApiServer loaded default

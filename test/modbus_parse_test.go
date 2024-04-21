@@ -10,7 +10,7 @@ import (
 
 	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 	"github.com/hootrhino/rhilex/component/rhilexrpc"
-	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/plugin/demo_plugin"
@@ -23,7 +23,7 @@ import (
 func Test_Modbus_LUA_Parse(t *testing.T) {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGABRT)
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("config/rhilex.ini"))
 	engine.Start()
 	hh := httpserver.NewHttpApiServer(engine)
 	// HttpApiServer loaded default

@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 )
 
 func Test_get_set(t *testing.T) {

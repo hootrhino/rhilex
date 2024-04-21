@@ -12,7 +12,7 @@ import (
 
 	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
@@ -64,7 +64,7 @@ func HttpGet(api string) string {
 *
  */
 func RunTestEngine() typex.Rhilex {
-	mainConfig := core.InitGlobalConfig("conf/rhilex.ini")
+	mainConfig := core.InitGlobalConfig("config/rhilex.ini")
 	glogger.StartGLogger(
 		core.GlobalConfig.LogLevel,
 		mainConfig.EnableConsole,

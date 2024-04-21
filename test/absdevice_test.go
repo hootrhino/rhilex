@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/hootrhino/rhilex/core"
+	"github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/engine"
 
 	"testing"
@@ -11,7 +11,7 @@ import (
 )
 
 func Test_ABS_device1(t *testing.T) {
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("config/rhilex.ini"))
 	engine.Start()
 	demoDev := &typex.Device{
 		UUID:        "Test1",
@@ -31,7 +31,7 @@ func Test_ABS_device1(t *testing.T) {
 	engine.Stop()
 }
 func Test_ABS_device2(t *testing.T) {
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("config/rhilex.ini"))
 	engine.Start()
 	demoDev := &typex.Device{
 		UUID:        "Test1",

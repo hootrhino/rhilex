@@ -8,7 +8,7 @@ import (
 )
 
 func Test_read_line(t *testing.T) {
-	t.Log(readLastLine("conf/rhilex.ini"))
+	t.Log(readLastLine("config/rhilex.ini"))
 }
 
 func readLastLine(filepath string) string {

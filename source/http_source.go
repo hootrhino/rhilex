@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/hootrhino/rhilex/common"
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -99,7 +99,6 @@ func (hh *httpInEndSource) Test(inEndId string) bool {
 func (hh *httpInEndSource) Details() *typex.InEnd {
 	return hh.RuleEngine.GetInEnd(hh.PointId)
 }
-
 
 // 来自外面的数据
 func (*httpInEndSource) DownStream([]byte) (int, error) {

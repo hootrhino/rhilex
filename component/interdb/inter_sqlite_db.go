@@ -3,7 +3,7 @@ package interdb
 import (
 	"runtime"
 
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/typex"
 
 	"github.com/hootrhino/rhilex/glogger"

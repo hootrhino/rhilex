@@ -23,7 +23,7 @@ import (
 
 	"github.com/gin-contrib/graceful"
 	"github.com/gin-gonic/gin"
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 )

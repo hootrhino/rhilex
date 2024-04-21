@@ -6,7 +6,7 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/engine"
 	"github.com/hootrhino/rhilex/typex"
 )
@@ -14,7 +14,7 @@ import (
 func TestLuaSyntax1(t *testing.T) {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGABRT)
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("config/rhilex.ini"))
 	engine.Start()
 	// Grpc Inend
 	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{
@@ -46,7 +46,7 @@ func TestLuaSyntax1(t *testing.T) {
 func TestLuaSyntax2(t *testing.T) {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGABRT)
-	engine := engine.InitRuleEngine(core.InitGlobalConfig("conf/rhilex.ini"))
+	engine := engine.InitRuleEngine(core.InitGlobalConfig("config/rhilex.ini"))
 	engine.Start()
 	// Grpc Inend
 	grpcInend := typex.NewInEnd("GRPC", "rhilex Grpc InEnd", "rhilex Grpc InEnd", map[string]interface{}{

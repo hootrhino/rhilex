@@ -27,6 +27,7 @@ import (
 	"github.com/hootrhino/rhilex/component/hwportmanager"
 	"github.com/hootrhino/rhilex/component/rhilexmanager"
 	"github.com/hootrhino/rhilex/component/ruleengine"
+	core "github.com/hootrhino/rhilex/config"
 
 	intercache "github.com/hootrhino/rhilex/component/intercache"
 
@@ -40,7 +41,6 @@ import (
 	"github.com/hootrhino/rhilex/component/jpegstream"
 	"github.com/hootrhino/rhilex/component/rtspserver"
 	"github.com/hootrhino/rhilex/component/trailer"
-	"github.com/hootrhino/rhilex/core"
 	"github.com/hootrhino/rhilex/device"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/source"

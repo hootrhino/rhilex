@@ -17,7 +17,7 @@ package engine
 
 import (
 	lua "github.com/hootrhino/gopher-lua"
-	"github.com/hootrhino/rhilex/core"
+	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/rhilexlib"
 	"github.com/hootrhino/rhilex/typex"
 )
