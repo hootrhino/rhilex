@@ -1,5 +1,16 @@
 # RhinoPI 红外接收器
 RhinoPI自带一路红外接收器，当用遥控器的时候可以触发事件。
+## 概述
+这段Go语言代码定义了一个名为`device`的包，其中包含了多个导入的库，如`encoding/json`、`fmt`、`syscall`、`time`、`unsafe`以及其他一些GitHub上的库。代码中还定义了一些常量、结构体和函数，主要用于处理设备相关的操作。
+
+- `__IR_DEV`常量指定了红外线接收模块的设备路径。
+- `__IrConfig`结构体包含了设备配置的相关字段，如`InputHandle`。
+- `IR`结构体继承自`typex.XDevice`接口，并实现了该接口的方法，如`Init`、`Start`、`OnRead`、`OnWrite`、`Status`、`Stop`等。
+- `NewIRDevice`函数创建一个新的`IR`实例，并传入`typex.Rhilex`类型的参数。
+- `timeval`结构体代表了时间戳，包含秒和微秒两个字段。
+- `irInputEvent`结构体代表了红外线输入事件，包含了时间戳、事件类型、编码和值等信息。
+- `Init`、`Start`、`Stop`等函数分别用于设备的初始化、启动和停止操作。
+
 ## 数据格式
 ```json
 {
