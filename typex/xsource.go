@@ -47,7 +47,7 @@ type XSource interface {
 	// Start方法用于启动资源。
 	// CCTX是上下文，具体作用取决于资源的实现。
 	// 返回启动是否成功的错误信息。
-	Start(CCTX context.Context) error
+	Start(CCTX CCTX) error
 
 	// DataModels方法用于获取资源支持的数据模型列表。
 	// 这些模型对应于云平台的物模型。
