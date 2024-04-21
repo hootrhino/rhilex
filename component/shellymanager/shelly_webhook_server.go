@@ -66,6 +66,7 @@ func (WebHookServer *ShellyWebHookServer) StartServer(ctx context.Context) {
 	}
 	WebHookServer.webServer = webServer
 	WebHookServer.webServer.POST("/", WebHookServer.CallBackApi)
+	WebHookServer.webServer.GET("/", WebHookServer.CallBackApi)
 	WebHookServer.webServer = webServer
 	go func(ctx context.Context) {
 		err := WebHookServer.webServer.RunWithContext(WebHookServer.ctx)
@@ -83,17 +84,9 @@ func (WebHookServer *ShellyWebHookServer) Stop() {
 	WebHookServer.webServer.Shutdown(WebHookServer.ctx)
 }
 func (WebHookServer *ShellyWebHookServer) CallBackApi(ctx *gin.Context) {
-	ShellyDeviceEvent := ShellyDeviceEvent{}
-	if err := ctx.ShouldBindJSON(&ShellyDeviceEvent); err != nil {
-		fmt.Println(err)
-		ctx.JSON(400, map[string]any{
-			"code": 400,
-			"msg":  err.Error(),
-		})
-		return
-	}
-	if WebHookServer.NotifyCallback != nil {
-		WebHookServer.NotifyCallback(ShellyDeviceNotify{})
+	glogger.GLogger.Debug("Shelly Device CallBackApi:", ctx.Request.RemoteAddr)
+	if Action, ok := ctx.GetQuery("action"); ok {
+		glogger.GLogger.Debug(Action)
 	}
 	ctx.JSON(200, map[string]any{
 		"code": 200,
