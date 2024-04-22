@@ -16,36 +16,22 @@
 package device
 
 import (
-	"sync"
-	"time"
-
 	"github.com/hootrhino/rhilex/component/shellymanager"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
 	"github.com/hootrhino/rhilex/utils/tinyarp"
+	"sync"
+	"time"
 )
 
-// GET http://192.168.1.106/rpc/Shelly.GetDeviceInfo
-//
-//	{
-//	    "name": null,
-//	    "id": "shellypro1-30c6f78474c0",
-//	    "mac": "30C6F78474C0",
-//	    "slot": 0,
-//	    "model": "SPSW-001XE16EU",
-//	    "gen": 2,
-//	    "fw_id": "20240223-142004/1.2.2-g7c39781",
-//	    "ver": "1.2.2",
-//	    "app": "Pro1",
-//	    "auth_en": false,
-//	    "auth_domain": null
-//	}
-
+type ShellyConfig struct {
+	CommonConfig ShellyCommonConfig `json:"commonConfig" validate:"required"`
+}
 type ShellyGen1ProxyGateway struct {
 	typex.XStatus
 	status              typex.DeviceState
-	mainConfig          ShellyGen1ProxyGatewayConfig
+	mainConfig          ShellyConfig
 	BlackList           map[string]string
 	locker              sync.Mutex
 	shellyWebHookServer *shellymanager.ShellyWebHookServer
@@ -56,7 +42,7 @@ type ShellyGen1ProxyGateway struct {
 * 配置
 *
  */
-type ShellyGen1ProxyGatewayConfig struct {
+type ShellyCommonConfig struct {
 	// CIDR
 	NetworkCidr string `json:"networkCidr" validate:"required"`
 	// AutoScan
@@ -78,15 +64,17 @@ func NewShellyGen1ProxyGateway(e typex.Rhilex) typex.XDevice {
 	Shelly := new(ShellyGen1ProxyGateway)
 	Shelly.BlackList = map[string]string{}
 	Shelly.locker = sync.Mutex{}
-	Shelly.mainConfig = ShellyGen1ProxyGatewayConfig{
-		NetworkCidr: "192.168.1.0/24",
-		AutoScan: func() *bool {
-			b := true
-			return &b
-		}(),
-		ScanTimeout: 3000, //ms
-		Frequency:   5000, //ms
-		WebHookPort: 6400,
+	Shelly.mainConfig = ShellyConfig{
+		CommonConfig: ShellyCommonConfig{
+			NetworkCidr: "192.168.1.0/24",
+			AutoScan: func() *bool {
+				b := true
+				return &b
+			}(),
+			ScanTimeout: 3000, //ms
+			Frequency:   5000, //ms
+			WebHookPort: 6400,
+		},
 	}
 	Shelly.RuleEngine = e
 
@@ -96,14 +84,14 @@ func NewShellyGen1ProxyGateway(e typex.Rhilex) typex.XDevice {
 //  初始化
 func (Shelly *ShellyGen1ProxyGateway) Init(devId string, configMap map[string]interface{}) error {
 	Shelly.PointId = devId
-	if err := utils.BindSourceConfig(configMap, &Shelly.mainConfig); err != nil {
+	if err := utils.BindSourceConfig(configMap, &Shelly.mainConfig.CommonConfig); err != nil {
 		glogger.GLogger.Error(err)
 		return err
 	}
 	shellymanager.RegisterSlot(devId)
 	Shelly.shellyWebHookServer = shellymanager.NewShellyWebHookServer(
 		Shelly.RuleEngine,
-		Shelly.mainConfig.WebHookPort,
+		Shelly.mainConfig.CommonConfig.WebHookPort,
 	)
 	return nil
 }
@@ -112,11 +100,15 @@ func (Shelly *ShellyGen1ProxyGateway) Init(devId string, configMap map[string]in
 func (Shelly *ShellyGen1ProxyGateway) Start(cctx typex.CCTX) error {
 	Shelly.Ctx = cctx.Ctx
 	Shelly.CancelCTX = cctx.CancelCTX
+	Shelly.shellyWebHookServer.SetEventCallBack(func(Notify shellymanager.ShellyDeviceNotify) {
+		glogger.GLogger.Debug(Notify)
+		Shelly.RuleEngine.WorkDevice(Shelly.Details(), Notify.String())
+	})
 	Shelly.shellyWebHookServer.StartServer(Shelly.Ctx)
 	go func() {
 		ticker := time.NewTicker(30 * time.Second)
 		defer ticker.Stop()
-		if *Shelly.mainConfig.AutoScan {
+		if *Shelly.mainConfig.CommonConfig.AutoScan {
 			for {
 				select {
 				case <-Shelly.Ctx.Done():
@@ -131,7 +123,7 @@ func (Shelly *ShellyGen1ProxyGateway) Start(cctx typex.CCTX) error {
 					Shelly.locker.Unlock()
 				default:
 					Shelly.ScanDevice(Shelly.PointId)
-					time.Sleep(time.Duration(Shelly.mainConfig.Frequency) * time.Millisecond)
+					time.Sleep(time.Duration(Shelly.mainConfig.CommonConfig.Frequency) * time.Millisecond)
 				}
 			}
 		}

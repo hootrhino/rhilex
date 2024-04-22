@@ -83,15 +83,36 @@ func (WebHookServer *ShellyWebHookServer) SetEventCallBack(NotifyCallback func(N
 func (WebHookServer *ShellyWebHookServer) Stop() {
 	WebHookServer.webServer.Shutdown(WebHookServer.ctx)
 }
+
+// QueryParam: 参数表
+type QueryParam struct {
+	Mac    string `form:"mac"`
+	Token  string `form:"token"`
+	Action string `form:"action"`
+	Cid    *int   `form:"cid"`
+}
+
 func (WebHookServer *ShellyWebHookServer) CallBackApi(ctx *gin.Context) {
-	glogger.GLogger.Debug("Shelly Device CallBackApi:", ctx.Request.RemoteAddr)
-	if Action, ok := ctx.GetQuery("action"); ok {
-		glogger.GLogger.Debug(Action)
-	}
-	ctx.JSON(200, map[string]any{
+	QueryParam := QueryParam{}
+	Response := map[string]any{
 		"code": 200,
 		"msg":  "success",
-	})
+	}
+	if err := ctx.ShouldBindQuery(&QueryParam); err != nil {
+		ctx.JSON(200, Response)
+		return
+	}
+	if WebHookServer.NotifyCallback != nil {
+		WebHookServer.NotifyCallback(ShellyDeviceNotify{
+			Mac:    QueryParam.Mac,
+			IP:     ctx.ClientIP(),
+			Token:  QueryParam.Token,
+			Action: QueryParam.Action,
+			Cid:    QueryParam.Cid,
+		})
+	}
+	ctx.JSON(200, Response)
+
 }
 
 /*
@@ -130,9 +151,11 @@ func (E ShellyDeviceEvent) String() string {
 }
 
 type ShellyDeviceNotify struct {
-	Mac   string            `json:"mac"`
-	IP    string            `json:"ip"`
-	Event ShellyDeviceEvent `json:"event"`
+	Mac    string `json:"mac"`
+	IP     string `json:"ip"`
+	Token  string `json:"token"`
+	Action string `json:"action"`
+	Cid    *int   `json:"cid"`
 }
 
 func (E ShellyDeviceNotify) String() string {

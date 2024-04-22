@@ -16,9 +16,9 @@
 package shellymanager
 
 import (
-	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -28,12 +28,20 @@ func HttpGet(url string) ([]byte, error) {
 	}
 	resp, err := client.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("Error sending HTTP GET request: %v", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("Error reading response body: %v", err)
+		return nil, err
 	}
 	return respBody, nil
+}
+func HttpPost(url string, body string) ([]byte, error) {
+	resp, err := http.Post(url, "application/json", strings.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	return io.ReadAll(resp.Body)
 }

@@ -18,11 +18,24 @@ Shelly 设备支持MQTT，本插件的原理就是起一个本地版MQTT Server�
     "schemaId": "",
     "gid": "DROOT",
     "config": {
+        "commonConfig":{
             "networkCidr": "192.168.1.0/24",
             "autoRequest": true,
             "timeout": 3000,
             "frequency": 5000
+        }
     },
     "description": "SHELLY_GEN1_PROXY_SERVER"
+}
+```
+
+## 规则数据
+```json
+{
+    "mac": "30C6F78474C0",
+    "ip": "192.168.1.106",
+    "token": "shelly",
+    "action": "input.toggle_off",
+    "cid": 0
 }
 ```

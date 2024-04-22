@@ -25,6 +25,7 @@ func InitShellyRoute() {
 	Pro1Api := server.RouteGroup(server.ContextUrl("/shelly_gen1/pro1"))
 	{
 		Pro1Api.GET("/switch1/toggle", server.AddRoute(Pro1ToggleSwitch1))
+		Pro1Api.POST("/configWebHook", server.AddRoute(Pro1ConfigWebHook))
 	}
 }
 
@@ -298,4 +299,95 @@ func Pro1ToggleSwitch1(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	c.JSON(common.HTTP_OK, common.OkWithData(ProToggleSwitch1Response))
+}
+
+/*
+*
+* 配置WebHook, 自动触发以及一键清空
+
+	{
+	    "id": 1,
+	    "method": "Webhook.Create",
+	    "params": {
+	        "name":"PUSH-SWITCH${cid}-EVENT-ON-TO-RHILEX",
+	        "cid": "${cid}",
+	        "enable": true,
+	        "event": "switch.on",
+	        "urls": [
+	            "http://192.168.1.175:6400?mac=${config.sys.device.mac}&token=shelly&action=switch_on&cid=${cid}"
+	        ]
+	    }
+	}
+*/
+func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
+	opType, _ := c.GetQuery("opType")
+	Ip, _ := c.GetQuery("ip")
+	if opType == "set_webhook" {
+		go func() {
+
+			{
+				_, err := shellymanager.Pro1SetSw0OnHook(Ip)
+				if err != nil {
+					c.JSON(common.HTTP_OK, common.Error400(err))
+					return
+				}
+
+			}
+			{
+				_, err := shellymanager.Pro1SetSw0OffHook(Ip)
+				if err != nil {
+					c.JSON(common.HTTP_OK, common.Error400(err))
+					return
+				}
+
+			}
+			{
+				_, err := shellymanager.Pro1SetInput0OnHook(Ip)
+				if err != nil {
+					c.JSON(common.HTTP_OK, common.Error400(err))
+					return
+				}
+
+			}
+			{
+				_, err := shellymanager.Pro1SetInput0OffHook(Ip)
+				if err != nil {
+					c.JSON(common.HTTP_OK, common.Error400(err))
+					return
+				}
+
+			}
+			{
+				_, err := shellymanager.Pro1SetInput1OnHook(Ip)
+				if err != nil {
+					c.JSON(common.HTTP_OK, common.Error400(err))
+					return
+				}
+
+			}
+			{
+				_, err := shellymanager.Pro1SetInput1OffHook(Ip)
+				if err != nil {
+					c.JSON(common.HTTP_OK, common.Error400(err))
+					return
+				}
+
+			}
+		}()
+		c.JSON(common.HTTP_OK, common.Ok())
+		return
+	}
+	if opType == "clear_webhook" {
+		if tinyarp.IsValidIP(Ip) {
+			err := shellymanager.Pro1ClearWebhook(Ip)
+			if err != nil {
+				c.JSON(common.HTTP_OK, common.Error400(err))
+				return
+			}
+		} else {
+			c.JSON(common.HTTP_OK, common.Error("Invalid Ip:"+Ip))
+			return
+		}
+	}
+	c.JSON(common.HTTP_OK, common.Ok())
 }

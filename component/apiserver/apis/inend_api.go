@@ -234,3 +234,32 @@ func GetInEndModels(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 
 }
+
+type InEndClient struct {
+	Ip         string         `json:"ip"`
+	Status     bool           `json:"status"`
+	Properties map[string]any `json:"properties"`
+}
+
+/*
+*
+* 获取客户端列表
+*
+ */
+func GetInEndClients(c *gin.Context, ruleEngine typex.Rhilex) {
+	pager, err := service.ReadPageRequest(c)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	// deviceUuid, _ := c.GetQuery("device_uuid")
+	// clients_registry.get(deviceUuid) -> []InEndClient
+	InEndClients := []InEndClient{
+		{Ip: "127.0.0.1", Status: true, Properties: map[string]any{
+			"observe": true,
+			"version": "2.0",
+		}},
+	}
+	Count := int64(0)
+	c.JSON(common.HTTP_OK, common.OkWithData(service.WrapPageResult(*pager, InEndClients, Count)))
+}

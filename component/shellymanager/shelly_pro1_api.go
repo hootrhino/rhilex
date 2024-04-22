@@ -135,3 +135,98 @@ func Pro1ToggleSwitch1(Ip string) (ProToggleSwitch1, error) {
 	}
 	return ProToggleSwitch1, nil
 }
+
+type SetWebhookRequestParam struct {
+	Name   string   `json:"name"`
+	Cid    int      `json:"cid"`
+	Enable bool     `json:"enable"`
+	Event  string   `json:"event"`
+	Urls   []string `json:"urls"`
+}
+
+type SetWebhookRequest struct {
+	ID     int                    `json:"id"`
+	Method string                 `json:"method"`
+	Params SetWebhookRequestParam `json:"params"`
+}
+
+func (O SetWebhookRequest) JsonString() string {
+	if bytes, err := json.Marshal(O); err != nil {
+		return ""
+	} else {
+		return string(bytes)
+	}
+}
+
+type SetWebhookResponse struct {
+	ID    int    `json:"id"`
+	Src   string `json:"src"`
+	Error struct {
+		ID int `json:"id"`
+	} `json:"error"`
+	Result struct {
+		ID int `json:"id"`
+	} `json:"result"`
+}
+
+/*
+*
+* Pro1 有2个Input，一个Switch
+*
+ */
+func NewSetWebhookRequest(cid int, event string) SetWebhookRequest {
+	basUrl := "http://192.168.1.175:6400"
+	return SetWebhookRequest{
+		ID:     1,
+		Method: "Webhook.Create",
+		Params: SetWebhookRequestParam{
+			Name:   fmt.Sprintf("Send component:%d event: %s to rhilex", cid, event),
+			Cid:    cid,
+			Enable: true,
+			Event:  event,
+			Urls: []string{
+				fmt.Sprintf(basUrl+"?mac=${config.sys.device.mac}&token=shelly&action=%s&cid=%d", event, cid),
+			},
+		},
+	}
+}
+func Pro1SetSw0OnHook(Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(Ip, "switch.on", 0)
+}
+func Pro1SetSw0OffHook(Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(Ip, "switch.off", 0)
+}
+func Pro1SetInput0OnHook(Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(Ip, "input.toggle_on", 0)
+}
+func Pro1SetInput0OffHook(Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(Ip, "input.toggle_off", 0)
+}
+func Pro1SetInput1OnHook(Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(Ip, "input.toggle_on", 1)
+}
+func Pro1SetInput1OffHook(Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(Ip, "input.toggle_off", 1)
+}
+
+func Pro1SetWebhook(Ip, event string, cid int) (SetWebhookResponse, error) {
+	SetWebhookResponse := SetWebhookResponse{}
+	SetWebhookRequestOut0On := NewSetWebhookRequest(cid, event)
+	r1, err := HttpPost(fmt.Sprintf("http://%s/rpc", Ip), SetWebhookRequestOut0On.JsonString())
+	if err != nil {
+		return SetWebhookResponse, err
+	}
+	if err := json.Unmarshal(r1, &SetWebhookResponse); err != nil {
+		return SetWebhookResponse, err
+	}
+	return SetWebhookResponse, nil
+}
+
+// http://192.168.1.106/rpc/Webhook.DeleteAll
+func Pro1ClearWebhook(Ip string) error {
+	_, err := HttpGet(fmt.Sprintf("http://%s/rpc/Webhook.DeleteAll", Ip))
+	if err != nil {
+		return err
+	}
+	return nil
+}

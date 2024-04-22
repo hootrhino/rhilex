@@ -15,9 +15,9 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
-# Pro1 API 配置
-- 2 instances of Input (input:0, input:1)
-- 1 instance of Switch (switch:0)
+# Pro1 4PM 配置
+- 4 instances of Input (input:0, input:1, input:2, input:3)
+- 4 instances of Switch (switch:0, switch:1, switch:2, switch:3)
 
 ## 变量
 GET: `http://192.168.1.106/rpc/Webhook.ListSupported`

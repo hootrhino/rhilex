@@ -9,13 +9,13 @@ import (
 	"github.com/hootrhino/rhilex/component/hwportmanager"
 	"github.com/shirou/gopsutil/cpu"
 
-	"github.com/hootrhino/rhilex/component/appstack"
-	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/component/apiserver/apis"
 	"github.com/hootrhino/rhilex/component/apiserver/apis/shelly"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
+	"github.com/hootrhino/rhilex/component/appstack"
+	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/component/trailer"
 
 	"github.com/hootrhino/rhilex/glogger"
@@ -260,6 +260,7 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		InEndApi.DELETE(("/del"), server.AddRoute(apis.DeleteInEnd))
 		InEndApi.PUT(("/update"), server.AddRoute(apis.UpdateInend))
 		InEndApi.PUT("/restart", server.AddRoute(apis.RestartInEnd))
+		InEndApi.GET("/clients", server.AddRoute(apis.GetInEndClients))
 	}
 
 	rulesApi := server.RouteGroup(server.ContextUrl("/rules"))
