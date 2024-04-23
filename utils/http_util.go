@@ -1,11 +1,14 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/hootrhino/rhilex/glogger"
 )
@@ -73,4 +76,36 @@ func Get(client http.Client, url string) string {
 		return ""
 	}
 	return string(body)
+}
+
+// Download @param: 机器码
+func Download(url, param string) error {
+	// 创建请求体
+	body := []byte(`{"param":"` + param + `"}`)
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Failed to connect active server")
+	}
+	out, err := os.Create("license.zip")
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
+	return nil
 }

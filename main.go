@@ -253,22 +253,35 @@ func main() {
 						return fmt.Errorf("[LICENCE ACTIVE]: missing admin 'password' parameter")
 					}
 					// linux
-					macAddr, err := ossupport.ReadIfaceMacAddr("eth0")
-					if err != nil {
-						return err
+					if runtime.GOOS == "linux" {
+						macAddr, err := ossupport.ReadLinuxMacAddr("eth0")
+						if err != nil {
+							return fmt.Errorf("[LICENCE ACTIVE]: Get Local Mac Address error:%s", err)
+						}
+						// Commercial version will implement it
+						// rhilex active -H 127.0.0.1 -U admin -P 123456
+						// - H: Active Server Host
+						// - U: Active Server Account
+						// - P: Active Server Password
+						err1 := utils.FetchLoadLicense(host, username, password, macAddr)
+						if err1 != nil {
+							return fmt.Errorf("[LICENCE ACTIVE]: Download license failed, error:%s", err1)
+						}
+						return nil
 					}
-					// Commercial version will implement it
-					// rhilex active -H 127.0.0.1 -U admin -P 123456
-					// - H: Active Server Host
-					// - U: Active Server Account
-					// - P: Active Server Password
-					utils.CLog("\n*>> BEGIN LICENCE ACTIVE\n"+
-						"*# Vendor Admin: (%s, %s)\n"+
-						"*# Local Mac Address: (%s)\n"+
-						"*# Try to request license from server:(%s) ...\n",
-						username, password, macAddr, host)
-					fmt.Println("*<< END LICENCE ACTIVE")
-					return nil
+					if runtime.GOOS == "windows" {
+						// Just for test
+						macAddr, err0 := ossupport.GetWindowsMACAddress()
+						if err0 != nil {
+							return fmt.Errorf("[LICENCE ACTIVE]: Get Local Mac Address error:%s", err0)
+						}
+						err1 := utils.FetchLoadLicense(host, username, password, macAddr)
+						if err1 != nil {
+							return fmt.Errorf("[LICENCE ACTIVE]: Download license failed, error:%s", err1)
+						}
+						return nil
+					}
+					return fmt.Errorf("[LICENCE ACTIVE]: Active not supported on current distribution.")
 				},
 			},
 			// version

@@ -76,7 +76,7 @@ func (iface *EtcNetworkConfig) GenEtcConfig() string {
 * 获取网卡的MAC地址
 *
  */
-func ReadIfaceMacAddr(ifaceName string) (string, error) {
+func ReadLinuxMacAddr(ifaceName string) (string, error) {
 	// 构建文件路径
 	filePath := filepath.Join("/sys/class/net", ifaceName, "address")
 
