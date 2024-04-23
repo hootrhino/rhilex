@@ -61,12 +61,15 @@ type ShellyDeviceVo struct {
 
 func ScanShellyDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
-	tinyarp.AutoRefresh(1000 * time.Second)
-	ArpTable := tinyarp.SendArp()
+	IPs, err := shellymanager.ScanCIDR("192.168.1.0/24", 5*time.Second)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
 	go func() {
 		// 1 将第一次扫出来请求失败的设备拉进黑名单,防止浪费资源
 		// 2 已经有在列表里面的就不再扫描
-		for Ip, Mac := range ArpTable {
+		for _, Ip := range IPs {
 			if shellymanager.Exists(uuid, Ip) {
 				continue
 			}
@@ -77,10 +80,10 @@ func ScanShellyDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 			if err != nil {
 				continue
 			}
-			DeviceInfo.Mac = Mac
+			DeviceInfo.Ip = Ip
 			if utils.IsValidMacAddress1(DeviceInfo.Mac) ||
 				utils.IsValidMacAddress2(DeviceInfo.Mac) {
-				shellymanager.SetValue(uuid, DeviceInfo.Mac, shellymanager.ShellyDevice{
+				shellymanager.SetValue(uuid, DeviceInfo.Ip, shellymanager.ShellyDevice{
 					Ip:         DeviceInfo.Ip,
 					Name:       DeviceInfo.Name,
 					ID:         DeviceInfo.ID,
@@ -252,11 +255,14 @@ func ShellyDeviceDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 *
  */
 func ScanDevice(c *gin.Context, ruleEngine typex.Rhilex) {
-	tinyarp.AutoRefresh(1000 * time.Second)
-	ArpTable := tinyarp.SendArp()
+	IPs, err := shellymanager.ScanCIDR("192.168.1.0/24", 5*time.Second)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
 	wg := sync.WaitGroup{}
-	wg.Add(len(ArpTable))
-	for Ip := range ArpTable {
+	wg.Add(len(IPs))
+	for _, Ip := range IPs {
 		go func(Ip string) {
 			defer wg.Done()
 			if tinyarp.IsValidIP(Ip) {
