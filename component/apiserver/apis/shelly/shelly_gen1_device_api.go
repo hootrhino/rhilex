@@ -323,8 +323,11 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 	opType, _ := c.GetQuery("opType")
 	Ip, _ := c.GetQuery("ip")
 	if opType == "set_webhook" {
+		if err := shellymanager.Pro1CheckWebhook(Ip); err != nil {
+			c.JSON(common.HTTP_OK, common.Error400(err))
+			return
+		}
 		go func() {
-
 			{
 				_, err := shellymanager.Pro1SetSw0OnHook(Ip)
 				if err != nil {

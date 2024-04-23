@@ -222,6 +222,33 @@ func Pro1SetWebhook(Ip, event string, cid int) (SetWebhookResponse, error) {
 	return SetWebhookResponse, nil
 }
 
+type ProWebHook struct {
+	Hooks []struct {
+		ID     int      `json:"id"`
+		Cid    int      `json:"cid"`
+		Enable bool     `json:"enable"`
+		Event  string   `json:"event"`
+		Name   string   `json:"name"`
+		Urls   []string `json:"urls"`
+	} `json:"hooks"`
+}
+
+// http://192.168.33.1/rpc/Webhook.List
+func Pro1CheckWebhook(Ip string) error {
+	Body, err := HttpGet(fmt.Sprintf("http://%s/rpc/Webhook.List", Ip))
+	if err != nil {
+		return err
+	}
+	ProWebHook := ProWebHook{}
+	if err := json.Unmarshal(Body, &ProWebHook); err != nil {
+		return err
+	}
+	if len(ProWebHook.Hooks) > 0 {
+		return fmt.Errorf("Already exists webhook, Should delete old")
+	}
+	return nil
+}
+
 // http://192.168.1.106/rpc/Webhook.DeleteAll
 func Pro1ClearWebhook(Ip string) error {
 	_, err := HttpGet(fmt.Sprintf("http://%s/rpc/Webhook.DeleteAll", Ip))
