@@ -19,14 +19,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hootrhino/rhilex/ossupport"
+	"github.com/hootrhino/rhilex/component/shellymanager"
 )
 
 // go test -timeout 30s -run ^Test_scan_cidr github.com/hootrhino/rhilex/test -v -count=1
 func Test_scan_cidr(t *testing.T) {
 	cidr := "192.168.1.0/24"
 	timeout := 5 * time.Second
-	devices, err := ossupport.ScanCIDR(cidr, timeout)
+	devices, err := shellymanager.ScanCIDR(cidr, timeout)
 	if err != nil {
 		t.Log("Error:", err)
 		return
