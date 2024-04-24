@@ -9,7 +9,7 @@ create_pkg() {
     local version="$(git describe --tags $(git rev-list --tags --max-count=1))"
     local release_dir="_release"
     local pkg_name="${APP}-$target-$version.zip"
-    local common_files="./config/license.* ./config/${APP}.ini ./md5.sum"
+    local common_files="./config/${APP}.ini ./md5.sum"
     local files_to_include="./${APP} $common_files"
     local files_to_include_exe="./${APP}.exe $common_files"
 
@@ -126,32 +126,19 @@ calculate_and_save_md5() {
 fetch_dashboard() {
     local owner="hootrhino"
     local repo="rhilex-web"
-
-    # 检查当前目录是否已经存在 www.zip 文件
     if [ -f "www.zip" ]; then
         echo "[!] www.zip already exists. No need to download."
         exit 0
     fi
-
-    # 获取最新 release 的 tag 名称
     local tag=$(curl -s "https://api.github.com/repos/$owner/$repo/releases/latest" | jq -r .tag_name)
-
-    # 获取最新 release 中的 www.zip 下载链接
     local zip_url=$(curl -s "https://api.github.com/repos/$owner/$repo/releases/latest" | jq -r '.assets[] | select(.name == "www.zip") | .browser_download_url')
-
     if [ -z "$zip_url" ]; then
         echo "[x] Error: www.zip not found in the release assets."
         exit 1
     fi
-
-    # 下载 www.zip 文件
     curl -L -o www.zip "$zip_url"
-
     echo "[√] Download complete. Tag: $tag"
-
-    # 解压 www.zip 文件到指定目录
     unzip -o www.zip -d /plugin/apiserver/server/www/
-
     echo "[√] Extraction complete. www.zip contents have been overwritten to /plugin/apiserver/server/www/."
 }
 
