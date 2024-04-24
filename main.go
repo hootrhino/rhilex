@@ -254,7 +254,7 @@ func main() {
 					}
 					// linux
 					if runtime.GOOS == "linux" {
-						macAddr, err := ossupport.ReadLinuxMacAddr("eth0")
+						macAddr, err := ossupport.GetLinuxMacAddr("eth0")
 						if err != nil {
 							return fmt.Errorf("[LICENCE ACTIVE]: Get Local Mac Address error:%s", err)
 						}

@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -104,7 +105,14 @@ func (dm *LicenseManager) Init(section *ini.Section) error {
 		os.Exit(0)
 	}
 	// validate local mac
-	localMac, err3 := ossupport.GetWindowsMACAddress()
+	localMac := ""
+	var err3 error
+	if runtime.GOOS == "windows" {
+		localMac, err3 = ossupport.GetWindowsMACAddress()
+	}
+	if runtime.GOOS == "linux" {
+		localMac, err3 = ossupport.GetLinuxMacAddr("eth0")
+	}
 	if err3 != nil {
 		glogger.GLogger.Fatal(err3)
 		os.Exit(0)

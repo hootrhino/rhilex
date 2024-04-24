@@ -17,5 +17,5 @@ func GetWindowsMACAddress() (string, error) {
 	if strings.Contains(macAddress, "MACAddress") {
 		macAddress = strings.Split(macAddress, "\n")[1]
 	}
-	return macAddress, nil
+	return strings.ToUpper(macAddress), nil
 }
