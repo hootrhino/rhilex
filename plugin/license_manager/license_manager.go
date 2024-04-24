@@ -94,8 +94,8 @@ func (dm *LicenseManager) Init(section *ini.Section) error {
 		os.Exit(0)
 	}
 	LocalLicense.License = string(licBytesB64)
-	T1 := time.Unix(LocalLicense.BeginAuthorize, 0)
-	T2 := time.Unix(LocalLicense.EndAuthorize, 0)
+	T1 := time.UnixMilli(LocalLicense.BeginAuthorize)
+	T2 := time.UnixMilli(LocalLicense.EndAuthorize)
 	T1s := T1.Format("2006-01-02 15:04:05")
 	T2s := T2.Format("2006-01-02 15:04:05")
 	//
