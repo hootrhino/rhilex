@@ -91,7 +91,7 @@ func Apps(c *gin.Context, ruleEngine typex.Rhilex) {
  */
 const luaTemplate = `
 --
--- App use lua syntax, goto https://hootrhino.github.io for more document
+-- Go to https://luaguide.hootrhino.com for more tutorials
 -- APPID: %s
 --
 AppNAME = "%s"

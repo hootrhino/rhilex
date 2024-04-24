@@ -1,6 +1,5 @@
 ---@diagnostic disable: undefined-global
 --
--- App use lua syntax, goto https://hootrhino.github.io for more document
 -- APPID: APP6b28330ff4be4b0ba2f3e9317c4e2a47
 --
 AppNAME = "LED-RGB"
