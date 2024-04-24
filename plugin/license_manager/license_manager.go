@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/ossupport"
 	"github.com/hootrhino/rhilex/typex"
 	"gopkg.in/ini.v1"
 )
@@ -44,7 +45,6 @@ func ParseAuthInfo(info string) (typex.LocalLicense, error) {
 
 // LicenseManager 证书管理
 type LicenseManager struct {
-	localLicense typex.LocalLicense
 }
 
 /*
@@ -53,9 +53,7 @@ type LicenseManager struct {
 *
  */
 func NewLicenseManager(r typex.Rhilex) *LicenseManager {
-	return &LicenseManager{
-		localLicense: typex.LocalLicense{},
-	}
+	return &LicenseManager{}
 }
 
 func (dm *LicenseManager) Init(section *ini.Section) error {
@@ -95,29 +93,26 @@ func (dm *LicenseManager) Init(section *ini.Section) error {
 		glogger.GLogger.Fatal(errMsg)
 		os.Exit(0)
 	}
-
 	LocalLicense.License = string(licBytesB64)
-	dm.localLicense = LocalLicense
 	T1 := time.Unix(LocalLicense.BeginAuthorize, 0)
 	T2 := time.Unix(LocalLicense.EndAuthorize, 0)
 	T1s := T1.Format("2006-01-02 15:04:05")
 	T2s := T2.Format("2006-01-02 15:04:05")
 	//
-	if LocalLicense.BeginAuthorize == 0 && LocalLicense.EndAuthorize == 0 {
-		glogger.GLogger.Info("This is Indefinite use version.")
-	} else {
-		if !LocalLicense.ValidateTime() {
-			glogger.GLogger.Fatalf("License has expired, Valid from %s to %s", T1s, T2s)
-			os.Exit(0)
-		}
-		// get local mac .....
+	if !LocalLicense.ValidateTime() {
+		glogger.GLogger.Fatalf("License has expired, Valid from %s to %s", T1s, T2s)
+		os.Exit(0)
 	}
-	Tip := "Indefinite version"
-	if LocalLicense.BeginAuthorize == 0 {
-		T1s = Tip
+	// validate local mac
+	localMac, err3 := ossupport.GetWindowsMACAddress()
+	if err3 != nil {
+		glogger.GLogger.Fatal(err3)
+		os.Exit(0)
 	}
-	if LocalLicense.EndAuthorize == 0 {
-		T2s = Tip
+	if localMac != LocalLicense.MAC {
+		glogger.GLogger.Debugf("Local Mac:%s; certificate Mac:%s", localMac, LocalLicense.MAC)
+		glogger.GLogger.Fatal("Local certificate and hardware information do not match.")
+		os.Exit(0)
 	}
 	typex.License = LocalLicense
 	fmt.Println("[∫∫] -----------------------------------")
