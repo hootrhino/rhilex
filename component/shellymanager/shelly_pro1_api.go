@@ -172,10 +172,9 @@ type SetWebhookResponse struct {
 /*
 *
 * Pro1 有2个Input，一个Switch
-*
+* baseUrl := "http://192.168.1.175:6400"
  */
-func NewSetWebhookRequest(cid int, event string) SetWebhookRequest {
-	basUrl := "http://192.168.1.175:6400"
+func NewSetWebhookRequest(baseUrl string, cid int, event string) SetWebhookRequest {
 	return SetWebhookRequest{
 		ID:     1,
 		Method: "Webhook.Create",
@@ -185,33 +184,33 @@ func NewSetWebhookRequest(cid int, event string) SetWebhookRequest {
 			Enable: true,
 			Event:  event,
 			Urls: []string{
-				fmt.Sprintf(basUrl+"?mac=${config.sys.device.mac}&token=shelly&action=%s&cid=%d", event, cid),
+				fmt.Sprintf(baseUrl+"?mac=${config.sys.device.mac}&token=shelly&action=%s&cid=%d", event, cid),
 			},
 		},
 	}
 }
-func Pro1SetSw0OnHook(Ip string) (SetWebhookResponse, error) {
-	return Pro1SetWebhook(Ip, "switch.on", 0)
+func Pro1SetSw0OnHook(baseUrl string, Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(baseUrl, Ip, "switch.on", 0)
 }
-func Pro1SetSw0OffHook(Ip string) (SetWebhookResponse, error) {
-	return Pro1SetWebhook(Ip, "switch.off", 0)
+func Pro1SetSw0OffHook(baseUrl string, Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(baseUrl, Ip, "switch.off", 0)
 }
-func Pro1SetInput0OnHook(Ip string) (SetWebhookResponse, error) {
-	return Pro1SetWebhook(Ip, "input.toggle_on", 0)
+func Pro1SetInput0OnHook(baseUrl string, Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(baseUrl, Ip, "input.toggle_on", 0)
 }
-func Pro1SetInput0OffHook(Ip string) (SetWebhookResponse, error) {
-	return Pro1SetWebhook(Ip, "input.toggle_off", 0)
+func Pro1SetInput0OffHook(baseUrl string, Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(baseUrl, Ip, "input.toggle_off", 0)
 }
-func Pro1SetInput1OnHook(Ip string) (SetWebhookResponse, error) {
-	return Pro1SetWebhook(Ip, "input.toggle_on", 1)
+func Pro1SetInput1OnHook(baseUrl string, Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(baseUrl, Ip, "input.toggle_on", 1)
 }
-func Pro1SetInput1OffHook(Ip string) (SetWebhookResponse, error) {
-	return Pro1SetWebhook(Ip, "input.toggle_off", 1)
+func Pro1SetInput1OffHook(baseUrl string, Ip string) (SetWebhookResponse, error) {
+	return Pro1SetWebhook(baseUrl, Ip, "input.toggle_off", 1)
 }
 
-func Pro1SetWebhook(Ip, event string, cid int) (SetWebhookResponse, error) {
+func Pro1SetWebhook(baseUrl, Ip, event string, cid int) (SetWebhookResponse, error) {
 	SetWebhookResponse := SetWebhookResponse{}
-	SetWebhookRequestOut0On := NewSetWebhookRequest(cid, event)
+	SetWebhookRequestOut0On := NewSetWebhookRequest(baseUrl, cid, event)
 	r1, err := HttpPost(fmt.Sprintf("http://%s/rpc", Ip), SetWebhookRequestOut0On.JsonString())
 	if err != nil {
 		return SetWebhookResponse, err

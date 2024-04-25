@@ -325,17 +325,19 @@ func Pro1ToggleSwitch1(c *gin.Context, ruleEngine typex.Rhilex) {
 	    }
 	}
 */
+// Pro1ConfigWebHook := "http://192.168.1.175:6400"
 func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 	opType, _ := c.GetQuery("opType")
-	Ip, _ := c.GetQuery("ip")
+	GwIp, _ := c.GetQuery("gwIp")
+	DeviceIp, _ := c.GetQuery("deviceIp")
 	if opType == "set_webhook" {
-		if err := shellymanager.Pro1CheckWebhook(Ip); err != nil {
+		if err := shellymanager.Pro1CheckWebhook(DeviceIp); err != nil {
 			c.JSON(common.HTTP_OK, common.Error400(err))
 			return
 		}
 		go func() {
 			{
-				_, err := shellymanager.Pro1SetSw0OnHook(Ip)
+				_, err := shellymanager.Pro1SetSw0OnHook(GwIp, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -343,7 +345,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetSw0OffHook(Ip)
+				_, err := shellymanager.Pro1SetSw0OffHook(GwIp, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -351,7 +353,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput0OnHook(Ip)
+				_, err := shellymanager.Pro1SetInput0OnHook(GwIp, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -359,7 +361,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput0OffHook(Ip)
+				_, err := shellymanager.Pro1SetInput0OffHook(GwIp, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -367,7 +369,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput1OnHook(Ip)
+				_, err := shellymanager.Pro1SetInput1OnHook(GwIp, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -375,26 +377,25 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput1OffHook(Ip)
+				_, err := shellymanager.Pro1SetInput1OffHook(GwIp, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
 				}
-
 			}
 		}()
 		c.JSON(common.HTTP_OK, common.Ok())
 		return
 	}
 	if opType == "clear_webhook" {
-		if tinyarp.IsValidIP(Ip) {
-			err := shellymanager.Pro1ClearWebhook(Ip)
+		if tinyarp.IsValidIP(DeviceIp) {
+			err := shellymanager.Pro1ClearWebhook(DeviceIp)
 			if err != nil {
 				c.JSON(common.HTTP_OK, common.Error400(err))
 				return
 			}
 		} else {
-			c.JSON(common.HTTP_OK, common.Error("Invalid Ip:"+Ip))
+			c.JSON(common.HTTP_OK, common.Error("Invalid Ip:"+DeviceIp))
 			return
 		}
 	}
