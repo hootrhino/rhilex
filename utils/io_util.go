@@ -159,4 +159,5 @@ func CLog(format string, v ...interface{}) {
 	logMsg := fmt.Sprintf(format, v...)
 	logLine := fmt.Sprintf("[%s] %s", timestamp, logMsg)
 	fmt.Print(logLine)
+	fmt.Println()
 }
