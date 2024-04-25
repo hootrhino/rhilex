@@ -656,6 +656,12 @@ func (e *RuleEngine) InitSourceTypeManager() error {
 *
  */
 func (e *RuleEngine) InitTargetTypeManager() error {
+	e.TargetTypeManager.Register(typex.GENERIC_UART_TARGET,
+		&typex.XConfig{
+			Engine:    e,
+			NewTarget: target.NewCommonUart,
+		},
+	)
 	e.TargetTypeManager.Register(typex.MONGO_SINGLE,
 		&typex.XConfig{
 			Engine:    e,
@@ -702,12 +708,6 @@ func (e *RuleEngine) InitTargetTypeManager() error {
 		&typex.XConfig{
 			Engine:    e,
 			NewTarget: target.NewSqliteTarget,
-		},
-	)
-	e.TargetTypeManager.Register(typex.USER_G776_TARGET,
-		&typex.XConfig{
-			Engine:    e,
-			NewTarget: target.NewUserG776,
 		},
 	)
 	e.TargetTypeManager.Register(typex.TCP_TRANSPORT,
