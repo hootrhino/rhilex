@@ -488,7 +488,7 @@ func (e *RuleEngine) RestartDevice(uuid string) error {
  */
 
 func (e *RuleEngine) InitDeviceTypeManager() error {
-	e.DeviceTypeManager.Register(typex.SHELLY_GEN1_PROXY_SERVER,
+	e.DeviceTypeManager.Register(typex.SMART_HOME_CONTROLLER,
 		&typex.XConfig{
 			Engine:    e,
 			NewDevice: device.NewShellyGen1ProxyGateway,

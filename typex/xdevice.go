@@ -30,7 +30,7 @@ const (
 	GENERIC_HTTP_DEVICE        DeviceType = "GENERIC_HTTP_DEVICE"        // GENERIC_HTTP
 	HNC8                       DeviceType = "HNC8"                       // 华中数控机床
 	KDN                        DeviceType = "KDN"                        // 凯帝恩控机床
-	SHELLY_GEN1_PROXY_SERVER   DeviceType = "SHELLY_GEN1_PROXY_SERVER"   // Shelly gen1
+	SMART_HOME_CONTROLLER      DeviceType = "SMART_HOME_CONTROLLER"      // Shelly gen1
 
 )
 
