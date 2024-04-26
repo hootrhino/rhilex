@@ -48,7 +48,7 @@ const (
 
 func init() {
 	env := os.Getenv("ARCHSUPPORT")
-	if env == "RHINOPI" {
+	if env == "RHILEXG1" {
 		fmt.Println("RhinoPi Init 4G")
 		__RhinoPiInit4G()
 		fmt.Println("RhinoPi Init 4G Ok.")

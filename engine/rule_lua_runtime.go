@@ -148,10 +148,10 @@ func LoadRuleLibGroup(r *typex.Rule, e typex.Rhilex) {
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"DO1Set":  rhilexlib.H3DO1Set(e, r.UUID),
-			"DO1Get":  rhilexlib.H3DO1Get(e, r.UUID),
-			"DO2Set":  rhilexlib.H3DO2Set(e, r.UUID),
-			"DO2Get":  rhilexlib.H3DO2Get(e, r.UUID),
+			"DO1Set":  rhilexlib.RHILEXG1_DO1Set(e, r.UUID),
+			"DO1Get":  rhilexlib.RHILEXG1_DO1Get(e, r.UUID),
+			"DO2Set":  rhilexlib.RHILEXG1_DO2Set(e, r.UUID),
+			"DO2Get":  rhilexlib.RHILEXG1_DO2Get(e, r.UUID),
 			"DI1Get":  rhilexlib.H3DI1Get(e, r.UUID),
 			"DI2Get":  rhilexlib.H3DI2Get(e, r.UUID),
 			"DI3Get":  rhilexlib.H3DI3Get(e, r.UUID),

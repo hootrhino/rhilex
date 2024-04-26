@@ -506,7 +506,7 @@ func (e *RuleEngine) InitDeviceTypeManager() error {
 			NewDevice: device.NewVideoCamera,
 		},
 	)
-	e.DeviceTypeManager.Register(typex.RHINOPI_IR,
+	e.DeviceTypeManager.Register(typex.RHILEXG1_IR,
 		&typex.XConfig{
 			Engine:    e,
 			NewDevice: device.NewIRDevice,

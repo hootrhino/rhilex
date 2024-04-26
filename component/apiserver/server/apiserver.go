@@ -190,7 +190,7 @@ func (s *RhilexApiServer) InitializeWindowsData() {
 
 func (s *RhilexApiServer) InitializeEEKITData() {
 	env := os.Getenv("ARCHSUPPORT")
-	if env == "RHINOPI" {
+	if env == "RHILEXG1" {
 		glogger.GLogger.Info("Initialize Rhilex Pi Default Data")
 	}
 }
@@ -204,7 +204,7 @@ func (s *RhilexApiServer) InitializeConfigCtl() {
 	// 一组操作, 主要用来初始化 DHCP和DNS、网卡配置等
 	// 1 2 3 的目的是为了每次重启的时候初始化软路由
 	env := os.Getenv("ARCHSUPPORT")
-	if env == "RHINOPI" {
+	if env == "RHILEXG1" {
 		{
 			MIproute, err := service.GetDefaultIpRoute()
 			if err != nil {

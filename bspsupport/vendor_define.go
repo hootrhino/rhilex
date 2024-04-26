@@ -21,8 +21,8 @@ import (
 
 func CheckVendor(env string) string {
 	if slices.Contains([]string{
-		"RHINOPI",
-		"EEKITT507",
+		"RHILEXG1",
+		"RHILEXG1T507",
 		"WKYS805",
 		"RPI4B",
 		"EN6400",

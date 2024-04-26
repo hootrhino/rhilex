@@ -174,10 +174,10 @@ func LoadAppLibGroup(app *Application, e typex.Rhilex) {
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"DO1Set":  rhilexlib.H3DO1Set(e, app.UUID),
-			"DO1Get":  rhilexlib.H3DO1Get(e, app.UUID),
-			"DO2Set":  rhilexlib.H3DO2Set(e, app.UUID),
-			"DO2Get":  rhilexlib.H3DO2Get(e, app.UUID),
+			"DO1Set":  rhilexlib.RHILEXG1_DO1Set(e, app.UUID),
+			"DO1Get":  rhilexlib.RHILEXG1_DO1Get(e, app.UUID),
+			"DO2Set":  rhilexlib.RHILEXG1_DO2Set(e, app.UUID),
+			"DO2Get":  rhilexlib.RHILEXG1_DO2Get(e, app.UUID),
 			"DI1Get":  rhilexlib.H3DI1Get(e, app.UUID),
 			"DI2Get":  rhilexlib.H3DI2Get(e, app.UUID),
 			"DI3Get":  rhilexlib.H3DI3Get(e, app.UUID),

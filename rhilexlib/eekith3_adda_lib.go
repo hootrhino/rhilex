@@ -11,11 +11,11 @@ import (
 * DI2(0/1)
 *
  */
-func H3DO1Set(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+func RHILEXG1_DO1Set(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		value := l.ToNumber(2)
 		if value == 0 || value == 1 {
-			e := archsupport.EEKIT_GPIOSetDO1((int(value)))
+			e := archsupport.RHILEXG1_GPIOSetDO1((int(value)))
 			if e != nil {
 				l.Push(lua.LString(e.Error()))
 			} else {
@@ -27,9 +27,9 @@ func H3DO1Set(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 		return 1
 	}
 }
-func H3DO1Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+func RHILEXG1_DO1Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		v, e := archsupport.EEKIT_GPIOGetDO1()
+		v, e := archsupport.RHILEXG1_GPIOGetDO1()
 		if e != nil {
 			l.Push(lua.LNil)
 			l.Push(lua.LString(e.Error()))
@@ -41,11 +41,11 @@ func H3DO1Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	}
 }
 
-func H3DO2Set(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+func RHILEXG1_DO2Set(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
 		value := l.ToNumber(2)
 		if value == 0 || value == 1 {
-			e := archsupport.EEKIT_GPIOSetDO2(int(value))
+			e := archsupport.RHILEXG1_GPIOSetDO2(int(value))
 			if e != nil {
 				l.Push(lua.LString(e.Error()))
 			} else {
@@ -57,9 +57,9 @@ func H3DO2Set(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 		return 1
 	}
 }
-func H3DO2Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
+func RHILEXG1_DO2Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		v, e := archsupport.EEKIT_GPIOGetDO2()
+		v, e := archsupport.RHILEXG1_GPIOGetDO2()
 		if e != nil {
 			l.Push(lua.LNil)
 			l.Push(lua.LString(e.Error()))
@@ -78,7 +78,7 @@ func H3DO2Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
  */
 func H3DI1Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		Value, e := archsupport.EEKIT_GPIOGetDI1()
+		Value, e := archsupport.RHILEXG1_GPIOGetDI1()
 		if e != nil {
 			l.Push(lua.LNil)
 			l.Push(lua.LString(e.Error()))
@@ -91,7 +91,7 @@ func H3DI1Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 }
 func H3DI2Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		Value, e := archsupport.EEKIT_GPIOGetDI2()
+		Value, e := archsupport.RHILEXG1_GPIOGetDI2()
 		if e != nil {
 			l.Push(lua.LNil)
 			l.Push(lua.LString(e.Error()))
@@ -104,7 +104,7 @@ func H3DI2Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 }
 func H3DI3Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		v, e := archsupport.EEKIT_GPIOGetDI3()
+		v, e := archsupport.RHILEXG1_GPIOGetDI3()
 		if e != nil {
 			l.Push(lua.LNil)
 			l.Push(lua.LString(e.Error()))
@@ -120,7 +120,7 @@ func H3DI3Get(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 // 注意：低电平亮
 func Led1On(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		e := archsupport.EEKIT_GPIOSetUserGpio(0)
+		e := archsupport.RHILEXG1_GPIOSetUserGpio(0)
 		if e != nil {
 			l.Push(lua.LString(e.Error()))
 		} else {
@@ -131,7 +131,7 @@ func Led1On(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 }
 func Led1Off(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	return func(l *lua.LState) int {
-		e := archsupport.EEKIT_GPIOSetUserGpio(1)
+		e := archsupport.RHILEXG1_GPIOSetUserGpio(1)
 		if e != nil {
 			l.Push(lua.LString(e.Error()))
 		} else {

@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"github.com/hootrhino/beautiful-lua-go/parse"
-	"github.com/hootrhino/rhilex/component/interqueue"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
+	"github.com/hootrhino/rhilex/component/interqueue"
 	"github.com/hootrhino/rhilex/component/ruleengine"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/sirupsen/logrus"
@@ -742,7 +742,7 @@ func GetAllResources(c *gin.Context, ruleEngine typex.Rhilex) {
 			"GENERIC_UART",
 			"GENERIC_PROTOCOL",
 			"GENERIC_OPCUA",
-			"RHINOPI_IR",
+			"RHILEXG1_IR",
 			"GENERIC_HTTP_DEVICE",
 		}, v.Type) {
 			Devices = append(Devices, RhilexResource{
