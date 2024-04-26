@@ -38,12 +38,12 @@ const (
 	__NET_MODE_AT_CMD    = "AT+QCFG=\"nat\",1 \r\n"
 	__RESET_AT_CMD       = "AT+CFUN=1,1\r\n"
 	__CSQ                = "AT+CSQ\r\n"
-	__SAVE_CONFIG        = "AT&W\r\n"
-	__TURN_OFF_ECHO      = "ATE0\r\n"
-	__CURRENT_COPS_CMD   = "AT+COPS?\r\n"
-	__GET_ICCID_CMD      = "AT+QCCID\r\n"
-	__ATTimeout          = 300 * time.Millisecond //ms
-	__USB_4GDEV          = "/dev/ttyUSB1"
+	__TURN_OFF_ECHO      = "ATE0\r\n"             // ECHO Mode
+	__CURRENT_COPS_CMD   = "AT+COPS?\r\n"         // COPS
+	__GET_ICCID_CMD      = "AT+QCCID\r\n"         // Get ICCID
+	__AT_TIMEOUT         = 300 * time.Millisecond //ms
+	__SAVE_CONFIG        = "AT&W\r\n"             // SaveConfig
+	__USB_4G_DEV_PATH    = "/dev/ttyUSB1"
 )
 
 func init() {
@@ -72,13 +72,13 @@ AT+QICSGP=1,1,"UNINET","","",1 //配置场景 1，APN 配置为"UNINET"（中国
 OK\ERROR
 */
 func RhinoPiGetAPN() (string, error) {
-	return __EC200A_AT("AT+QICSGP=1", __ATTimeout)
+	return __EC200A_AT("AT+QICSGP=1", __AT_TIMEOUT)
 }
 
 // 场景恒等于1
 func RhinoPiSetAPN(ptype int, apn, username, password string, auth, cdmaPwd int) (string, error) {
 	return __EC200A_AT(fmt.Sprintf(`AT+QICSGP=1,%d,"%s","%s","%s",%d,%d`,
-		ptype, apn, username, password, auth, cdmaPwd), __ATTimeout)
+		ptype, apn, username, password, auth, cdmaPwd), __AT_TIMEOUT)
 }
 
 /*
@@ -108,10 +108,10 @@ func RhinoPiGet4GCSQ() int {
 func RhinoPiGetCOPS() (string, error) {
 	// +COPS: 0,0,"CHINA MOBILE",7
 	// +COPS: 0,0,"CHIN-UNICOM",7
-	return __EC200A_AT(__CURRENT_COPS_CMD, __ATTimeout)
+	return __EC200A_AT(__CURRENT_COPS_CMD, __AT_TIMEOUT)
 }
 func RhinoPiRestart4G() (string, error) {
-	return __EC200A_AT(__RESET_AT_CMD, __ATTimeout)
+	return __EC200A_AT(__RESET_AT_CMD, __AT_TIMEOUT)
 }
 
 /*
@@ -120,12 +120,12 @@ func RhinoPiRestart4G() (string, error) {
 * +QCCID: 89860025128306012474
  */
 func RhinoPiGetICCID() (string, error) {
-	return __EC200A_AT(__GET_ICCID_CMD, __ATTimeout)
+	return __EC200A_AT(__GET_ICCID_CMD, __AT_TIMEOUT)
 
 }
 func __Get4GCSQ() int {
 	csq := 0
-	file, err := os.OpenFile(__USB_4GDEV, os.O_RDWR, os.ModePerm)
+	file, err := os.OpenFile(__USB_4G_DEV_PATH, os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return csq
 	}
@@ -226,11 +226,11 @@ func resetCard() error {
 	return __ExecuteAT(__RESET_AT_CMD)
 }
 func __ExecuteAT(cmd string) error {
-	_, err0 := __EC200A_AT(cmd, __ATTimeout)
+	_, err0 := __EC200A_AT(cmd, __AT_TIMEOUT)
 	if err0 != nil {
 		return err0
 	}
-	_, err1 := __EC200A_AT(__SAVE_CONFIG, __ATTimeout)
+	_, err1 := __EC200A_AT(__SAVE_CONFIG, __AT_TIMEOUT)
 	if err1 != nil {
 		return err1
 	}
@@ -259,7 +259,7 @@ func __ExecuteAT(cmd string) error {
 */
 func __EC200A_AT(command string, timeout time.Duration) (string, error) {
 	// 打开设备文件以供读写
-	file, err := os.OpenFile(__USB_4GDEV, os.O_RDWR, os.ModePerm)
+	file, err := os.OpenFile(__USB_4G_DEV_PATH, os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return "", err
 	}
