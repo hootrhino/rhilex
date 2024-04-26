@@ -45,7 +45,14 @@ func NewGenericHttpDevice(e typex.Rhilex) typex.XDevice {
 	hd.client = *http.DefaultClient
 	hd.mainConfig = __HttpMainConfig{
 		CommonConfig: __HttpCommonConfig{
-			AutoRequest: new(bool),
+			AutoRequest: func() *bool {
+				b := false
+				return &b
+			}(),
+			Timeout: func() *int {
+				b := 3000
+				return &b
+			}(),
 		},
 	}
 	hd.RuleEngine = e
@@ -131,6 +138,7 @@ func (hd *GenericHttpDevice) SetState(status typex.DeviceState) {
 	hd.status = status
 
 }
+
 // --------------------------------------------------------------------------------------------------
 //
 // --------------------------------------------------------------------------------------------------

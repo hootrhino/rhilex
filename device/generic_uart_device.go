@@ -20,8 +20,7 @@ type _GUDCommonConfig struct {
 	Tag         string `json:"tag" validate:"required"`
 	Frequency   *int64 `json:"frequency"`
 	AutoRequest *bool  `json:"autoRequest" validate:"required"`
-	// 协议报文结束符号
-	Separator string `json:"separator"`
+	Separator   string `json:"separator"`
 }
 
 type _GUDConfig struct {
@@ -170,7 +169,6 @@ func (uart *genericUartDevice) SetState(status typex.DeviceState) {
 	uart.status = status
 
 }
-
 
 // --------------------------------------------------------------------------------------------------
 //

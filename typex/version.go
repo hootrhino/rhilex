@@ -24,10 +24,10 @@ var License = LocalLicense{
 
 var DefaultVersionInfo = VersionInfo{
 	Product:        "COMMON",
-	ReleaseTime: "2024-04-26 15:13:48",
+	ReleaseTime: "2024-04-26 21:50:56",
 }
 var Banner = `
  **  Welcome to RHILEX framework world <'_'>     -.
-**   Version: v0.6.8-3eceb24f00fe0af             -.
+**   Version: v0.6.8-c15679e6452b49d             -.
  **  More information: https://hootrhino.github.io  -.
 `
