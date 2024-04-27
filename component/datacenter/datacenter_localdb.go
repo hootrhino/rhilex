@@ -42,13 +42,12 @@ func (ldb *LocalDb) Init() error {
 	return nil
 }
 
-func (ldb *LocalDb) GetSchemaDetail(goodsId string) SchemaDetail {
+func (ldb *LocalDb) GetSchemaDetail(uuid string) SchemaDetail {
 	return SchemaDetail{
 		UUID:        "rhilex_internal_datacenter",
 		SchemaType:  "rhilex_internal_datacenter",
 		Name:        "RHILEX内置轻量级数据仓库",
 		LocalPath:   ".local",
-		NetAddr:     ".local",
 		CreateTs:    0,
 		Size:        0,
 		StorePath:   ".local",
@@ -81,7 +80,7 @@ func (ldb *LocalDb) GetSchemaDetail(goodsId string) SchemaDetail {
     // Rows = append(Rows, Row2)
 */
 
-func (ldb *LocalDb) Query(goodsId, query string) ([]map[string]any, error) {
+func (ldb *LocalDb) Query(uuid, query string) ([]map[string]any, error) {
 	if strings.HasPrefix(query, "SELECT") ||
 		strings.HasPrefix(query, "select") {
 		result := []map[string]any{}

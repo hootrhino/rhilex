@@ -26,9 +26,9 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
+	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
-	common "github.com/hootrhino/rhilex/component/apiserver/common"
 
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
@@ -68,8 +68,8 @@ func SiemensPointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
 		time.Now().UnixMilli()))
 	var records []model.MSiemensDataPoint
-	result := interdb.DB().Order("created_at DESC").Find(&records,
-		&model.MSiemensDataPoint{DeviceUuid: deviceUuid})
+	result := interdb.DB().Table("m_siemens_data_points").
+		Where("device_uuid=?", deviceUuid).Find(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return

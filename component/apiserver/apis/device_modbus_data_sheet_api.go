@@ -26,11 +26,11 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hootrhino/rhilex/component/intercache"
-	"github.com/hootrhino/rhilex/component/interdb"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
+	"github.com/hootrhino/rhilex/component/intercache"
+	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
 	"github.com/xuri/excelize/v2"
@@ -69,8 +69,8 @@ func ModbusPointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
 		time.Now().UnixMilli()))
 	var records []model.MModbusDataPoint
-	result := interdb.DB().Order("created_at DESC").Find(&records,
-		&model.MModbusDataPoint{DeviceUuid: deviceUuid})
+	result := interdb.DB().Table("m_modbus_data_points").
+		Where("device_uuid=?", deviceUuid).Find(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
@@ -425,22 +425,6 @@ func ModbusSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 			common.Error("Invalid Device Type, Only Support Import Modbus Device"))
 		return
 	}
-	ConfigMap := Device.GetConfig()
-	CommonConfig := ConfigMap["commonConfig"]
-	ModbusMode := ""
-	switch T := CommonConfig.(type) {
-	case map[string]any:
-		Mode := T["mode"]
-		if Mode == "UART" {
-			ModbusMode = "UART"
-		} else if Mode == "TCP" {
-			ModbusMode = "TCP"
-		} else {
-			c.JSON(common.HTTP_OK,
-				common.Error("Invalid Device Mode, Only Support UART And TCP"))
-			return
-		}
-	}
 
 	contentType := header.Header.Get("Content-Type")
 	if contentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
@@ -454,7 +438,7 @@ func ModbusSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	// 只取第一张表，而且名字必须是Sheet1
-	list, err := parseModbusPointExcel(file, "Sheet1", ModbusMode, deviceUuid)
+	list, err := parseModbusPointExcel(file, "Sheet1", deviceUuid)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
@@ -473,8 +457,8 @@ func ModbusSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 *
  */
 
-func parseModbusPointExcel(r io.Reader,
-	sheetName string, Mode string, deviceUuid string) (list []model.MModbusDataPoint, err error) {
+func parseModbusPointExcel(r io.Reader, sheetName string,
+	deviceUuid string) (list []model.MModbusDataPoint, err error) {
 	excelFile, err := excelize.OpenReader(r)
 	if err != nil {
 		return nil, err
@@ -514,13 +498,7 @@ func parseModbusPointExcel(r io.Reader,
 		alias := row[1]
 		function, _ := strconv.ParseUint(row[2], 10, 8)
 		frequency, _ := strconv.ParseUint(row[3], 10, 64)
-		slaverId := uint64(0)
-		if Mode == "UART" {
-			slaverId, _ = strconv.ParseUint(row[4], 10, 8)
-		}
-		if Mode == "TCP" {
-			slaverId = 0 // 不起作用
-		}
+		slaverId, _ := strconv.ParseUint(row[4], 10, 8)
 		address, _ := strconv.ParseUint(row[5], 10, 16)
 		quantity, _ := strconv.ParseUint(row[6], 10, 16)
 		Type := row[7]

@@ -76,8 +76,8 @@ func SnmpOidsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
 		time.Now().UnixMilli()))
 	var records []model.MSnmpOid
-	result := interdb.DB().Order("created_at DESC").Find(&records,
-		&model.MSnmpOid{DeviceUuid: deviceUuid})
+	result := interdb.DB().Table("m_snmp_oids").
+		Where("device_uuid=?", deviceUuid).Find(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return

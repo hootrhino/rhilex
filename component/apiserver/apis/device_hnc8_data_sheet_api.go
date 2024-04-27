@@ -62,8 +62,8 @@ func Hnc8PointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
 		time.Now().UnixMilli()))
 	var records []model.MHnc8DataPoint
-	result := interdb.DB().Order("created_at DESC").Find(&records,
-		&model.MHnc8DataPoint{DeviceUuid: deviceUuid})
+	result := interdb.DB().Table("m_hnc8_data_points").
+		Where("device_uuid=?", deviceUuid).Find(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return

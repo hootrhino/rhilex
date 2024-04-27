@@ -27,7 +27,6 @@ type SchemaDetail struct {
 	// 该字段是为了扩展数据中心, 将数据中心扩展为通用的一个中间层
 	SchemaType   string       `json:"schemaType"`
 	LocalPath    string       `json:"local_path"`
-	NetAddr      string       `json:"net_addr"`
 	CreateTs     uint64       `json:"create_ts"`
 	Size         float32      `json:"size"`
 	StorePath    string       `json:"store_path"`
@@ -64,6 +63,6 @@ type SchemaDefine struct {
  */
 type DataSource interface {
 	Init() error
-	GetSchemaDetail(goodsId string) SchemaDetail // 表详情
-	Query(goodsId, query string) ([]map[string]any, error)
+	GetSchemaDetail(uuid string) SchemaDetail // 表详情
+	Query(uuid, query string) ([]map[string]any, error)
 }

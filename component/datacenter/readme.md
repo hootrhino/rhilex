@@ -1,27 +1,13 @@
-<!--
- Copyright (C) 2023 wwhai
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as
- published by the Free Software Foundation, either version 3 of the
- License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
-# 边缘数据中心
-
-## 简介
-这里主要用来管理开发者数据，开发者可以使用RPC为RHILEX数据中心提供接口，将自己的功能进行集成。对RHILEX来说，相当于是借助开发者扩展了自己的功能。
-
-## 原理
-开发者定义表结构，RHILEX获取到会后渲染出表格供给外部应用查询。
-## 类型
-- LOCAL：本地设备
-- EXTERNAL：外部扩展设备
+# 技术提案：边缘网关本地数据存储系统
+![1714196948398](image/readme/1714196948398.png)
+## 1. 引言
+随着工业物联网和边缘计算的快速发展，边缘网关在数据采集和处理中扮演着越来越重要的角色。为了提高数据处理效率和系统的可靠性，我们提议在边缘网关上开发一套本地数据存储系统。本提案旨在详细说明系统的设计、功能、优势以及实施计划。
+## 2. 系统设计
+### 2.1 系统架构
+系统的核心架构包括三个主要部分：数据采集模块、数据存储模块和数据管理模块。
+1. **数据采集模块**：负责从各种传感器和设备中采集数据。
+2. **数据存储模块**：将采集到的数据存储在边缘网关的本地存储系统中。
+3. **数据管理模块**：提供数据的查询、分析和维护功能。
+### 2.2 技术选型
+- **数据存储**：SQLite
+- **数据同步**：通过MQTT或TCP实现与云服务或其他边缘设备的数据同步。
