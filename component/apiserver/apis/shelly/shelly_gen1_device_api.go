@@ -1,6 +1,8 @@
 package shelly
 
 import (
+	"net"
+	"strings"
 	"sync"
 	"time"
 
@@ -325,10 +327,31 @@ func Pro1ToggleSwitch1(c *gin.Context, ruleEngine typex.Rhilex) {
 	    }
 	}
 */
+func ParseIPPort(addr string) (string, int) {
+	parts := strings.Split(addr, ":")
+	if len(parts) != 2 {
+		return "", 0
+	}
+
+	ip := net.ParseIP(parts[0])
+	if ip == nil {
+		return "", 0
+	}
+
+	port, err := net.LookupPort("tcp", parts[1])
+	if err != nil {
+		return "", 0
+	}
+
+	return ip.String(), port
+}
+
 // Pro1ConfigWebHook := "http://192.168.1.175:6400"
+// FIXME: 需要传递端口进来
 func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 	opType, _ := c.GetQuery("opType")
-	GwIp, _ := c.GetQuery("gwIp")
+	gwIp, _ := c.GetQuery("gwIp")
+	GwIp, _ := ParseIPPort(gwIp)
 	DeviceIp, _ := c.GetQuery("deviceIp")
 	if opType == "set_webhook" {
 		if err := shellymanager.Pro1CheckWebhook(DeviceIp); err != nil {
