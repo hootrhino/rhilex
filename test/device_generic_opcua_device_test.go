@@ -5,7 +5,6 @@ import (
 	"time"
 
 	httpserver "github.com/hootrhino/rhilex/component/apiserver"
-	"github.com/hootrhino/rhilex/device"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 )
@@ -24,30 +23,14 @@ func Test_Generic_opcua_device(t *testing.T) {
 		"GENERIC_OPCUA", "GENERIC_OPCUA", map[string]interface{}{
 			"commonConfig": map[string]interface{}{
 				"endpoint":  "opc.tcp://NOAH:53530/OPCUA/SimulationServer",
-				"policy":    device.POLICY_BASIC128RSA15,
-				"mode":      device.MODE_SIGN,
-				"auth":      device.AUTH_ANONYMOUS,
+				"policy":    "POLICY_BASIC128RSA15",
+				"mode":      "MODE_SIGN",
+				"auth":      "AUTH_ANONYMOUS",
 				"username":  "1",
 				"password":  "1",
 				"timeout":   10,
 				"frequency": 500,
 				"retryTime": 10,
-			},
-			"opcuaNodes": []map[string]interface{}{
-				{
-					"tag":         "node1",
-					"description": "node 1",
-					"nodeId":      "ns=3;i=1013",
-					"dataType":    "String",
-					"value":       "",
-				},
-				{
-					"tag":         "node2",
-					"description": "node 2",
-					"nodeId":      "ns=3;i=1001",
-					"dataType":    "String",
-					"value":       "",
-				},
 			},
 		})
 	ctx, cancelF := typex.NewCCTX()
