@@ -37,18 +37,18 @@ func (M *ShellyDeviceRegistry) TestAlive() {
 			}
 			for RhilexDeviceId, Slot := range M.Slots {
 				go func(RhilexDeviceId string, Slot map[string]ShellyDevice) {
-					for Mac, Device := range Slot {
+					for _, Device := range Slot {
 						if tinyarp.IsValidIP(Device.Ip) {
 							_, err := GetShellyDeviceInfo(Device.Ip)
 							if err != nil {
-								M.DeleteValue(RhilexDeviceId, Mac)
+								M.DeleteValue(RhilexDeviceId, Device.Ip)
 								return
 							}
 						}
 					}
 				}(RhilexDeviceId, Slot)
 			}
-			time.Sleep(5000 * time.Millisecond)
+			time.Sleep(5 * time.Second)
 		}
 	}()
 }
