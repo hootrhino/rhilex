@@ -184,7 +184,8 @@ func NewSetWebhookRequest(baseUrl string, cid int, event string) SetWebhookReque
 			Enable: true,
 			Event:  event,
 			Urls: []string{
-				fmt.Sprintf(baseUrl+":6400?mac=${config.sys.device.mac}&token=shelly&action=%s&cid=%d", event, cid),
+				fmt.Sprintf("http://%s?mac=${config.sys.device.mac}&token=shelly&action=%s&cid=%d",
+					baseUrl, event, cid),
 			},
 		},
 	}

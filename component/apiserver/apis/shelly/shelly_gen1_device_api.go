@@ -1,6 +1,7 @@
 package shelly
 
 import (
+	"fmt"
 	"net"
 	"strings"
 	"sync"
@@ -350,8 +351,9 @@ func ParseIPPort(addr string) (string, int) {
 // FIXME: 需要传递端口进来
 func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 	opType, _ := c.GetQuery("opType")
+	webHookPort, _ := c.GetQuery("webHookPort")
 	gwIp, _ := c.GetQuery("gwIp")
-	GwIp, _ := ParseIPPort(gwIp)
+	GwHost := fmt.Sprintf("%v:%v", gwIp, webHookPort)
 	DeviceIp, _ := c.GetQuery("deviceIp")
 	if opType == "set_webhook" {
 		if err := shellymanager.Pro1CheckWebhook(DeviceIp); err != nil {
@@ -360,7 +362,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 		}
 		go func() {
 			{
-				_, err := shellymanager.Pro1SetSw0OnHook(GwIp, DeviceIp)
+				_, err := shellymanager.Pro1SetSw0OnHook(GwHost, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -368,7 +370,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetSw0OffHook(GwIp, DeviceIp)
+				_, err := shellymanager.Pro1SetSw0OffHook(GwHost, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -376,7 +378,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput0OnHook(GwIp, DeviceIp)
+				_, err := shellymanager.Pro1SetInput0OnHook(GwHost, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -384,7 +386,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput0OffHook(GwIp, DeviceIp)
+				_, err := shellymanager.Pro1SetInput0OffHook(GwHost, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -392,7 +394,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput1OnHook(GwIp, DeviceIp)
+				_, err := shellymanager.Pro1SetInput1OnHook(GwHost, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
@@ -400,7 +402,7 @@ func Pro1ConfigWebHook(c *gin.Context, ruleEngine typex.Rhilex) {
 
 			}
 			{
-				_, err := shellymanager.Pro1SetInput1OffHook(GwIp, DeviceIp)
+				_, err := shellymanager.Pro1SetInput1OffHook(GwHost, DeviceIp)
 				if err != nil {
 					c.JSON(common.HTTP_OK, common.Error400(err))
 					return
