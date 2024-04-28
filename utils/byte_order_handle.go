@@ -19,132 +19,51 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
-	"strconv"
-	"strings"
 )
 
-/*
-*
-*解析 Modbus 的值 有符号,
-注意：如果想解析值，必须不能超过4字节，目前常见的数一般都是4字节，也许后期会有8字节，但是目前暂时不支持
-*
-*/
-func ParseModbusValue(
-	DataBlockType string,
-	DataBlockOrder string,
-	Weight float32,
-	byteSlice [256]byte) string {
-	lenFloatRound := 0
-	part := strings.Split(fmt.Sprint(Weight), ".")
-	if len(part) == 2 {
-		lenFloatRound = len(part[1])
-	}
-	switch DataBlockType {
-	case "UTF8":
-		{
-			acc := 0
-			for _, v := range byteSlice {
-				if v != 0 {
-					acc++
-				} else {
-					continue
-				}
-			}
-			if acc == 0 {
-				return ""
-			}
-			if DataBlockOrder == "BIG_ENDIAN" {
-				return string(byteSlice[:acc])
-			}
-			if DataBlockOrder == "LITTLE_ENDIAN" {
-				return stringReverse(string(byteSlice[:acc]))
-			}
-		}
-	case "RAW":
-		{
-			acc := 0
-			for _, v := range byteSlice {
-				if v != 0 {
-					acc++
-				} else {
-					continue
-				}
-			}
-			if acc == 0 {
-				return ""
-			}
-			return hex.EncodeToString(byteSlice[:acc])
-		}
-	case "BYTE":
-		{
-			return fmt.Sprintf("%d", byteSlice[0])
-		}
-	case "SHORT", "INT16":
-		{
-			// AB: 1234
-			// BA: 3412
-			if DataBlockOrder == "AB" {
-				uint16Value := int16(byteSlice[0])<<8 | int16(byteSlice[1])
-				floatValue := float32(uint16Value) * float32(Weight)
-				finalValue := strconv.FormatFloat(float64(floatValue), 'f', lenFloatRound, 32)
-				return finalValue
-			}
-			if DataBlockOrder == "BA" {
-				uint16Value := int16(byteSlice[0]) | int16(byteSlice[1])<<8
-				floatValue := float32(uint16Value) * float32(Weight)
-				finalValue := strconv.FormatFloat(float64(floatValue), 'f', lenFloatRound, 32)
-				return finalValue
-			}
+func ParseBinaryValue(DataBlockType string, DataBlockOrder string,
+	Weight float32, byteSlice [256]byte) string {
 
+	if DataBlockType == "UTF8" {
+		acc := 0
+		for _, v := range byteSlice {
+			if v != 0 {
+				acc++
+			} else {
+				continue
+			}
 		}
-	case "INT", "INT32":
-		// ABCD
-		if DataBlockOrder == "ABCD" {
-			intValue := int32(byteSlice[0])<<24 | int32(byteSlice[1])<<16 |
-				int32(byteSlice[2])<<8 | int32(byteSlice[3])
-			floatValue := float32(intValue) * float32(Weight)
-			finalValue := strconv.FormatFloat(float64(floatValue), 'f', lenFloatRound, 32)
-			return finalValue
+		if acc == 0 {
+			return ""
 		}
-		if DataBlockOrder == "CDAB" {
-			intValue := int32(byteSlice[0])<<8 | int32(byteSlice[1]) |
-				int32(byteSlice[2])<<24 | int32(byteSlice[3])<<16
-			floatValue := float32(intValue) * float32(Weight)
-			finalValue := strconv.FormatFloat(float64(floatValue), 'f', lenFloatRound, 32)
-			return finalValue
+		if DataBlockOrder == "BIG_ENDIAN" {
+			return string(byteSlice[:acc])
 		}
-		// 大端字节序转换为int32
-		if DataBlockOrder == "DCBA" {
-			intValue := int32(byteSlice[0]) | int32(byteSlice[1])<<8 |
-				int32(byteSlice[2])<<16 | int32(byteSlice[3])<<24
-			floatValue := float32(intValue) * float32(Weight)
-			finalValue := strconv.FormatFloat(float64(floatValue), 'f', lenFloatRound, 32)
-			return finalValue
+		if DataBlockOrder == "LITTLE_ENDIAN" {
+			return stringReverse(string(byteSlice[:acc]))
 		}
-	case "FLOAT", "FLOAT32": // 3.14159:DCBA -> 40490FDC
-		// ABCD
-		if DataBlockOrder == "ABCD" {
-			intValue := int32(byteSlice[0])<<24 | int32(byteSlice[1])<<16 |
-				int32(byteSlice[2])<<8 | int32(byteSlice[3])
-			floatValue := float32(math.Float32frombits(uint32(intValue)))
-			return fmt.Sprintf("%.4f", floatValue)
-		}
-		if DataBlockOrder == "CDAB" {
-			intValue := int32(byteSlice[0])<<8 | int32(byteSlice[1]) |
-				int32(byteSlice[2])<<24 | int32(byteSlice[3])<<16
-			floatValue := float32(math.Float32frombits(uint32(intValue)))
-			return fmt.Sprintf("%.4f", floatValue)
-		}
-		if DataBlockOrder == "DCBA" {
-			intValue := int32(byteSlice[0]) | int32(byteSlice[1])<<8 |
-				int32(byteSlice[2])<<16 | int32(byteSlice[3])<<24
-			floatValue := float32(math.Float32frombits(uint32(intValue)))
-			return fmt.Sprintf("%.4f", floatValue)
-
-		}
-	default:
-		return ParseUSignedValue(DataBlockType, DataBlockOrder, Weight, byteSlice)
 	}
+
+	if DataBlockType == "RAW" {
+		acc := 0
+		for _, v := range byteSlice {
+			if v != 0 {
+				acc++
+			} else {
+				continue
+			}
+		}
+		if acc == 0 {
+			return ""
+		}
+		return hex.EncodeToString(byteSlice[:acc])
+	}
+
+	if DataBlockType == "BYTE" {
+
+		return fmt.Sprintf("%d", byteSlice[0])
+	}
+
 	return ""
 }
 
@@ -153,25 +72,59 @@ func ParseModbusValue(
 *解析西门子的值 无符号
 *
  */
-func ParseUSignedValue(DataBlockType string, DataBlockOrder string,
+func ParseSignedValue(DataBlockType string, DataBlockOrder string,
 	Weight float32, byteSlice [256]byte) string {
-	switch DataBlockType {
-	case "USHORT", "UINT16":
-		{
-			// AB: 1234
-			// BA: 3412
-			if DataBlockOrder == "AB" {
-				uint16Value := uint16(byteSlice[0])<<8 | uint16(byteSlice[1])
-				return fmt.Sprintf("%d", uint16Value*uint16(Weight))
-
-			}
-			if DataBlockOrder == "BA" {
-				uint16Value := uint16(byteSlice[0]) | uint16(byteSlice[1])<<8
-				return fmt.Sprintf("%d", uint16Value*uint16(Weight))
-			}
+	if DataBlockType == "SHORT" || DataBlockType == "INT16" {
+		// AB: 1234
+		// BA: 3412
+		if DataBlockOrder == "AB" {
+			uint16Value := int16(byteSlice[0])<<8 | int16(byteSlice[1])
+			return fmt.Sprintf("%d", uint16Value*int16(Weight))
 
 		}
-	case "UINT", "UINT32":
+		if DataBlockOrder == "BA" {
+			uint16Value := int16(byteSlice[0]) | int16(byteSlice[1])<<8
+			return fmt.Sprintf("%d", uint16Value*int16(Weight))
+		}
+	}
+	if DataBlockType == "INT" || DataBlockType == "INT32" {
+		// ABCD
+		if DataBlockOrder == "ABCD" {
+			intValue := int32(byteSlice[0])<<24 | int32(byteSlice[1])<<16 |
+				int32(byteSlice[2])<<8 | int32(byteSlice[3])
+			return fmt.Sprintf("%d", intValue*int32(Weight))
+
+		}
+		if DataBlockOrder == "CDAB" {
+			intValue := int32(byteSlice[0])<<8 | int32(byteSlice[1]) |
+				int32(byteSlice[2])<<24 | int32(byteSlice[3])<<16
+			return fmt.Sprintf("%d", intValue*int32(Weight))
+		}
+		if DataBlockOrder == "DCBA" {
+			intValue := int32(byteSlice[0]) | int32(byteSlice[1])<<8 |
+				int32(byteSlice[2])<<16 | int32(byteSlice[3])<<24
+			return fmt.Sprintf("%d", intValue*int32(Weight))
+		}
+	}
+
+	return ""
+}
+func ParseUSignedValue(DataBlockType string, DataBlockOrder string,
+	Weight float32, byteSlice [256]byte) string {
+	if DataBlockType == "USHORT" || DataBlockType == "UINT16" {
+		// AB: 1234
+		// BA: 3412
+		if DataBlockOrder == "AB" {
+			uint16Value := uint16(byteSlice[0])<<8 | uint16(byteSlice[1])
+			return fmt.Sprintf("%d", uint16Value*uint16(Weight))
+
+		}
+		if DataBlockOrder == "BA" {
+			uint16Value := uint16(byteSlice[0]) | uint16(byteSlice[1])<<8
+			return fmt.Sprintf("%d", uint16Value*uint16(Weight))
+		}
+	}
+	if DataBlockType == "UINT" || DataBlockType == "UINT32" {
 		// ABCD
 		if DataBlockOrder == "ABCD" {
 			intValue := uint32(byteSlice[0])<<24 | uint32(byteSlice[1])<<16 |
@@ -190,6 +143,7 @@ func ParseUSignedValue(DataBlockType string, DataBlockOrder string,
 			return fmt.Sprintf("%d", intValue*uint32(Weight))
 		}
 	}
+
 	return ""
 }
 
@@ -234,4 +188,170 @@ func HandleZeroValue[V int16 | int32 | int64 | float32 | float64](v *V) *V {
 		return new(V)
 	}
 	return v
+}
+
+/*
+*
+*解析 Modbus 的值 有符号,
+注意：如果想解析值，必须不能超过4字节，目前常见的数一般都是4字节，也许后期会有8字节，但是目前暂时不支持
+*
+*/
+func ParseModbusValue(DataBlockType string, DataBlockOrder string,
+	Weight float32, byteSlice [256]byte) string {
+	// binary
+	if DataBlockType == "UTF8" {
+		acc := 0
+		for _, v := range byteSlice {
+			if v != 0 {
+				acc++
+			} else {
+				continue
+			}
+		}
+		if acc == 0 {
+			return ""
+		}
+		if DataBlockOrder == "BIG_ENDIAN" {
+			return string(byteSlice[:acc])
+		}
+		if DataBlockOrder == "LITTLE_ENDIAN" {
+			return stringReverse(string(byteSlice[:acc]))
+		}
+	}
+
+	if DataBlockType == "RAW" {
+		acc := 0
+		for _, v := range byteSlice {
+			if v != 0 {
+				acc++
+			} else {
+				continue
+			}
+		}
+		if acc == 0 {
+			return ""
+		}
+		return hex.EncodeToString(byteSlice[:acc])
+	}
+
+	if DataBlockType == "BYTE" {
+
+		return fmt.Sprintf("%d", byteSlice[0])
+	}
+	// signed
+	if DataBlockType == "SHORT" || DataBlockType == "INT16" {
+		// AB: 1234
+		// BA: 3412
+		if DataBlockOrder == "AB" {
+			int16Value := int16(byteSlice[0])<<8 | int16(byteSlice[1])
+			if Weight == 1 {
+				return fmt.Sprintf("%d", int16Value)
+			}
+			return fmt.Sprintf("%.4f", float32(int16Value)*(Weight))
+		}
+		if DataBlockOrder == "BA" {
+			int16Value := int16(byteSlice[0]) | int16(byteSlice[1])<<8
+			if Weight == 1 {
+				return fmt.Sprintf("%d", int16Value)
+			}
+			return fmt.Sprintf("%.4f", float32(int16Value)*(Weight))
+		}
+	}
+	if DataBlockType == "INT" || DataBlockType == "INT32" {
+		// ABCD
+		if DataBlockOrder == "ABCD" {
+			intValue := int32(byteSlice[0])<<24 | int32(byteSlice[1])<<16 |
+				int32(byteSlice[2])<<8 | int32(byteSlice[3])
+			if Weight == 1 {
+				return fmt.Sprintf("%d", intValue)
+			}
+			return fmt.Sprintf("%.4f", float32(intValue)*(Weight))
+		}
+		if DataBlockOrder == "CDAB" {
+			intValue := int32(byteSlice[0])<<8 | int32(byteSlice[1]) |
+				int32(byteSlice[2])<<24 | int32(byteSlice[3])<<16
+			if Weight == 1 {
+				return fmt.Sprintf("%d", intValue)
+			}
+			return fmt.Sprintf("%.4f", float32(intValue)*(Weight))
+		}
+		if DataBlockOrder == "DCBA" {
+			intValue := int32(byteSlice[0]) | int32(byteSlice[1])<<8 |
+				int32(byteSlice[2])<<16 | int32(byteSlice[3])<<24
+			if Weight == 1 {
+				return fmt.Sprintf("%d", intValue)
+			}
+			return fmt.Sprintf("%.4f", float32(intValue)*(Weight))
+		}
+	}
+	// Unsigned
+	if DataBlockType == "USHORT" || DataBlockType == "UINT16" {
+		// AB: 1234
+		// BA: 3412
+		if DataBlockOrder == "AB" {
+			uint16Value := uint16(byteSlice[0])<<8 | uint16(byteSlice[1])
+			if Weight == 1 {
+				return fmt.Sprintf("%d", uint16Value)
+			}
+			return fmt.Sprintf("%.4f", float32(uint16Value)*(Weight))
+		}
+		if DataBlockOrder == "BA" {
+			uint16Value := uint16(byteSlice[0]) | uint16(byteSlice[1])<<8
+			if Weight == 1 {
+				return fmt.Sprintf("%d", uint16Value)
+			}
+			return fmt.Sprintf("%.4f", float32(uint16Value)*(Weight))
+		}
+	}
+	if DataBlockType == "UINT" || DataBlockType == "UINT32" {
+		// ABCD
+		if DataBlockOrder == "ABCD" {
+			intValue := uint32(byteSlice[0])<<24 | uint32(byteSlice[1])<<16 |
+				uint32(byteSlice[2])<<8 | uint32(byteSlice[3])
+			if Weight == 1 {
+				return fmt.Sprintf("%d", intValue)
+			}
+			return fmt.Sprintf("%.4f", float32(intValue)*(Weight))
+		}
+		if DataBlockOrder == "CDAB" {
+			intValue := uint32(byteSlice[0])<<8 | uint32(byteSlice[1]) |
+				uint32(byteSlice[2])<<24 | uint32(byteSlice[3])<<16
+			if Weight == 1 {
+				return fmt.Sprintf("%d", intValue)
+			}
+			return fmt.Sprintf("%.4f", float32(intValue)*(Weight))
+		}
+		if DataBlockOrder == "DCBA" {
+			intValue := uint32(byteSlice[0]) | uint32(byteSlice[1])<<8 |
+				uint32(byteSlice[2])<<16 | uint32(byteSlice[3])<<24
+			if Weight == 1 {
+				return fmt.Sprintf("%d", intValue)
+			}
+			return fmt.Sprintf("%.4f", float32(intValue)*(Weight))
+		}
+	}
+	// 3.14159:DCBA -> 40490FDC
+	if DataBlockType == "FLOAT" || DataBlockType == "FLOAT32" {
+		// ABCD
+		if DataBlockOrder == "ABCD" {
+			intValue := int32(byteSlice[0])<<24 | int32(byteSlice[1])<<16 |
+				int32(byteSlice[2])<<8 | int32(byteSlice[3])
+			floatValue := float32(math.Float32frombits(uint32(intValue)))
+			return fmt.Sprintf("%.4f", floatValue)
+		}
+		if DataBlockOrder == "CDAB" {
+			intValue := int32(byteSlice[0])<<8 | int32(byteSlice[1]) |
+				int32(byteSlice[2])<<24 | int32(byteSlice[3])<<16
+			floatValue := float32(math.Float32frombits(uint32(intValue)))
+			return fmt.Sprintf("%.4f", floatValue)
+		}
+		if DataBlockOrder == "DCBA" {
+			intValue := int32(byteSlice[0]) | int32(byteSlice[1])<<8 |
+				int32(byteSlice[2])<<16 | int32(byteSlice[3])<<24
+			floatValue := float32(math.Float32frombits(uint32(intValue)))
+			return fmt.Sprintf("%.4f", floatValue)
+
+		}
+	}
+	return "0"
 }
