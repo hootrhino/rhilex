@@ -198,7 +198,7 @@ func (hs *ApiServerPlugin) Init(config *ini.Section) error {
 		&model.MHnc8DataPoint{},
 		&model.MKnd8DataPoint{},
 		&model.MSnmpOid{},
-		&model.MBacnetNode{},
+		&model.MBacnetDataPoint{},
 	)
 	// 初始化所有预制参数
 	server.DefaultApiServer.InitializeGenericOSData()
