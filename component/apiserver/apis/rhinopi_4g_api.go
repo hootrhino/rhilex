@@ -17,6 +17,7 @@ package apis
 
 import (
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	archsupport "github.com/hootrhino/rhilex/bspsupport"
@@ -45,6 +46,10 @@ func EC200ARestart4G(c *gin.Context, ruleEngine typex.Rhilex) {
  */
 func Get4GBaseInfo(c *gin.Context, ruleEngine typex.Rhilex) {
 	csq := archsupport.EC200AGet4G_CSQ()
+	if csq == 0 {
+		time.Sleep(100 * time.Millisecond)
+		csq = archsupport.EC200AGet4G_CSQ()
+	}
 	cops, err1 := archsupport.EC200AGetCOPS()
 	if err1 != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err1))
