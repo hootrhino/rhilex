@@ -78,8 +78,17 @@ func Get(client http.Client, url string) string {
 	return string(body)
 }
 
+type response struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+func (O response) String() string {
+	return fmt.Sprintf("Code:%v, Error: %s", O.Code, O.Msg)
+}
+
 // Download @param: 机器码
-func Download(url, param string) error {
+func Download(url, param, filePath string) error {
 	// 创建请求体
 	body := []byte(`{"param":"` + param + `"}`)
 	client := &http.Client{
@@ -96,9 +105,12 @@ func Download(url, param string) error {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Failed to connect active server")
+		body, _ := io.ReadAll(req.Body)
+		response := response{}
+		json.Unmarshal(body, &response)
+		return fmt.Errorf(response.String())
 	}
-	out, err := os.Create("license.zip")
+	out, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}

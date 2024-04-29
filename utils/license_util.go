@@ -15,22 +15,26 @@
 
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // FetchLoadLicense rhilex active -H 127.0.0.1 -U admin -P 123456
 func FetchLoadLicense(host, username, password, macAddr string) error {
 	activeParams := fmt.Sprintf(`%s&%s&%s&%s&0&0`,
 		"SN000001", username, password, macAddr)
 	CLog("\n*>> BEGIN LICENCE ACTIVE\n"+
-		"*# Vendor Admin: (%s, %s)\n"+
-		"*# Local Mac Address: (%s)\n"+
-		"*# Try to request license from server:(%s) ...\n",
+		"*# Vendor Admin: (%s, %s).\n"+
+		"*# Local Mac Address: (%s).\n"+
+		"*# Try to request license from server:(%s).",
 		username, password, macAddr, host)
-	err := Download(host, activeParams)
+	filePath := fmt.Sprintf("license_%v.zip", time.Now().UnixMilli())
+	err := Download(host, activeParams, filePath)
 	if err != nil {
-		return fmt.Errorf("[LICENCE ACTIVE]: Download license failed, error:%s", err)
+		return fmt.Errorf("Request failed")
 	}
-	fmt.Println("*# License fetch success, save as: license.zip")
+	fmt.Println("*# License fetch success, save as: " + filePath)
 	fmt.Println("*<< END LICENCE ACTIVE")
 	return nil
 }
