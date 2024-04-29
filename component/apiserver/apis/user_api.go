@@ -12,6 +12,7 @@ import (
 	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -137,17 +138,49 @@ func Login(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
+	UUID := utils.MakeUUID("NOTIFY")
+	Ts := uint64(time.Now().UnixMilli())
 	if _, err := service.Login(u.Username, md5Hash(u.Password)); err != nil {
 		glogger.GLogger.Warn("User Login Failed:", clientIP)
+		service.InsertInternalNotify(model.MInternalNotify{
+			UUID:    UUID,
+			Type:    `WARNING`, // INFO | ERROR | WARNING
+			Status:  1,
+			Event:   `event.system.user.login.failed`,
+			Ts:      Ts,
+			Summary: "User Login Failed",
+			Info: fmt.Sprintf(`User Login Failed, Username: %s, RemoteAddr: %s`,
+				u.Username, clientIP),
+		})
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
 	if token, err := generateToken(u.Username); err != nil {
 		glogger.GLogger.Warn("User Login Failed:", clientIP)
+		service.InsertInternalNotify(model.MInternalNotify{
+			UUID:    UUID,
+			Type:    `WARNING`, // INFO | ERROR | WARNING
+			Status:  1,
+			Event:   `event.system.user.login.failed`,
+			Ts:      Ts,
+			Summary: "User Login Failed",
+			Info: fmt.Sprintf(`User Login Failed, Username: %s, RemoteAddr: %s`,
+				u.Username, clientIP),
+		})
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	} else {
 		glogger.GLogger.Info("User Login Success:", clientIP)
+		service.InsertInternalNotify(model.MInternalNotify{
+			UUID:    UUID,
+			Type:    `INFO`, // INFO | ERROR | WARNING
+			Status:  1,
+			Event:   `event.system.user.login.success`,
+			Ts:      Ts,
+			Summary: "User Login Success",
+			Info: fmt.Sprintf(`User Login Success, Username: %s, RemoteAddr: %s`,
+				u.Username, clientIP),
+		})
 		c.JSON(common.HTTP_OK, common.OkWithData(token))
 	}
 }

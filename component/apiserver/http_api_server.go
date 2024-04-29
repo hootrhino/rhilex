@@ -560,8 +560,8 @@ func GetCpuUsage() {
 				Status:  1,
 				Event:   `system.cpu.load`, // 字符串
 				Ts:      uint64(time.Now().UnixMilli()),
-				Summary: "CPU负载过高",
-				Info:    fmt.Sprintf("CPU负载过高: %.2f%%, 请注意维护设备", V),
+				Summary: "High CPU Usage",
+				Info:    fmt.Sprintf("High CPU Usage: %.2f%%, please maintain the device", V),
 			})
 		}
 	}
