@@ -62,7 +62,7 @@ func LoadSystemSettingsAPI() {
 	settings4GApi := server.RouteGroup(server.ContextUrl("/mn4g"))
 	{
 		settings4GApi.GET("/info", server.AddRoute(Get4GBaseInfo))
-		settings4GApi.POST("/restart", server.AddRoute(RhinoPiRestart4G))
+		settings4GApi.POST("/restart", server.AddRoute(EC200ARestart4G))
 		settings4GApi.GET("/apn", server.AddRoute(GetAPN))
 		settings4GApi.POST("/apn", server.AddRoute(SetAPN))
 	}

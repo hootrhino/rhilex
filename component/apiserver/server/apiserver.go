@@ -188,7 +188,7 @@ func (s *RhilexApiServer) InitializeWindowsData() {
 	glogger.GLogger.Info("Initialize Windows Default Data")
 }
 
-func (s *RhilexApiServer) InitializeEEKITData() {
+func (s *RhilexApiServer) InitializeRHILEXG1Data() {
 	env := os.Getenv("ARCHSUPPORT")
 	if env == "RHILEXG1" {
 		glogger.GLogger.Info("Initialize Rhilex Pi Default Data")

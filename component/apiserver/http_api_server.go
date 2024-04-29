@@ -202,7 +202,7 @@ func (hs *ApiServerPlugin) Init(config *ini.Section) error {
 	)
 	// 初始化所有预制参数
 	server.DefaultApiServer.InitializeGenericOSData()
-	server.DefaultApiServer.InitializeEEKITData()
+	server.DefaultApiServer.InitializeRHILEXG1Data()
 	server.DefaultApiServer.InitializeWindowsData()
 	server.DefaultApiServer.InitializeUnixData()
 	server.DefaultApiServer.InitializeConfigCtl()

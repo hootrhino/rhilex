@@ -35,23 +35,24 @@ import (
 const (
 	__DRIVER_MODE_AT_CMD = "AT+QCFG=\"usbnet\",1\r\n"
 	__DIAL_AT_CMD        = "AT+QNETDEVCTL=3,1,1\r\n"
-	__NET_MODE_AT_CMD    = "AT+QCFG=\"nat\",1 \r\n"
+	__NET_MODE_AT_CMD    = "AT+QCFG=\"nat\",1\r\n"
 	__RESET_AT_CMD       = "AT+CFUN=1,1\r\n"
-	__CSQ                = "AT+CSQ\r\n"
+	__CSQ                = "AT+CSQ\r\n"           // CSQ
 	__TURN_OFF_ECHO      = "ATE0\r\n"             // ECHO Mode
 	__CURRENT_COPS_CMD   = "AT+COPS?\r\n"         // COPS
 	__GET_ICCID_CMD      = "AT+QCCID\r\n"         // Get ICCID
 	__AT_TIMEOUT         = 300 * time.Millisecond //ms
+	__GET_APN_CFG        = "AT+QICSGP=1\r\n"      // APN
 	__SAVE_CONFIG        = "AT&W\r\n"             // SaveConfig
-	__USB_4G_DEV_PATH    = "/dev/ttyUSB1"
+	__USB_4G_DEV_PATH    = "/dev/ttyUSB1"         // USB
 )
 
 func init() {
 	env := os.Getenv("ARCHSUPPORT")
 	if env == "RHILEXG1" {
-		fmt.Println("RhinoPi Init 4G")
-		__RhinoPiInit4G()
-		fmt.Println("RhinoPi Init 4G Ok.")
+		fmt.Println("EC200A Init 4G")
+		__EC200AInit4G()
+		fmt.Println("EC200A Init 4G Ok.")
 	}
 }
 
@@ -71,12 +72,12 @@ OK
 AT+QICSGP=1,1,"UNINET","","",1 //配置场景 1，APN 配置为"UNINET"（中国联通）。
 OK\ERROR
 */
-func RhinoPiGetAPN() (string, error) {
-	return __EC200A_AT("AT+QICSGP=1", __AT_TIMEOUT)
+func EC200AGetAPN() (string, error) {
+	return __EC200A_AT(__GET_APN_CFG, __AT_TIMEOUT)
 }
 
 // 场景恒等于1
-func RhinoPiSetAPN(ptype int, apn, username, password string, auth, cdmaPwd int) (string, error) {
+func EC200ASetAPN(ptype int, apn, username, password string, auth, cdmaPwd int) (string, error) {
 	return __EC200A_AT(fmt.Sprintf(`AT+QICSGP=1,%d,"%s","%s","%s",%d,%d`,
 		ptype, apn, username, password, auth, cdmaPwd), __AT_TIMEOUT)
 }
@@ -89,10 +90,10 @@ func RhinoPiSetAPN(ptype int, apn, username, password string, auth, cdmaPwd int)
   - 10-14：较弱的信号，但可能可以建立连接。
   - 15-19：中等强度的信号。
   - 20-31：非常强的信号，信号质量非常好。
-    RhinoPiGet4GCSQ: 返回值代表信号格
+    EC200AGet4G_CSQ: 返回值代表信号格
 */
-func RhinoPiGet4GCSQ() int {
-	return __Get4GCSQ()
+func EC200AGet4G_CSQ() int {
+	return __Get4G_CSQ()
 }
 
 /*
@@ -105,12 +106,12 @@ func RhinoPiGet4GCSQ() int {
 (3,"CHN-CT","CT","46011",7),
 (1,"460 15","460 15","46015",7),,(0-4),(0-2)
 */
-func RhinoPiGetCOPS() (string, error) {
+func EC200AGetCOPS() (string, error) {
 	// +COPS: 0,0,"CHINA MOBILE",7
 	// +COPS: 0,0,"CHIN-UNICOM",7
 	return __EC200A_AT(__CURRENT_COPS_CMD, __AT_TIMEOUT)
 }
-func RhinoPiRestart4G() (string, error) {
+func EC200ARestart4G() (string, error) {
 	return __EC200A_AT(__RESET_AT_CMD, __AT_TIMEOUT)
 }
 
@@ -119,11 +120,11 @@ func RhinoPiRestart4G() (string, error) {
 * 获取ICCID, 用户查询电话卡号
 * +QCCID: 89860025128306012474
  */
-func RhinoPiGetICCID() (string, error) {
+func EC200AGetICCID() (string, error) {
 	return __EC200A_AT(__GET_ICCID_CMD, __AT_TIMEOUT)
 
 }
-func __Get4GCSQ() int {
+func __Get4G_CSQ() int {
 	csq := 0
 	file, err := os.OpenFile(__USB_4G_DEV_PATH, os.O_RDWR, os.ModePerm)
 	if err != nil {
@@ -182,32 +183,32 @@ func __Get4GCSQ() int {
 * 初始化4G模组
 *
  */
-func __RhinoPiInit4G() {
+func __EC200AInit4G() {
 	if err := turnOffEcho(); err != nil {
-		fmt.Println("RhinoPiInit4G turnOffEcho error:", err)
+		fmt.Println("EC200AInit4G turnOffEcho error:", err)
 		return
 	}
-	fmt.Println("RhinoPiInit4G turnOffEcho ok.")
+	fmt.Println("EC200AInit4G turnOffEcho ok.")
 	if err := setDriverMode(); err != nil {
-		fmt.Println("RhinoPiInit4G setDriverMode error:", err)
+		fmt.Println("EC200AInit4G setDriverMode error:", err)
 		return
 	}
-	fmt.Println("RhinoPiInit4G setDriverMode ok.")
+	fmt.Println("EC200AInit4G setDriverMode ok.")
 	if err := setDial(); err != nil {
-		fmt.Println("RhinoPiInit4G setDial error:", err)
+		fmt.Println("EC200AInit4G setDial error:", err)
 		return
 	}
-	fmt.Println("RhinoPiInit4G setDial ok.")
+	fmt.Println("EC200AInit4G setDial ok.")
 	if err := setNetMode(); err != nil {
-		fmt.Println("RhinoPiInit4G setNetMode error:", err)
+		fmt.Println("EC200AInit4G setNetMode error:", err)
 		return
 	}
-	fmt.Println("RhinoPiInit4G setNetMode ok.")
+	fmt.Println("EC200AInit4G setNetMode ok.")
 	if err := resetCard(); err != nil {
-		fmt.Println("RhinoPiInit4G resetCard error:", err)
+		fmt.Println("EC200AInit4G resetCard error:", err)
 		return
 	}
-	fmt.Println("RhinoPiInit4G resetCard ok.")
+	fmt.Println("EC200AInit4G resetCard ok.")
 
 }
 func turnOffEcho() error {

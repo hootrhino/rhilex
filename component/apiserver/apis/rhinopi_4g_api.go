@@ -29,8 +29,8 @@ import (
 * 重启4G
 *
  */
-func RhinoPiRestart4G(c *gin.Context, ruleEngine typex.Rhilex) {
-	_, err := archsupport.RhinoPiRestart4G()
+func EC200ARestart4G(c *gin.Context, ruleEngine typex.Rhilex) {
+	_, err := archsupport.EC200ARestart4G()
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
@@ -44,8 +44,8 @@ func RhinoPiRestart4G(c *gin.Context, ruleEngine typex.Rhilex) {
 *
  */
 func Get4GBaseInfo(c *gin.Context, ruleEngine typex.Rhilex) {
-	csq := archsupport.RhinoPiGet4GCSQ()
-	cops, err1 := archsupport.RhinoPiGetCOPS()
+	csq := archsupport.EC200AGet4G_CSQ()
+	cops, err1 := archsupport.EC200AGetCOPS()
 	if err1 != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err1))
 		return
@@ -60,7 +60,7 @@ func Get4GBaseInfo(c *gin.Context, ruleEngine typex.Rhilex) {
 	if strings.Contains(cops, "UNICOM") {
 		cm = "中国联通"
 	}
-	iccid, err2 := archsupport.RhinoPiGetICCID()
+	iccid, err2 := archsupport.EC200AGetICCID()
 	if err2 != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err2))
 		return
@@ -87,15 +87,15 @@ func Get4GBaseInfo(c *gin.Context, ruleEngine typex.Rhilex) {
 * 信号强度
 *
  */
-func Get4GCSQ(c *gin.Context, ruleEngine typex.Rhilex) {
-	c.JSON(common.HTTP_OK, common.OkWithData(archsupport.RhinoPiGet4GCSQ()))
+func Get4G_CSQ(c *gin.Context, ruleEngine typex.Rhilex) {
+	c.JSON(common.HTTP_OK, common.OkWithData(archsupport.EC200AGet4G_CSQ()))
 }
 
 // (1,"CHINA MOBILE","CMCC","46000",0),
 // (3,"CHN-UNICOM","UNICOM","46001",7),
 // +COPS: 0,0,\"CHINA MOBILE\",7
 func Get4GCOPS(c *gin.Context, ruleEngine typex.Rhilex) {
-	result, err := archsupport.RhinoPiGetCOPS()
+	result, err := archsupport.EC200AGetCOPS()
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 	} else {
@@ -129,8 +129,9 @@ type APNFormVo struct {
 	Password string `json:"apn_password"`
 }
 
+// 目前暂时用不到
 func GetAPN(c *gin.Context, ruleEngine typex.Rhilex) {
-	if _, err := archsupport.RhinoPiGetAPN(); err != nil {
+	if _, err := archsupport.EC200AGetAPN(); err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
@@ -154,7 +155,7 @@ func SetAPN(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if _, err := archsupport.RhinoPiSetAPN(
+	if _, err := archsupport.EC200ASetAPN(
 		form.PTytpe, form.APN, form.Username, form.Password, form.Auth, form.CDMAPWD,
 	); err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
@@ -164,7 +165,7 @@ func SetAPN(c *gin.Context, ruleEngine typex.Rhilex) {
 
 }
 func Get4GICCID(c *gin.Context, ruleEngine typex.Rhilex) {
-	result, err := archsupport.RhinoPiGetICCID()
+	result, err := archsupport.EC200AGetICCID()
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 	} else {
