@@ -21,9 +21,9 @@ import (
 )
 
 // FetchLoadLicense rhilex active -H 127.0.0.1 -U admin -P 123456
-func FetchLoadLicense(host, username, password, macAddr string) error {
+func FetchLoadLicense(host, SN, username, password, macAddr string) error {
 	activeParams := fmt.Sprintf(`%s&%s&%s&%s&0&0`,
-		"SN000001", username, password, macAddr)
+		SN, username, password, macAddr)
 	CLog("\n*>> BEGIN LICENCE ACTIVE\n"+
 		"*# Vendor Admin: (%s, %s).\n"+
 		"*# Local Mac Address: (%s).\n"+

@@ -230,6 +230,10 @@ func main() {
 						Usage: "active server ip",
 					},
 					&cli.StringFlag{
+						Name:  "SN",
+						Usage: "device serial number",
+					},
+					&cli.StringFlag{
 						Name:  "U",
 						Usage: "active admin username",
 					},
@@ -243,6 +247,10 @@ func main() {
 					host := c.String("H")
 					if host == "" {
 						return fmt.Errorf("[LICENCE ACTIVE]: missing 'host' parameter")
+					}
+					sn := c.String("SN")
+					if sn == "" {
+						return fmt.Errorf("[LICENCE ACTIVE]: missing 'SN' parameter")
 					}
 					username := c.String("U")
 					if username == "" {
@@ -263,7 +271,7 @@ func main() {
 						// - H: Active Server Host
 						// - U: Active Server Account
 						// - P: Active Server Password
-						err1 := utils.FetchLoadLicense(host, username, password, macAddr)
+						err1 := utils.FetchLoadLicense(host, sn, username, password, macAddr)
 						if err1 != nil {
 							return fmt.Errorf("[LICENCE ACTIVE]: Fetch license failed, error: %s", err1)
 						}
@@ -275,7 +283,7 @@ func main() {
 						if err0 != nil {
 							return fmt.Errorf("[LICENCE ACTIVE]: Get Local Mac Address error: %s", err0)
 						}
-						err1 := utils.FetchLoadLicense(host, username, password, macAddr)
+						err1 := utils.FetchLoadLicense(host, sn, username, password, macAddr)
 						if err1 != nil {
 							return fmt.Errorf("[LICENCE ACTIVE]: Fetch license failed, error: %s", err1)
 						}
