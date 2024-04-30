@@ -38,8 +38,27 @@ import (
 type logger struct {
 }
 
-func (l *logger) Log(ctx context.Context, lvl ngrok_log.LogLevel, msg string, data map[string]interface{}) {
-	glogger.GLogger.Debugf("%s , %v", msg, data)
+func (l *logger) Log(ctx context.Context, lvl ngrok_log.LogLevel, msg string,
+	data map[string]interface{}) {
+	Level, err := ngrok_log.StringFromLogLevel(lvl)
+	if err != nil {
+		glogger.GLogger.Error(err)
+		return
+	}
+	switch Level {
+	case "trace":
+		glogger.GLogger.Trace(msg, data)
+	case "debug":
+		glogger.GLogger.Debug(msg, data)
+	case "info":
+		glogger.GLogger.Info(msg, data)
+	case "warn":
+		glogger.GLogger.Warn(msg, data)
+	case "error":
+		glogger.GLogger.Error(msg, data)
+	default:
+		glogger.GLogger.Info(msg, data)
+	}
 }
 
 type NgrokConfig struct {
@@ -52,6 +71,8 @@ type NgrokConfig struct {
 	AuthToken      string `ini:"auth_token" json:"auth_token"`
 }
 type NgrokClient struct {
+	ctx        context.Context
+	cancel     context.CancelFunc
 	running    bool
 	forwarder  ngrok.Forwarder
 	serverAddr string
@@ -86,7 +107,7 @@ func (dm *NgrokClient) Init(config *ini.Section) error {
 	return nil
 }
 func (dm *NgrokClient) getTunnel() config.Tunnel {
-	if dm.mainConfig.Domain == "" {
+	if dm.mainConfig.Domain == "default" {
 		return config.HTTPEndpoint()
 	} else {
 		return config.HTTPEndpoint(config.WithDomain(dm.mainConfig.Domain))
@@ -99,10 +120,12 @@ func (dm *NgrokClient) startClient() error {
 		return err
 	}
 	if dm.mainConfig.LocalSchema == "tcp" {
-		ctx, cancel := context.WithTimeout(typex.GCTX, 5*time.Second)
+		ctx, cancel := context.WithCancel(typex.GCTX)
+		dm.ctx = ctx
+		dm.cancel = cancel
 		go func() {
-			defer cancel()
-			Forwarder, err := ngrok.ListenAndForward(ctx, URL, config.TCPEndpoint(),
+			//
+			Forwarder, err := ngrok.ListenAndForward(dm.ctx, URL, config.TCPEndpoint(),
 				ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
 				ngrok.WithConnectHandler(func(ctx context.Context, session ngrok.Session) {
 					glogger.GLogger.Debug(session.Warnings())
@@ -130,11 +153,22 @@ func (dm *NgrokClient) startClient() error {
 	}
 	// workable-logically-tarpon.ngrok-free.app
 	if dm.mainConfig.LocalSchema == "http" {
-		ctx, cancel := context.WithTimeout(typex.GCTX, 5*time.Second)
+		ctx, cancel := context.WithCancel(typex.GCTX)
+		dm.ctx = ctx
+		dm.cancel = cancel
 		go func() {
-			defer cancel()
-			Forwarder, err := ngrok.ListenAndForward(ctx, URL, dm.getTunnel(),
+			//
+			Forwarder, err := ngrok.ListenAndForward(dm.ctx, URL, dm.getTunnel(),
 				ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
+				ngrok.WithConnectHandler(func(ctx context.Context, session ngrok.Session) {
+					glogger.GLogger.Debug(session.Warnings())
+				}),
+				ngrok.WithHeartbeatHandler(func(ctx context.Context, session ngrok.Session, latency time.Duration) {
+					glogger.GLogger.Debug(latency)
+				}),
+				ngrok.WithDisconnectHandler(func(ctx context.Context, session ngrok.Session, err error) {
+					glogger.GLogger.Error(err)
+				}),
 				ngrok.WithLogger(&logger{}))
 			if err != nil {
 				glogger.GLogger.Error(err)
@@ -152,10 +186,12 @@ func (dm *NgrokClient) startClient() error {
 
 	}
 	if dm.mainConfig.LocalSchema == "https" {
-		ctx, cancel := context.WithTimeout(typex.GCTX, 5*time.Second)
+		ctx, cancel := context.WithCancel(typex.GCTX)
+		dm.ctx = ctx
+		dm.cancel = cancel
 		go func() {
-			defer cancel()
-			Forwarder, err := ngrok.ListenAndForward(ctx, URL, dm.getTunnel(),
+			//
+			Forwarder, err := ngrok.ListenAndForward(dm.ctx, URL, dm.getTunnel(),
 				ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
 				ngrok.WithLogger(&logger{}))
 			if err != nil {
@@ -183,6 +219,9 @@ func (dm *NgrokClient) Start(typex.Rhilex) error {
 	return nil
 }
 func (dm *NgrokClient) Stop() error {
+	if dm.cancel != nil {
+		dm.cancel()
+	}
 	if dm.forwarder != nil {
 		dm.forwarder.Close()
 		dm.forwarder = nil

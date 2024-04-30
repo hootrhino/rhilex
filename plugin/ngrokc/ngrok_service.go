@@ -51,6 +51,9 @@ func (dm *NgrokClient) Service(arg typex.ServiceArg) typex.ServiceResult {
 		if err := dm.forwarder.Close(); err != nil {
 			return typex.ServiceResult{Out: err}
 		}
+		if dm.cancel != nil {
+			dm.cancel()
+		}
 		dm.running = false
 		return typex.ServiceResult{Out: "Ngrok Client Stopped"}
 	}
