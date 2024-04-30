@@ -23,6 +23,7 @@ import "github.com/hootrhino/rhilex/typex"
 *
  */
 type NgrokResponse struct {
+	Running        bool   `json:"running"`
 	ServerAddr     string `json:"server_addr"`
 	ServerEndpoint string `json:"server_endpoint"`
 	Domain         string `json:"domain"`
@@ -34,22 +35,28 @@ type NgrokResponse struct {
 
 func (dm *NgrokClient) Service(arg typex.ServiceArg) typex.ServiceResult {
 	if arg.Name == "start" {
+		if dm.running {
+			return typex.ServiceResult{Out: "Ngrok Client Already Started"}
+		}
 		if err := dm.startClient(); err != nil {
 			return typex.ServiceResult{Out: err}
 		}
-		dm.busy = true
+		dm.running = true
 		return typex.ServiceResult{Out: "Ngrok Client Started"}
 	}
 	if arg.Name == "stop" {
-		dm.cancel()
+		if !dm.running {
+			return typex.ServiceResult{Out: "Ngrok Client Already Stopped"}
+		}
 		if err := dm.forwarder.Close(); err != nil {
 			return typex.ServiceResult{Out: err}
 		}
-		dm.busy = false
+		dm.running = false
 		return typex.ServiceResult{Out: "Ngrok Client Stopped"}
 	}
 	if arg.Name == "get_config" {
 		return typex.ServiceResult{Out: NgrokResponse{
+			Running:        dm.running,
 			ServerAddr:     dm.serverAddr,
 			Domain:         dm.mainConfig.Domain,
 			ServerEndpoint: dm.mainConfig.ServerEndpoint,

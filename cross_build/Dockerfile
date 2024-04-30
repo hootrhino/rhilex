@@ -12,18 +12,16 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-FROM golang:1.21
+# 第一阶段：编译应用程序
+FROM golang:1.21 as builder
 
 RUN apt update && \
     apt upgrade && \
     apt install -y sudo make jq
 
+WORKDIR "/go/src"
+RUN git clone https://github.com/hybridgroup/gocv.git && \
+    cd gocv && \
+    make install
 
-WORKDIR  "/go/src"
-RUN git clone https://github.com/hybridgroup/gocv.git
-WORKDIR "/go/src/gocv"
-# RUN make install
-ADD ../ "/go/src/rhilex"
-WORKDIR "/go/src/rhilex"
-# RUN ["go","build"]
-RUN "bash"
+RUN go build

@@ -52,9 +52,7 @@ type NgrokConfig struct {
 	AuthToken      string `ini:"auth_token" json:"auth_token"`
 }
 type NgrokClient struct {
-	ctx        context.Context
-	cancel     context.CancelFunc
-	busy       bool
+	running    bool
 	forwarder  ngrok.Forwarder
 	serverAddr string
 	mainConfig NgrokConfig
@@ -62,7 +60,7 @@ type NgrokClient struct {
 
 func NewNgrokClient() *NgrokClient {
 	return &NgrokClient{
-		busy:       false,
+		running:    false,
 		serverAddr: "",
 		mainConfig: NgrokConfig{
 			AuthToken:      "",
@@ -100,57 +98,78 @@ func (dm *NgrokClient) startClient() error {
 	if err != nil {
 		return err
 	}
-	ctx, cancel := context.WithCancel(typex.GCTX)
-	dm.cancel = cancel
-	dm.ctx = ctx
 	if dm.mainConfig.LocalSchema == "tcp" {
-		Forwarder, err := ngrok.ListenAndForward(ctx, URL, config.TCPEndpoint(),
-			ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
-			ngrok.WithConnectHandler(func(ctx context.Context, session ngrok.Session) {
-				glogger.GLogger.Debug(session.Warnings())
-			}),
-			ngrok.WithHeartbeatHandler(func(ctx context.Context, session ngrok.Session, latency time.Duration) {
-				glogger.GLogger.Debug(latency)
-			}),
-			ngrok.WithDisconnectHandler(func(ctx context.Context, session ngrok.Session, err error) {
+		ctx, cancel := context.WithTimeout(typex.GCTX, 5*time.Second)
+		go func() {
+			defer cancel()
+			Forwarder, err := ngrok.ListenAndForward(ctx, URL, config.TCPEndpoint(),
+				ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
+				ngrok.WithConnectHandler(func(ctx context.Context, session ngrok.Session) {
+					glogger.GLogger.Debug(session.Warnings())
+				}),
+				ngrok.WithHeartbeatHandler(func(ctx context.Context, session ngrok.Session, latency time.Duration) {
+					glogger.GLogger.Debug(latency)
+				}),
+				ngrok.WithDisconnectHandler(func(ctx context.Context, session ngrok.Session, err error) {
+					glogger.GLogger.Error(err)
+				}),
+				ngrok.WithLogger(&logger{}))
+			if err != nil {
 				glogger.GLogger.Error(err)
-			}),
-			ngrok.WithLogger(&logger{}))
-		if err != nil {
-			return err
-		}
-		dm.serverAddr = Forwarder.URL()
-		glogger.GLogger.Debugf("Forwarder: %s connect to Ngrok success: %s",
-			Forwarder.ID(), Forwarder.URL())
-		dm.forwarder = Forwarder
+				return
+			}
+			if Forwarder.URL() != "" {
+				dm.serverAddr = Forwarder.URL()
+				dm.running = true
+			}
+			glogger.GLogger.Debugf("Forwarder: %s connect to Ngrok success: %s",
+				Forwarder.ID(), Forwarder.URL())
+			dm.forwarder = Forwarder
+		}()
 		return nil
 	}
 	// workable-logically-tarpon.ngrok-free.app
 	if dm.mainConfig.LocalSchema == "http" {
-		Forwarder, err := ngrok.ListenAndForward(ctx, URL, dm.getTunnel(),
-			ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
-			ngrok.WithLogger(&logger{}))
-		if err != nil {
-			return err
-		}
-		dm.serverAddr = Forwarder.URL()
-		glogger.GLogger.Debugf("Forwarder: %s connect to Ngrok success: %s",
-			Forwarder.ID(), Forwarder.URL())
-		dm.forwarder = Forwarder
+		ctx, cancel := context.WithTimeout(typex.GCTX, 5*time.Second)
+		go func() {
+			defer cancel()
+			Forwarder, err := ngrok.ListenAndForward(ctx, URL, dm.getTunnel(),
+				ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
+				ngrok.WithLogger(&logger{}))
+			if err != nil {
+				glogger.GLogger.Error(err)
+				return
+			}
+			if Forwarder.URL() != "" {
+				dm.serverAddr = Forwarder.URL()
+				dm.running = true
+			}
+			glogger.GLogger.Debugf("Forwarder: %s connect to Ngrok success: %s",
+				Forwarder.ID(), Forwarder.URL())
+			dm.forwarder = Forwarder
+		}()
 		return nil
 
 	}
 	if dm.mainConfig.LocalSchema == "https" {
-		Forwarder, err := ngrok.ListenAndForward(ctx, URL, dm.getTunnel(),
-			ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
-			ngrok.WithLogger(&logger{}))
-		if err != nil {
-			return err
-		}
-		dm.serverAddr = Forwarder.URL()
-		glogger.GLogger.Debugf("Forwarder: %s connect to Ngrok success: %s",
-			Forwarder.ID(), Forwarder.URL())
-		dm.forwarder = Forwarder
+		ctx, cancel := context.WithTimeout(typex.GCTX, 5*time.Second)
+		go func() {
+			defer cancel()
+			Forwarder, err := ngrok.ListenAndForward(ctx, URL, dm.getTunnel(),
+				ngrok.WithAuthtoken(dm.mainConfig.AuthToken),
+				ngrok.WithLogger(&logger{}))
+			if err != nil {
+				glogger.GLogger.Error(err)
+				return
+			}
+			if Forwarder.URL() != "" {
+				dm.serverAddr = Forwarder.URL()
+				dm.running = true
+			}
+			glogger.GLogger.Debugf("Forwarder: %s connect to Ngrok success: %s",
+				Forwarder.ID(), Forwarder.URL())
+			dm.forwarder = Forwarder
+		}()
 		return nil
 	}
 	return fmt.Errorf("unsupported schema:%s", dm.mainConfig.LocalSchema)
@@ -161,18 +180,14 @@ func (dm *NgrokClient) Start(typex.Rhilex) error {
 	if err := dm.startClient(); err != nil {
 		return err
 	}
-	dm.busy = true
 	return nil
 }
 func (dm *NgrokClient) Stop() error {
-	if dm.cancel != nil {
-		dm.cancel()
-	}
 	if dm.forwarder != nil {
 		dm.forwarder.Close()
 		dm.forwarder = nil
 	}
-	dm.busy = false
+	dm.running = false
 	return nil
 }
 
