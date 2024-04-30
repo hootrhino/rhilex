@@ -36,6 +36,8 @@ Ngrok 是一个流行的工具，尤其是在开发和测试阶段，因为它�
 [plugin.ngrokc]
 # 启用插件
 enable = true
+# ngrok分配的域名
+domain = "default"
 # 服务器端地址
 server_endpoint = "default"
 # 认证参数

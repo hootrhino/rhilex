@@ -25,6 +25,7 @@ import "github.com/hootrhino/rhilex/typex"
 type NgrokResponse struct {
 	ServerAddr     string `json:"server_addr"`
 	ServerEndpoint string `json:"server_endpoint"`
+	Domain         string `json:"domain"`
 	LocalSchema    string `json:"local_schema"`
 	LocalHost      string `json:"local_host"`
 	LocalPort      int    `json:"local_port"`
@@ -50,6 +51,7 @@ func (dm *NgrokClient) Service(arg typex.ServiceArg) typex.ServiceResult {
 	if arg.Name == "get_config" {
 		return typex.ServiceResult{Out: NgrokResponse{
 			ServerAddr:     dm.serverAddr,
+			Domain:         dm.mainConfig.Domain,
 			ServerEndpoint: dm.mainConfig.ServerEndpoint,
 			LocalSchema:    dm.mainConfig.LocalSchema,
 			LocalHost:      dm.mainConfig.LocalHost,
