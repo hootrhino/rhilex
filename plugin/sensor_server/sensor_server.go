@@ -50,7 +50,7 @@ func (dm *SensorServer) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "/",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }
 

@@ -3,12 +3,11 @@ package apis
 import (
 	"fmt"
 
-	"github.com/hootrhino/rhilex/component/intercache"
-	"github.com/hootrhino/rhilex/component/interdb"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
+	"github.com/hootrhino/rhilex/component/interdb"
 	"gorm.io/gorm"
 
 	"github.com/hootrhino/rhilex/typex"
@@ -23,7 +22,6 @@ type DeviceVo struct {
 	Gid         string                 `json:"gid"`
 	Name        string                 `json:"name"`
 	Type        string                 `json:"type"`
-	SchemaId    string                 `json:"schemaId"`
 	State       int                    `json:"state"`
 	ErrMsg      string                 `json:"errMsg"`
 	Config      map[string]interface{} `json:"config"`
@@ -46,7 +44,6 @@ func DeviceDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 	DeviceVo.UUID = mdev.UUID
 	DeviceVo.Name = mdev.Name
 	DeviceVo.Type = mdev.Type
-	DeviceVo.SchemaId = mdev.SchemaId
 	DeviceVo.Description = mdev.Description
 	DeviceVo.Config = mdev.GetConfig()
 	//
@@ -83,7 +80,6 @@ func ListDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 		DeviceVo.UUID = mdev.UUID
 		DeviceVo.Name = mdev.Name
 		DeviceVo.Type = mdev.Type
-		DeviceVo.SchemaId = mdev.SchemaId
 		DeviceVo.Description = mdev.Description
 		DeviceVo.Config = mdev.GetConfig()
 		//
@@ -127,7 +123,6 @@ func ListDeviceByGroup(c *gin.Context, ruleEngine typex.Rhilex) {
 		DeviceVo.UUID = mdev.UUID
 		DeviceVo.Name = mdev.Name
 		DeviceVo.Type = mdev.Type
-		DeviceVo.SchemaId = mdev.SchemaId
 		DeviceVo.Description = mdev.Description
 		DeviceVo.Config = mdev.GetConfig()
 		//
@@ -275,7 +270,6 @@ func CreateDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 		Name:        form.Name,
 		Description: form.Description,
 		Config:      string(configJson),
-		SchemaId:    form.SchemaId,
 		BindRules:   []string{},
 	}
 	if err := service.InsertDevice(&MDevice); err != nil {
@@ -319,7 +313,6 @@ func UpdateDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 			UUID:        form.UUID,
 			Type:        form.Type,
 			Name:        form.Name,
-			SchemaId:    form.SchemaId,
 			Description: form.Description,
 			Config:      string(configJson),
 		}
@@ -336,78 +329,6 @@ func UpdateDevice(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	c.JSON(common.HTTP_OK, common.Ok())
-}
-
-/*
-*
-* 属性
-*
- */
-type DevicePropertyVo struct {
-	Label       string `json:"label"`       // UI显示的那个文本
-	Name        string `json:"name"`        // 变量关联名
-	Description string `json:"description"` // 额外信息
-	Type        string `json:"type"`        // 类型, 只能是上面几种
-	Rw          string `json:"rw"`          // R读 W写 RW读写
-	Unit        string `json:"unit"`        // 单位 例如：摄氏度、米、牛等等
-	Value       any    `json:"value"`       // 值
-}
-
-/*
-*
-*挂在设备上的物模型以及数据
-*
- */
-func DevicePropertiesPage(c *gin.Context, ruleEngine typex.Rhilex) {
-	pager, err := service.ReadPageRequest(c)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	uuid, _ := c.GetQuery("uuid")
-	MDevice, err := service.GetMDeviceWithUUID(uuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	db := interdb.DB()
-	tx := db.Scopes(service.Paginate(*pager))
-	var count int64
-	tx.Model(&model.MIotProperty{}).
-		Where("schema_id=?", MDevice.SchemaId).Count(&count)
-	var records []model.MIotProperty
-	tx.Order("created_at DESC").Where("schema_id=?", MDevice.SchemaId).Find(&records)
-	recordsVoList := []DevicePropertyVo{}
-	// 1 从数据库加载物模型
-	// 2 从物模型缓存器里面拿数据
-	// 3 构造view vo
-	// 如果缓存器里面有数据
-	DataSchemaCacheValueSlot := intercache.GetSlot(uuid)
-	for _, record := range records {
-		IoTPropertyRuleVo := IoTPropertyRuleVo{}
-		if err0 := IoTPropertyRuleVo.ParseRuleFromModel(record.Rule); err0 != nil {
-			c.JSON(common.HTTP_OK, common.Error400(err0))
-			return
-		}
-		IotPropertyVo := DevicePropertyVo{
-			Label:       record.Label,
-			Name:        record.Name,
-			Rw:          record.Rw,
-			Type:        record.Type,
-			Unit:        record.Unit,
-			Description: record.Description,
-			Value:       "--",
-		}
-		// 取出 name 指向的缓冲值
-		if DataSchemaCacheValueSlot != nil {
-			if DataSchemaCacheValue, ok := DataSchemaCacheValueSlot[record.Name]; ok {
-				IotPropertyVo.Value = DataSchemaCacheValue.Value
-			}
-		}
-		recordsVoList = append(recordsVoList, IotPropertyVo)
-	}
-	Result := service.WrapPageResult(*pager, recordsVoList, count)
-	c.JSON(common.HTTP_OK, common.OkWithData(Result))
 }
 
 /*

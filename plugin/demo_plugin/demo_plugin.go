@@ -35,7 +35,7 @@ func (dm *DemoPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "/",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }
 

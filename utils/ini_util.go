@@ -41,7 +41,7 @@ func GetINISection(iniPath string, s string) *ini.Section {
 // INI转结构体
 func InIMapToStruct(section *ini.Section, s interface{}) error {
 	if reflect.ValueOf(s).Kind() != reflect.Ptr {
-		return errors.New("config must be a pointer")
+		return errors.New("config must be a pointer type")
 	}
-	return section.MapTo(s)
+	return section.StrictMapTo(s)
 }

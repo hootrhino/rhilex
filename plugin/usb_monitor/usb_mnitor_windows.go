@@ -44,7 +44,7 @@ func (usbm *usbMonitor) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "https://github.com/hootrhino/rhilex.git",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }
 

@@ -37,15 +37,62 @@ Ngrok 是一个流行的工具，尤其是在开发和测试阶段，因为它�
 # 启用插件
 enable = true
 # 服务器端地址
-server_addr = "127.0.0.1"
-# 服务器端端口
-server_port = 7000
-# 插件类型
-type = "tcp"
+server_endpoint = "default"
+# 认证参数
+auth_token = "auth_token"
+# tcp | http | https
+local_schema = "http"
 # 本地IP地址
-local_ip = "127.0.0.1"
+local_host = "127.0.0.1"
 # 本地端口
 local_port = 2580
+
+```
+## 指令
+获取配置：
+```json
+{
+    "uuid": "NGROKC",
+    "name": "get_config",
+    "args": []
+}
+```
+启动：
+```json
+{
+    "uuid": "NGROKC",
+    "name": "start",
+    "args": []
+}
+```
+停止:
+```json
+{
+    "uuid": "NGROKC",
+    "name": "stop",
+    "args": []
+}
+```
+## 测试
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "<h1>Hello World, Ngrok Running</h1>")
+}
+
+func StartHttpServer() {
+	http.HandleFunc("/", helloWorldHandler)
+	err := http.ListenAndServe(":2589", nil)
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
+}
 
 ```
 ## 参考

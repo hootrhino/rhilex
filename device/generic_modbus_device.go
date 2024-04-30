@@ -71,7 +71,6 @@ type _GMODConfig struct {
 	CommonConfig _GMODCommonConfig `json:"commonConfig" validate:"required"`
 	HostConfig   common.HostConfig `json:"hostConfig"`
 	PortUuid     string            `json:"portUuid"`
-	SchemaId     string            `json:"schemaId"`
 }
 
 type GroupedTags struct {
@@ -210,33 +209,6 @@ func (mdev *generic_modbus_device) Init(devId string, configMap map[string]inter
 			Value:         "",
 			ErrMsg:        "Device Loading",
 		})
-	}
-	// 加载数据模型，先根据模型schema_id加载属性m_iot_properties，然后Bind到设备
-	// 先拿到设备的SchemaId, 然后查出来其绑定的数据字段，最后注册到数据模型中心dataschema
-	//
-	// SchemaId = db.find(device.SchemaId)
-	// SchemaProperties = db.find_by_schema_id(SchemaId)
-	// dataschema.RegisterSlot(mdev.PointId)
-	// dataschema.SetValue(mdev.PointId, K, V)
-	//
-	if mdev.mainConfig.SchemaId != "" {
-		intercache.RegisterSlot(mdev.PointId)
-		var SchemaProperties []SchemaProperty
-		dataSchemaLoadError := interdb.DB().Table("m_iot_properties").
-			Where("schema_id=?", mdev.mainConfig.SchemaId).Find(&SchemaProperties).Error
-		if dataSchemaLoadError != nil {
-			return dataSchemaLoadError
-		}
-		LastFetchTime := uint64(time.Now().UnixMilli())
-
-		for _, MSchemaProperty := range SchemaProperties {
-			intercache.SetValue(mdev.PointId, MSchemaProperty.Name,
-				intercache.CacheValue{
-					UUID:          MSchemaProperty.UUID,
-					LastFetchTime: LastFetchTime,
-					Value:         "-",
-				})
-		}
 	}
 
 	// 开启优化

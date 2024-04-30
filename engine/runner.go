@@ -21,10 +21,12 @@ import (
 	"strings"
 	"syscall"
 
+	frpc "github.com/hootrhino/rhilex/plugin/frpc"
 	wdog "github.com/hootrhino/rhilex/plugin/generic_watchdog"
 	modbusscrc "github.com/hootrhino/rhilex/plugin/modbus_crc_tools"
 	modbusscanner "github.com/hootrhino/rhilex/plugin/modbus_scanner"
 	mqttserver "github.com/hootrhino/rhilex/plugin/mqtt_server"
+	ngrokc "github.com/hootrhino/rhilex/plugin/ngrokc"
 	ttyterminal "github.com/hootrhino/rhilex/plugin/ttyd_terminal"
 	usbmonitor "github.com/hootrhino/rhilex/plugin/usb_monitor"
 	"gopkg.in/ini.v1"
@@ -120,6 +122,12 @@ func loadPlugin(engine typex.Rhilex) {
 		}
 		if name == "soft_wdog" {
 			plugin = wdog.NewGenericWatchDog()
+		}
+		if name == "frpc" {
+			plugin = frpc.NewFrpcProxy()
+		}
+		if name == "ngrokc" {
+			plugin = ngrokc.NewNgrokClient()
 		}
 		if plugin != nil {
 			if err := engine.LoadPlugin(section.Name(), plugin); err != nil {

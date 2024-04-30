@@ -47,28 +47,6 @@ type InternalNotifyVo struct {
 * 站内消息
 *
  */
-func InternalNotifiesHeader(c *gin.Context, ruleEngine typex.Rhilex) {
-	data := []InternalNotifyVo{}
-	models := service.AllInternalNotifiesHeader()
-	for _, model := range models {
-		data = append(data, InternalNotifyVo{
-			UUID:    model.UUID,
-			Type:    model.Type,
-			Event:   model.Event,
-			Ts:      model.Ts,
-			Summary: model.Summary,
-			Status:  model.Status,
-		})
-
-	}
-	c.JSON(common.HTTP_OK, common.OkWithData(data))
-}
-
-/*
-*
-* 站内消息
-*
- */
 func InternalNotifies(c *gin.Context, ruleEngine typex.Rhilex) {
 	data := []InternalNotifyVo{}
 	models := service.AllInternalNotifies()

@@ -90,6 +90,6 @@ func (p *Telemetry) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "https://github.com/dropliu/rhilex",
 		Author:   "dropliu",
 		Email:    "13594448678@163.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }

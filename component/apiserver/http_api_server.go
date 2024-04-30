@@ -330,7 +330,6 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		deviceApi.GET("/listByGroup", server.AddRoute(apis.ListDeviceByGroup))
 		deviceApi.GET("/list", server.AddRoute(apis.ListDevice))
 		deviceApi.PUT("/restart", server.AddRoute(apis.RestartDevice))
-		deviceApi.GET("/properties", server.AddRoute(apis.DevicePropertiesPage))
 		deviceApi.GET("/deviceErrMsg", server.AddRoute(apis.GetDeviceErrorMsg))
 		deviceApi.GET("/pointErrMsg", server.AddRoute(apis.GetDevicePointErrorMsg))
 	}
@@ -467,11 +466,9 @@ func (hs *ApiServerPlugin) LoadRoute() {
 	// 站内公告
 	internalNotifyApi := server.DefaultApiServer.GetGroup(server.ContextUrl("/notify"))
 	{
-		internalNotifyApi.GET("/header", server.AddRoute(apis.InternalNotifiesHeader))
 		internalNotifyApi.GET("/list", server.AddRoute(apis.InternalNotifies))
 		internalNotifyApi.PUT("/clear", server.AddRoute(apis.ClearInternalNotifies))
 		internalNotifyApi.PUT("/read", server.AddRoute(apis.ReadInternalNotifies))
-		// internalNotifyApi.POST("/test", server.AddRoute(apis.TestCreateNotifies))
 	}
 	//
 	// 系统设置
@@ -528,7 +525,7 @@ func (hs *ApiServerPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "/",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }
 

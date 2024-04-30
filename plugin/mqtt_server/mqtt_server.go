@@ -88,7 +88,7 @@ func (s *MqttServer) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "/",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }
 

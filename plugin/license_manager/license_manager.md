@@ -1,5 +1,20 @@
 # 固件证书管理器
 固件证书管理器，用来防止盗版或者破解。开源版不限制使用，商业版有单独的证书管理器。
+
+## CURL
+```sh
+curl -X 'POST' \
+  'http://106.15.225.172:8000/api/v1/device-active' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "param": "string"
+}'
+```
+## 申请证书
+```sh
+rhilex active -H http://106.15.225.171:8000/api/v1/device-active -U admin -P 123456 -SN SN0001
+```
 ## 操作指南
 
 ---

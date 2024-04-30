@@ -1,4 +1,4 @@
-package frpcproxy
+package frpc
 
 import (
 	"github.com/hootrhino/rhilex/typex"
@@ -55,7 +55,7 @@ func (dm *FrpcProxy) PluginMetaInfo() typex.XPluginMetaInfo {
 		HelpLink: "/",
 		Author:   "RHILEXTeam",
 		Email:    "RHILEXTeam@hootrhino.com",
-		License:  "AGPL",
+		License:  "",
 	}
 }
 
