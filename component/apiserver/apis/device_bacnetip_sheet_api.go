@@ -17,6 +17,7 @@ package apis
 
 import (
 	"fmt"
+	"github.com/hootrhino/rhilex/component/apiserver/dto"
 	"time"
 
 	"github.com/hootrhino/rhilex/glogger"
@@ -46,22 +47,80 @@ func InitBacnetIpRoute() {
 	}
 }
 
-// SnmpOids 获取Snmp_excel类型的点位数据
+func BacnetIpSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
+	// 解析 multipart/form-data 类型的请求体
+	err := c.Request.ParseMultipartForm(1024 * 1024 * 10)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+
+	// 获取上传的文件
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	defer file.Close()
+	deviceUuid := c.Request.Form.Get("device_uuid")
+	type DeviceDto struct {
+		UUID string
+		Name string
+		Type string
+	}
+	Device := DeviceDto{}
+	errDb := interdb.DB().Table("m_devices").
+		Where("uuid=?", deviceUuid).Find(&Device).Error
+	if errDb != nil {
+		c.JSON(common.HTTP_OK, common.Error400(errDb))
+		return
+	}
+	if Device.Type != typex.GENERIC_BACNET_IP.String() {
+		c.JSON(common.HTTP_OK,
+			common.Error("Invalid Device Type, Only Support Import Snmp Device"))
+		return
+	}
+	contentType := header.Header.Get("Content-Type")
+	if contentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
+		contentType != "application/vnd.ms-excel" {
+		c.JSON(common.HTTP_OK, common.Error("File Must be Excel Sheet"))
+		return
+	}
+	// 判断文件大小是否符合要求（10MB）
+	if header.Size > 1024*1024*10 {
+		c.JSON(common.HTTP_OK, common.Error("Excel file size cannot be greater than 10MB"))
+		return
+	}
+
+	// TODO 导入bacnet点位
+	//list, err := parseSnmpOidExcel(file, "Sheet1", deviceUuid)
+	//if err != nil {
+	//	c.JSON(common.HTTP_OK, common.Error400(err))
+	//	return
+	//}
+	//if err = service.InsertSnmpOids(list); err != nil {
+	//	c.JSON(common.HTTP_OK, common.Error400(err))
+	//	return
+	//}
+	ruleEngine.RestartDevice(deviceUuid)
+	c.JSON(common.HTTP_OK, common.Ok())
+}
+
 func BacnetIpSheetExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	deviceUuid, _ := c.GetQuery("device_uuid")
 	c.Header("Content-Type", "application/octet-stream")
 	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
 		time.Now().UnixMilli()))
-	var records []model.MSnmpOid
-	result := interdb.DB().Table("m_snmp_oids").
+	var records []model.MBacnetDataPoint
+	result := interdb.DB().Model(&model.MBacnetDataPoint{}).
 		Where("device_uuid=?", deviceUuid).Find(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
 	}
-	// oid	tag	alias	frequency
+	// header
 	Headers := []string{
-		"oid", "tag", "alias", "frequency",
+		"tag", "alias", "bacnetDeviceId", "objectType", "objectId", "frequency",
 	}
 	xlsx := excelize.NewFile()
 	defer func() {
@@ -71,10 +130,15 @@ func BacnetIpSheetExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	}()
 	cell, _ := excelize.CoordinatesToCellName(1, 1)
 	xlsx.SetSheetRow("Sheet1", cell, &Headers)
-	if len(records) > 1 {
+	if len(records) >= 1 {
 		for idx, record := range records[0:] {
-			Row := []string{
-				record.Oid, record.Tag, record.Alias, fmt.Sprintf("%d", record.Frequency),
+			Row := []any{
+				record.Tag,
+				record.Alias,
+				*record.BacnetDeviceId,
+				record.ObjectType,
+				*record.ObjectId,
+				record.Frequency,
 			}
 			cell, _ = excelize.CoordinatesToCellName(1, idx+2)
 			xlsx.SetSheetRow("Sheet1", cell, &Row)
@@ -93,45 +157,47 @@ func BacnetIpSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 	db := interdb.DB()
 	tx := db.Scopes(service.Paginate(*pager))
 	var count int64
-	err1 := interdb.DB().Model(&model.MSnmpOid{}).
+	err = interdb.DB().Model(&model.MBacnetDataPoint{}).
 		Where("device_uuid=?", deviceUuid).Count(&count).Error
-	if err1 != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err1))
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	var records []model.MSnmpOid
+	var records []model.MBacnetDataPoint
 	result := tx.Order("created_at DESC").Find(&records,
-		&model.MSnmpOid{DeviceUuid: deviceUuid})
+		&model.MBacnetDataPoint{DeviceUuid: deviceUuid})
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
 	}
-	recordsVo := []SnmpOidVo{}
+	var recordsVo []dto.BacnetDataPointVO
 	Slot := intercache.GetSlot(deviceUuid)
 	if Slot != nil {
 		for _, record := range records {
-			Value, ok := Slot[record.UUID]
-			Vo := SnmpOidVo{
-				UUID:       record.UUID,
-				Oid:        record.Oid,
-				DeviceUUID: record.DeviceUuid,
-				Tag:        record.Tag,
-				Alias:      record.Alias,
-				Frequency:  &record.Frequency,
-				ErrMsg:     Value.ErrMsg,
+			value, ok := Slot[record.UUID]
+			pointVo := dto.BacnetDataPointVO{
+				UUID:           record.UUID,
+				DeviceUUID:     record.DeviceUuid,
+				Tag:            record.Tag,
+				Alias:          record.Alias,
+				BacnetDeviceId: record.BacnetDeviceId,
+				ObjectType:     record.ObjectType,
+				ObjectId:       record.ObjectId,
+				Frequency:      record.Frequency,
+				ErrMsg:         value.ErrMsg,
 			}
 			if ok {
-				Vo.Status = func() int {
-					if Value.Value == "" {
+				pointVo.Status = func() int {
+					if value.Value == "" {
 						return 0
 					}
 					return 1
-				}() // 运行时
-				Vo.LastFetchTime = Value.LastFetchTime // 运行时
-				Vo.Value = Value.Value                 // 运行时
-				recordsVo = append(recordsVo, Vo)
+				}()
+				pointVo.LastFetchTime = value.LastFetchTime
+				pointVo.Value = value.Value
+				recordsVo = append(recordsVo, pointVo)
 			} else {
-				recordsVo = append(recordsVo, Vo)
+				recordsVo = append(recordsVo, pointVo)
 			}
 		}
 	}
@@ -226,61 +292,4 @@ func BacnetIpSheetUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
 	ruleEngine.RestartDevice(form.DeviceUUID)
 	c.JSON(common.HTTP_OK, common.Ok())
 
-}
-
-func BacnetIpSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
-	// 解析 multipart/form-data 类型的请求体
-	err := c.Request.ParseMultipartForm(1024 * 1024 * 10)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-
-	// 获取上传的文件
-	file, header, err := c.Request.FormFile("file")
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	defer file.Close()
-	deviceUuid := c.Request.Form.Get("device_uuid")
-	type DeviceDto struct {
-		UUID string
-		Name string
-		Type string
-	}
-	Device := DeviceDto{}
-	errDb := interdb.DB().Table("m_devices").
-		Where("uuid=?", deviceUuid).Find(&Device).Error
-	if errDb != nil {
-		c.JSON(common.HTTP_OK, common.Error400(errDb))
-		return
-	}
-	if Device.Type != typex.GENERIC_SNMP.String() {
-		c.JSON(common.HTTP_OK,
-			common.Error("Invalid Device Type, Only Support Import Snmp Device"))
-		return
-	}
-	contentType := header.Header.Get("Content-Type")
-	if contentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
-		contentType != "application/vnd.ms-excel" {
-		c.JSON(common.HTTP_OK, common.Error("File Must be Excel Sheet"))
-		return
-	}
-	// 判断文件大小是否符合要求（10MB）
-	if header.Size > 1024*1024*10 {
-		c.JSON(common.HTTP_OK, common.Error("Excel file size cannot be greater than 10MB"))
-		return
-	}
-	list, err := parseSnmpOidExcel(file, "Sheet1", deviceUuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if err = service.InsertSnmpOids(list); err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	ruleEngine.RestartDevice(deviceUuid)
-	c.JSON(common.HTTP_OK, common.Ok())
 }

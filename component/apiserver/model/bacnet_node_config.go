@@ -24,6 +24,7 @@ type MBacnetDataPoint struct {
 	BacnetDeviceId *int   `gorm:"not null"`
 	ObjectType     string `gorm:"not null"`
 	ObjectId       *int   `gorm:"not null"`
+	Frequency      int    `gorm:"not null"`
 }
 
 func (M MBacnetDataPoint) TableName() string {
