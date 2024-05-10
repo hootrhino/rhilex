@@ -505,6 +505,7 @@ func (hs *ApiServerPlugin) LoadRoute() {
 	shelly.InitShellyRoute()
 	//
 	apis.InitSnmpRoute()
+	apis.InitBacnetIpRoute()
 }
 
 // ApiServerPlugin Start
