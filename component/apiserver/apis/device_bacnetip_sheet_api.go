@@ -16,8 +16,11 @@
 package apis
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hootrhino/rhilex/component/apiserver/dto"
+	"mime/multipart"
+	"strconv"
 	"time"
 
 	"github.com/hootrhino/rhilex/glogger"
@@ -41,7 +44,7 @@ func InitBacnetIpRoute() {
 		route.POST(("/sheetImport"), server.AddRoute(BacnetIpSheetImport))
 		route.GET(("/sheetExport"), server.AddRoute(BacnetIpSheetExport))
 		route.GET(("/list"), server.AddRoute(BacnetIpSheetPageList))
-		route.POST(("/update"), server.AddRoute(BacnetIpSheetUpdate))
+		route.POST(("/update"), server.AddRoute(BacnetIpSheetCreateOrUpdate))
 		route.DELETE(("/delIds"), server.AddRoute(BacnetIpSheetDeleteByUUIDs))
 		route.DELETE(("/delAll"), server.AddRoute(BacnetIpSheetDeleteAll))
 	}
@@ -77,7 +80,7 @@ func BacnetIpSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	if Device.Type != typex.GENERIC_BACNET_IP.String() {
 		c.JSON(common.HTTP_OK,
-			common.Error("Invalid Device Type, Only Support Import Snmp Device"))
+			common.Error("Invalid Device Type, Only Support Import BacnetIp Device"))
 		return
 	}
 	contentType := header.Header.Get("Content-Type")
@@ -92,16 +95,15 @@ func BacnetIpSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 
-	// TODO 导入bacnet点位
-	//list, err := parseSnmpOidExcel(file, "Sheet1", deviceUuid)
-	//if err != nil {
-	//	c.JSON(common.HTTP_OK, common.Error400(err))
-	//	return
-	//}
-	//if err = service.InsertSnmpOids(list); err != nil {
-	//	c.JSON(common.HTTP_OK, common.Error400(err))
-	//	return
-	//}
+	list, err := parseBacnetExcel(file, "Sheet1", deviceUuid)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	if err = service.BatchInsertBacnetDataPoint(list); err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
 	ruleEngine.RestartDevice(deviceUuid)
 	c.JSON(common.HTTP_OK, common.Ok())
 }
@@ -135,9 +137,9 @@ func BacnetIpSheetExport(c *gin.Context, ruleEngine typex.Rhilex) {
 			Row := []any{
 				record.Tag,
 				record.Alias,
-				*record.BacnetDeviceId,
+				record.BacnetDeviceId,
 				record.ObjectType,
-				*record.ObjectId,
+				record.ObjectId,
 				record.Frequency,
 			}
 			cell, _ = excelize.CoordinatesToCellName(1, idx+2)
@@ -216,7 +218,7 @@ func BacnetIpSheetDeleteByUUIDs(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(Error))
 		return
 	}
-	err := service.DeleteSnmpOidByDevice(form.UUIDs, form.DeviceUUID)
+	err := service.BatchDeleteBacnetDataPoint(form.UUIDs, form.DeviceUUID)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
@@ -235,7 +237,7 @@ func BacnetIpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(Error))
 		return
 	}
-	err := service.DeleteAllSnmpOidByDevice(form.DeviceUUID)
+	err := service.DeleteAllBacnetDataPointByDeviceUuid(form.DeviceUUID)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
@@ -245,44 +247,50 @@ func BacnetIpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
 
 }
 
-func BacnetIpSheetUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
+func BacnetIpSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
 	type Form struct {
-		DeviceUUID string      `json:"device_uuid"`
-		SnmpOids   []SnmpOidVo `json:"snmp_oids"`
+		DeviceUUID string                  `json:"device_uuid"`
+		Points     []dto.BacnetDataPointVO `json:"points"`
 	}
-	// SnmpOids := []SnmpOidVo{}
 	form := Form{}
 	err := c.ShouldBindJSON(&form)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	for _, SnmpDataPoint := range form.SnmpOids {
-		if err := checkSnmpOids(SnmpDataPoint); err != nil {
+	for _, Point := range form.Points {
+		if err = checkBacnetPoint(Point); err != nil {
 			c.JSON(common.HTTP_OK, common.Error400(err))
 			return
 		}
-		if SnmpDataPoint.UUID == "" {
-			NewRow := model.MSnmpOid{
-				UUID:      utils.SnmpOidUUID(),
-				Tag:       SnmpDataPoint.Tag,
-				Alias:     SnmpDataPoint.Alias,
-				Frequency: *SnmpDataPoint.Frequency,
+		if Point.UUID == "" {
+			NewRow := model.MBacnetDataPoint{
+				UUID:           utils.BacnetPointUUID(),
+				DeviceUuid:     form.DeviceUUID,
+				Tag:            Point.Tag,
+				Alias:          Point.Alias,
+				BacnetDeviceId: Point.BacnetDeviceId,
+				ObjectType:     Point.ObjectType,
+				ObjectId:       Point.ObjectId,
+				Frequency:      Point.Frequency,
 			}
-			err0 := service.InsertSnmpOid(NewRow)
+			err0 := service.InsertBacnetDataPoint(NewRow)
 			if err0 != nil {
 				c.JSON(common.HTTP_OK, common.Error400(err0))
 				return
 			}
 		} else {
-			OldRow := model.MSnmpOid{
-				UUID:       SnmpDataPoint.UUID,
-				DeviceUuid: SnmpDataPoint.DeviceUUID,
-				Tag:        SnmpDataPoint.Tag,
-				Alias:      SnmpDataPoint.Alias,
-				Frequency:  *SnmpDataPoint.Frequency,
+			OldRow := model.MBacnetDataPoint{
+				UUID:           Point.UUID,
+				DeviceUuid:     form.DeviceUUID,
+				Tag:            Point.Tag,
+				Alias:          Point.Alias,
+				BacnetDeviceId: Point.BacnetDeviceId,
+				ObjectType:     Point.ObjectType,
+				ObjectId:       Point.ObjectId,
+				Frequency:      Point.Frequency,
 			}
-			err0 := service.UpdateSnmpOid(OldRow)
+			err0 := service.UpdateBacnetDataPoint(OldRow)
 			if err0 != nil {
 				c.JSON(common.HTTP_OK, common.Error400(err0))
 				return
@@ -292,4 +300,66 @@ func BacnetIpSheetUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
 	ruleEngine.RestartDevice(form.DeviceUUID)
 	c.JSON(common.HTTP_OK, common.Ok())
 
+}
+
+func parseBacnetExcel(r multipart.File, sheetName string, deviceUuid string) ([]model.MBacnetDataPoint, error) {
+	excelFile, err := excelize.OpenReader(r)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		excelFile.Close()
+	}()
+	// 读取表格
+	rows, err := excelFile.GetRows(sheetName)
+	if err != nil {
+		return nil, err
+	}
+	// 判断首行标头
+	// "tag", "alias", "bacnetDeviceId", "objectType", "objectId", "frequency",
+	err1 := errors.New("'Invalid Sheet Header, must follow fixed format: 【tag,alias,bacnetDeviceId,objectType,objectId,frequency】")
+	if len(rows[0]) < 6 {
+		return nil, err1
+	}
+	// 严格检查表结构 oid,tag,alias,frequency
+	if rows[0][0] != "tag" ||
+		rows[0][1] != "alias" ||
+		rows[0][2] != "bacnetDeviceId" ||
+		rows[0][3] != "objectType" ||
+		rows[0][4] != "objectId" ||
+		rows[0][5] != "frequency" {
+		return nil, err1
+	}
+
+	list := make([]model.MBacnetDataPoint, 0)
+	for i := 1; i < len(rows); i++ {
+		row := rows[i]
+		// oid,tag,alias,frequency
+		tag := row[0]
+		alias := row[1]
+		bacnetDeviceId, _ := strconv.ParseInt(row[2], 10, 32)
+		objectType := row[3]
+		objectId, _ := strconv.ParseInt(row[4], 10, 32)
+		frequency, _ := strconv.ParseInt(row[5], 10, 64)
+		// TODO check validation
+		//
+
+		model := model.MBacnetDataPoint{
+			UUID:           utils.BacnetPointUUID(),
+			DeviceUuid:     deviceUuid,
+			Tag:            tag,
+			Alias:          alias,
+			BacnetDeviceId: int(bacnetDeviceId),
+			ObjectType:     objectType,
+			ObjectId:       int(objectId),
+			Frequency:      int(frequency),
+		}
+		list = append(list, model)
+	}
+	return list, nil
+}
+
+func checkBacnetPoint(point dto.BacnetDataPointVO) error {
+	// TODO
+	return nil
 }
