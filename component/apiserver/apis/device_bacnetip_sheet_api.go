@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hootrhino/rhilex/component/apiserver/dto"
+	"github.com/samber/lo"
 	"mime/multipart"
 	"strconv"
 	"time"
@@ -66,6 +67,11 @@ func BacnetIpSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	defer file.Close()
 	deviceUuid := c.Request.Form.Get("device_uuid")
+	if deviceUuid == "" {
+		err := errors.New("device_uuid is not allow empty")
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
 	type DeviceDto struct {
 		UUID string
 		Name string
@@ -122,7 +128,7 @@ func BacnetIpSheetExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	// header
 	Headers := []string{
-		"tag", "alias", "bacnetDeviceId", "objectType", "objectId", "frequency",
+		"tag", "alias", "bacnetDeviceId", "objectType", "objectId",
 	}
 	xlsx := excelize.NewFile()
 	defer func() {
@@ -140,7 +146,6 @@ func BacnetIpSheetExport(c *gin.Context, ruleEngine typex.Rhilex) {
 				record.BacnetDeviceId,
 				record.ObjectType,
 				record.ObjectId,
-				record.Frequency,
 			}
 			cell, _ = excelize.CoordinatesToCellName(1, idx+2)
 			xlsx.SetSheetRow("Sheet1", cell, &Row)
@@ -185,7 +190,6 @@ func BacnetIpSheetPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 				BacnetDeviceId: record.BacnetDeviceId,
 				ObjectType:     record.ObjectType,
 				ObjectId:       record.ObjectId,
-				Frequency:      record.Frequency,
 				ErrMsg:         value.ErrMsg,
 			}
 			if ok {
@@ -249,8 +253,8 @@ func BacnetIpSheetDeleteAll(c *gin.Context, ruleEngine typex.Rhilex) {
 
 func BacnetIpSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
 	type Form struct {
-		DeviceUUID string                  `json:"device_uuid"`
-		Points     []dto.BacnetDataPointVO `json:"points"`
+		DeviceUUID string                              `json:"device_uuid"`
+		Points     []dto.BacnetDataPointCreateOrUpdate `json:"points"`
 	}
 	form := Form{}
 	err := c.ShouldBindJSON(&form)
@@ -272,7 +276,6 @@ func BacnetIpSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
 				BacnetDeviceId: Point.BacnetDeviceId,
 				ObjectType:     Point.ObjectType,
 				ObjectId:       Point.ObjectId,
-				Frequency:      Point.Frequency,
 			}
 			err0 := service.InsertBacnetDataPoint(NewRow)
 			if err0 != nil {
@@ -288,7 +291,6 @@ func BacnetIpSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) {
 				BacnetDeviceId: Point.BacnetDeviceId,
 				ObjectType:     Point.ObjectType,
 				ObjectId:       Point.ObjectId,
-				Frequency:      Point.Frequency,
 			}
 			err0 := service.UpdateBacnetDataPoint(OldRow)
 			if err0 != nil {
@@ -316,9 +318,11 @@ func parseBacnetExcel(r multipart.File, sheetName string, deviceUuid string) ([]
 		return nil, err
 	}
 	// 判断首行标头
-	// "tag", "alias", "bacnetDeviceId", "objectType", "objectId", "frequency",
-	err1 := errors.New("'Invalid Sheet Header, must follow fixed format: 【tag,alias,bacnetDeviceId,objectType,objectId,frequency】")
-	if len(rows[0]) < 6 {
+	// "tag", "alias", "bacnetDeviceId", "objectType", "objectId"
+	err1 := errors.New("'Invalid Sheet Header, must follow fixed format: 【tag,alias,bacnetDeviceId,objectType,objectId】")
+
+	const MIN_LEN = 5
+	if len(rows[0]) < MIN_LEN {
 		return nil, err1
 	}
 	// 严格检查表结构 oid,tag,alias,frequency
@@ -326,40 +330,54 @@ func parseBacnetExcel(r multipart.File, sheetName string, deviceUuid string) ([]
 		rows[0][1] != "alias" ||
 		rows[0][2] != "bacnetDeviceId" ||
 		rows[0][3] != "objectType" ||
-		rows[0][4] != "objectId" ||
-		rows[0][5] != "frequency" {
+		rows[0][4] != "objectId" {
 		return nil, err1
 	}
 
 	list := make([]model.MBacnetDataPoint, 0)
 	for i := 1; i < len(rows); i++ {
 		row := rows[i]
+		if len(row) < MIN_LEN {
+			msg := fmt.Sprintf("illegal data, the data cell of row %d less than %d", i+1, MIN_LEN)
+			return nil, errors.New(msg)
+		}
 		// oid,tag,alias,frequency
 		tag := row[0]
 		alias := row[1]
 		bacnetDeviceId, _ := strconv.ParseInt(row[2], 10, 32)
 		objectType := row[3]
 		objectId, _ := strconv.ParseInt(row[4], 10, 32)
-		frequency, _ := strconv.ParseInt(row[5], 10, 64)
-		// TODO check validation
-		//
 
-		model := model.MBacnetDataPoint{
-			UUID:           utils.BacnetPointUUID(),
-			DeviceUuid:     deviceUuid,
+		createDto := dto.BacnetDataPointCreateOrUpdate{
 			Tag:            tag,
 			Alias:          alias,
 			BacnetDeviceId: int(bacnetDeviceId),
 			ObjectType:     objectType,
 			ObjectId:       int(objectId),
-			Frequency:      int(frequency),
+		}
+		err = checkBacnetPoint(createDto)
+		if err != nil {
+			return nil, err
+		}
+
+		model := model.MBacnetDataPoint{
+			UUID:           utils.BacnetPointUUID(),
+			DeviceUuid:     deviceUuid,
+			Tag:            createDto.Tag,
+			Alias:          createDto.Alias,
+			BacnetDeviceId: createDto.BacnetDeviceId,
+			ObjectType:     createDto.ObjectType,
+			ObjectId:       createDto.ObjectId,
 		}
 		list = append(list, model)
 	}
 	return list, nil
 }
 
-func checkBacnetPoint(point dto.BacnetDataPointVO) error {
-	// TODO
+func checkBacnetPoint(point dto.BacnetDataPointCreateOrUpdate) error {
+	contains := lo.Contains(dto.ValidBacnetObjectType, point.ObjectType)
+	if contains == false {
+		return errors.New("illegal objectType")
+	}
 	return nil
 }

@@ -48,7 +48,6 @@ type GenericBacnetIpDevice struct {
 	// Bacnet
 	bacnetClient    bacnet.Client
 	remoteDeviceMap map[int]btypes.Device
-	//remoteDev    btypes.Device
 }
 
 func NewGenericBacnetIpDevice(e typex.Rhilex) typex.XDevice {
@@ -76,9 +75,9 @@ func (dev *GenericBacnetIpDevice) Init(devId string, configMap map[string]interf
 		dataPoint := bacnetDataPoint{
 			UUID:           point.UUID,
 			Tag:            point.Tag,
-			BacnetDeviceId: *point.BacnetDeviceId,
+			BacnetDeviceId: point.BacnetDeviceId,
 			ObjectType:     getObjectTypeByNumber(point.ObjectType),
-			ObjectId:       *point.ObjectId,
+			ObjectId:       point.ObjectId,
 		}
 		points[i] = dataPoint
 	}
@@ -105,11 +104,11 @@ func getObjectTypeByNumber(strType string) btypes.ObjectType {
 		return btypes.BinaryOutput
 	case "BV":
 		return btypes.BinaryValue
-	case "MSI":
+	case "MI":
 		return btypes.MultiStateInput
-	case "MSO":
+	case "MO":
 		return btypes.MultiStateOutput
-	case "MSV":
+	case "MV":
 		return btypes.MultiStateValue
 	}
 	return btypes.AnalogInput
@@ -200,6 +199,9 @@ func (dev *GenericBacnetIpDevice) Start(cctx typex.CCTX) error {
 
 	go func(ctx context.Context) {
 		interval := dev.BacnetConfig.Frequency
+		if interval == 0 {
+			interval = 3000
+		}
 		ticker := time.NewTicker(time.Duration(interval) * time.Millisecond)
 		for {
 			select {
