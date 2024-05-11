@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
+	"github.com/hootrhino/rhilex/component/intercache"
 	"github.com/hootrhino/rhilex/component/interdb"
 	"time"
 
@@ -61,6 +62,7 @@ func NewGenericBacnetIpDevice(e typex.Rhilex) typex.XDevice {
 
 func (dev *GenericBacnetIpDevice) Init(devId string, configMap map[string]interface{}) error {
 	dev.PointId = devId
+	intercache.RegisterSlot(devId)
 	err := utils.BindSourceConfig(configMap, &dev.BacnetConfig)
 	if err != nil {
 		return err
@@ -274,6 +276,7 @@ func (dev *GenericBacnetIpDevice) Stop() {
 	if dev.bacnetClient != nil {
 		dev.bacnetClient.Close()
 	}
+	intercache.UnRegisterSlot(dev.PointId)
 }
 
 func (dev *GenericBacnetIpDevice) Details() *typex.Device {
