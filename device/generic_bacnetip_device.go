@@ -19,23 +19,26 @@ import (
 )
 
 type bacnetConfig struct {
-	Type       string `json:"type" title:"bacnet运行模式"`
-	Ip         string `json:"ip,omitempty" title:"bacnet设备ip"`
-	Port       int    `json:"port,omitempty" title:"bacnet端口，通常是47808"`
-	Boardcast  string `json:"boardcast" title:"bacnet广播地址"`
-	SubnetCIDR int    `json:"subnetCidr" title:"子网掩码长度"`
-	LocalPort  int    `json:"localPort" title:"本地监听端口，填0表示默认47808（有的模拟器必须本地监听47808才能正常交互）"`
-	Frequency  int    `json:"frequency" title:"采集间隔，单位毫秒"`
+	Type string `json:"type" title:"bacnet运行模式"`
+
+	Ip     string `json:"ip" title:"bacnet设备ip（仅type=SINGLE生效）"`
+	Port   int    `json:"port" title:"bacnet端口，通常是47808（仅type=SINGLE生效）"`
+	IsMstp int    `json:"isMstp" title:"是否为mstp设备，若是则子网号必须填写（仅type=SINGLE时生效）"`
+	Subnet int    `json:"subnet" title:"子网号（仅type=SINGLE 且 isMstp=1 时生效）"`
+
+	LocalIp    string `json:"LocalIp" title:"本地ip地址（仅type=BOARDCAST时有效）"`
+	SubnetCIDR int    `json:"subnetCidr" title:"子网掩码长度（仅type=BOARDCAST时有效）"`
+
+	LocalPort int `json:"localPort" title:"本地监听端口，填0表示默认47808（有的模拟器必须本地监听47808才能正常交互）"`
+	Frequency int `json:"frequency" title:"采集间隔，单位毫秒"`
 }
 
 type bacnetDataPoint struct {
-	//IsMstp   int    `json:"isMstp,omitempty" title:"是否为mstp设备，若是则设备id和子网号必须填写"`
-	//Subnet   int    `json:"subnet,omitempty" title:"子网号"`
 	UUID           string            `json:"uuid"`
 	Tag            string            `json:"tag" validate:"required" title:"数据Tag"`
-	BacnetDeviceId int               `json:"bacnetDeviceId,omitempty" title:"bacnet设备id"`
-	ObjectType     btypes.ObjectType `json:"objectType,omitempty" title:"object类型"`
-	ObjectId       int               `json:"objectId,omitempty" title:"object的id"`
+	BacnetDeviceId int               `json:"bacnetDeviceId" title:"bacnet设备id（若isMstp=1，则deviceId应该必填；若是纯bacnetip设备，则填1即可）"`
+	ObjectType     btypes.ObjectType `json:"objectType" title:"object类型"`
+	ObjectId       int               `json:"objectId" title:"object的id"`
 
 	property btypes.PropertyData
 }
@@ -62,6 +65,9 @@ func NewGenericBacnetIpDevice(e typex.Rhilex) typex.XDevice {
 
 func (dev *GenericBacnetIpDevice) Init(devId string, configMap map[string]interface{}) error {
 	dev.PointId = devId
+	// 先给个空的
+	dev.remoteDeviceMap = make(map[int]btypes.Device)
+
 	intercache.RegisterSlot(devId)
 	err := utils.BindSourceConfig(configMap, &dev.BacnetConfig)
 	if err != nil {
@@ -142,9 +148,9 @@ func (dev *GenericBacnetIpDevice) Start(cctx typex.CCTX) error {
 	if dev.BacnetConfig.Type == "BOARDCAST" {
 		// 创建一个bacnetip的本地网络
 		client, err := bacnet.NewClient(&bacnet.ClientBuilder{
-			Ip:         dev.BacnetConfig.Boardcast,
+			Ip:         dev.BacnetConfig.LocalIp,
 			Port:       dev.BacnetConfig.LocalPort,
-			SubnetCIDR: dev.BacnetConfig.SubnetCIDR, // 随便填一个，主要为了能够创建Client
+			SubnetCIDR: dev.BacnetConfig.SubnetCIDR,
 		})
 		if err != nil {
 			return err
@@ -153,28 +159,42 @@ func (dev *GenericBacnetIpDevice) Start(cctx typex.CCTX) error {
 		dev.bacnetClient = client
 		client.SetLogger(glogger.GLogger.Logger)
 		go dev.bacnetClient.ClientRun()
-		devices, err := client.WhoIs(&bacnet.WhoIsOpts{
-			Low:             -1,
-			High:            -1,
-			GlobalBroadcast: true,
-		})
-		if err != nil {
-			glogger.GLogger.Error("查找bacnet设备失败", err)
-			return err
-		}
-		// TODO 后续需要改成定时更新设备列表
-		dev.remoteDeviceMap = make(map[int]btypes.Device)
-		for i := range devices {
-			dev.remoteDeviceMap[devices[i].DeviceID] = devices[i]
-		}
+
+		go func(ctx context.Context) {
+			// 定时刷新device列表 后续可以优化下逻辑
+			ticker := time.NewTicker(15 * time.Minute)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ticker.C:
+					devices, err := client.WhoIs(&bacnet.WhoIsOpts{
+						Low:             -1,
+						High:            -1,
+						GlobalBroadcast: true,
+					})
+					if err != nil {
+						glogger.GLogger.Error("查找bacnet设备失败", err)
+						continue
+					}
+					deviceMap := make(map[int]btypes.Device)
+					for i := range devices {
+						deviceMap[devices[i].DeviceID] = devices[i]
+					}
+					dev.remoteDeviceMap = deviceMap
+				case <-ctx.Done():
+					break
+				}
+			}
+		}(dev.Ctx)
+
 	}
 
 	if dev.BacnetConfig.Type == "SINGLE" {
 		// 创建一个bacnetip的本地网络
 		client, err := bacnet.NewClient(&bacnet.ClientBuilder{
-			Ip:         "0.0.0.0",
-			Port:       dev.BacnetConfig.LocalPort,
-			SubnetCIDR: 10, // 随便填一个，主要为了能够创建Client
+			Ip:         "0.0.0.0",                  // 本地ip
+			Port:       dev.BacnetConfig.LocalPort, // 本地监听端口
+			SubnetCIDR: 10,                         // 随便填一个，主要为了能够创建Client
 		})
 		if err != nil {
 			return err
@@ -190,7 +210,6 @@ func (dev *GenericBacnetIpDevice) Start(cctx typex.CCTX) error {
 		mac[4] = byte(port >> 8)
 		mac[5] = byte(port & 0x00FF)
 
-		dev.remoteDeviceMap = make(map[int]btypes.Device)
 		dev.remoteDeviceMap[1] = btypes.Device{
 			Addr: btypes.Address{
 				MacLen: 6,
@@ -243,7 +262,13 @@ func (dev *GenericBacnetIpDevice) OnRead(cmd []byte, data []byte) (int, error) {
 func (dev *GenericBacnetIpDevice) read() ([]byte, error) {
 	retMap := map[string]string{}
 	for _, v := range dev.BacnetDataPoints {
-		if device, ok := dev.remoteDeviceMap[v.BacnetDeviceId]; ok {
+		var bacnetDeviceId int
+		if dev.BacnetConfig.Type == "SINGLE" {
+			bacnetDeviceId = 1
+		} else {
+			bacnetDeviceId = v.BacnetDeviceId
+		}
+		if device, ok := dev.remoteDeviceMap[bacnetDeviceId]; ok {
 			property, err := dev.bacnetClient.ReadProperty(device, v.property)
 			if err != nil {
 				glogger.GLogger.Errorf("read failed. tag = %v, err=%v", v.Tag, err)
