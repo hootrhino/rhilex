@@ -175,15 +175,6 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error("Query size too large, Must less than 1000"))
 		return
 	}
-	MSchema, err := service.GetDataSchemaWithUUID(uuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if !MSchema.Published {
-		c.JSON(common.HTTP_OK, common.Error("The schema must be published before it can be operated"))
-		return
-	}
 	DbTx := interdb.DB().Scopes(service.Paginate(*pager))
 	records := []map[string]any{}
 	tableName := fmt.Sprintf("data_center_%s", uuid)
@@ -198,7 +189,7 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	var count int64
-	err2 := DbTx.Raw(fmt.Sprintf("SELECT count(*) FROM %s", tableName)).Scan(&count).Error
+	err2 := DbTx.Table(tableName).Count(&count).Error
 	if err2 != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err2))
 		return
@@ -215,15 +206,7 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
 	selectFields, _ := c.GetQueryArray("select")
-	MSchema, err := service.GetDataSchemaWithUUID(uuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if !MSchema.Published {
-		c.JSON(common.HTTP_OK, common.Error("The schema must be published before it can be operated"))
-		return
-	}
+
 	tableName := fmt.Sprintf("data_center_%s", uuid)
 	record := map[string]any{}
 	result := interdb.DB().Select(selectFields).

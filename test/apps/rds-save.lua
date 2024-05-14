@@ -17,7 +17,7 @@
 function Main(arg)
     for i = 1, 10, 1 do
         local err = rds:Save('SCHEMAAAEM8PHB', {
-            warning = "运行信息",
+            info = "运行信息",
             temperature = 25.44,
             oxygen = 20.78,
             ph_value = 7.5
