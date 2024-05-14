@@ -3,6 +3,7 @@ package rhilexlib
 import (
 	"strings"
 
+	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
 	lua "github.com/hootrhino/gopher-lua"
@@ -10,7 +11,7 @@ import (
 
 /*
 *
-* Table 转成 String, {1,2,3,4,5} -> "12345"
+* Table 转成 String
 *
  */
 func T2Str(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
@@ -26,22 +27,38 @@ func T2Str(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	}
 }
 
-// {255,255,255} -> "\0xFF\0xFF\0xFF"
+/*
+*
+* 字节数组转字符串: {1, 2, 3, 4, 5} => "****", 列表必须是合法字节！
+*
+ */
+var result1 = [1024 * 100]byte{}
+
 func Bin2Str(rx typex.Rhilex, uuid string) func(l *lua.LState) int {
 	return func(l *lua.LState) int {
 		table := l.ToTable(2)
-		args := []byte{}
+		acc := 0
+		ok := true
+		errMsg := ""
 		table.ForEach(func(l1, value lua.LValue) {
-			switch value.Type() {
-			case lua.LTNumber:
-				if lua.LVAsNumber(value) >= 0 && lua.LVAsNumber(value) <= 255 {
-					args = append(args, byte(lua.LVAsNumber(value)))
-				}
+			switch t := value.(type) {
+			case lua.LNumber:
+				result1[acc] = byte(t)
+				acc++
 			default:
+				errMsg = "Bin2Str error:" + t.String()
+				glogger.GLogger.Error(errMsg)
+				ok = false
 				return
 			}
 		})
-		l.Push(lua.LString(string(args)))
-		return 1
+		if !ok {
+			l.Push(lua.LNil)
+			l.Push(lua.LString(errMsg))
+		} else {
+			l.Push(lua.LString(result1[:acc]))
+			l.Push(lua.LNil)
+		}
+		return 2
 	}
 }

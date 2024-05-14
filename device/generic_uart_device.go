@@ -179,13 +179,16 @@ func (uart *genericUartDevice) OnCtrl(cmd []byte, args []byte) ([]byte, error) {
 		return result[:n], nil
 	}
 	if string(cmd) == "STRING" {
-		// s := "t1.txt=\"RHILEX\"\xFF\xFF\xFF"
 		n, err := uart.serialPort.Write(args)
 		if err != nil {
 			return nil, err
 		}
+		// n, errSliceRequest := utils.SliceRequest(uart.Ctx, uart.serialPort,
+		// 	args, result[:], false, (50)*time.Millisecond)
+		// if errSliceRequest != nil {
+		// 	return []byte{}, errSliceRequest
+		// }
 		return result[:n], nil
-
 	}
 	return []byte{}, fmt.Errorf("unsupported cmd, must one of : STRING|HEX")
 }
@@ -193,10 +196,10 @@ func (uart *genericUartDevice) OnCtrl(cmd []byte, args []byte) ([]byte, error) {
 // 设备当前状态
 func (uart *genericUartDevice) Status() typex.DeviceState {
 	if uart.serialPort != nil {
-		// _, err := uart.serialPort.Write([]byte("\r\n"))
-		// if err != nil {
-		// 	uart.status = typex.DEV_DOWN
-		// }
+		_, err := uart.serialPort.Write([]byte("\r\n"))
+		if err != nil {
+			uart.status = typex.DEV_DOWN
+		}
 	} else {
 		uart.status = typex.DEV_DOWN
 	}
