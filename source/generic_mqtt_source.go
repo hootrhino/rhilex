@@ -127,6 +127,9 @@ func (tc *genericMqttSource) onMessage(client mqtt.Client, message mqtt.Message)
 	}
 }
 
+func (tc *genericMqttSource) DataModels() []typex.XDataModel {
+	return make([]typex.XDataModel, 0)
+}
 
 func (tc *genericMqttSource) Status() typex.SourceState {
 	if tc.client != nil {

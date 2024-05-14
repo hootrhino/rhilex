@@ -525,8 +525,7 @@ func GetCpuUsage() {
 		}
 		cpuPercent, _ := cpu.Percent(time.Duration(10)*time.Second, true)
 		V := calculateCpuPercent(cpuPercent)
-		// TODO 这个比例需要通过参数适配
-		if V > 90 {
+		if V > 95 {
 			service.InsertInternalNotify(model.MInternalNotify{
 				UUID:    utils.MakeUUID("NOTIFY"), // UUID
 				Type:    `WARNING`,                // INFO | ERROR | WARNING

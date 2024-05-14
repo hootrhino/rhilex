@@ -89,6 +89,10 @@ func (mq *mqttOutEndTarget) Start(cctx typex.CCTX) error {
 	return nil
 }
 
+func (mq *mqttOutEndTarget) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 func (mq *mqttOutEndTarget) Stop() {
 	mq.status = typex.SOURCE_DOWN
 	if mq.CancelCTX != nil {

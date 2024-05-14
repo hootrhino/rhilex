@@ -95,6 +95,10 @@ func (cc *coAPInEndSource) Stop() {
 	}
 }
 
+func (cc *coAPInEndSource) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 func (cc *coAPInEndSource) Status() typex.SourceState {
 	return cc.status
 }

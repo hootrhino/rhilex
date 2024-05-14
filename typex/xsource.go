@@ -49,6 +49,10 @@ type XSource interface {
 	// 返回启动是否成功的错误信息。
 	Start(CCTX CCTX) error
 
+	// DataModels方法用于获取资源支持的数据模型列表。
+	// 这些模型对应于云平台的物模型。
+	DataModels() []XDataModel
+
 	// Status方法用于获取资源的当前状态。
 	Status() SourceState
 

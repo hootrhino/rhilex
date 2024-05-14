@@ -255,6 +255,10 @@ func (tc *iothub) Start(cctx typex.CCTX) error {
 
 }
 
+func (tc *iothub) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 func (tc *iothub) Stop() {
 	tc.status = typex.SOURCE_DOWN
 	if tc.CancelCTX != nil {

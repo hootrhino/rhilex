@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/glogger"
@@ -88,32 +87,25 @@ func InsertToDataCenterTable(rx typex.Rhilex, uuid string) func(L *lua.LState) i
 			Row := [2]interface{}{}
 			// K 只能String
 			if k.Type() == lua.LTString {
-				// create_at 不允许用户填写
-				if Row[0] != "create_at" {
-					switch v.Type() {
-					case lua.LTString:
-						Row[0] = lua.LVAsString(k)
-						Row[1] = lua.LVAsString(v)
-					case lua.LTNumber:
-						Row[0] = lua.LVAsString(k)
-						Row[1] = float64(lua.LVAsNumber(v))
-					case lua.LTBool:
-						Row[0] = lua.LVAsString(k)
-						Row[1] = bool(lua.LVAsBool(v))
-					case lua.LTNil:
-						Row[0] = lua.LVAsString(k)
-						Row[1] = nil
-					default:
-						Row[0] = lua.LVAsString(k)
-						Row[1] = nil // 不支持其他类型
-					}
-					RowList = append(RowList, Row)
+				switch v.Type() {
+				case lua.LTString:
+					Row[0] = lua.LVAsString(k)
+					Row[1] = lua.LVAsString(v)
+				case lua.LTNumber:
+					Row[0] = lua.LVAsString(k)
+					Row[1] = float64(lua.LVAsNumber(v))
+				case lua.LTBool:
+					Row[0] = lua.LVAsString(k)
+					Row[1] = bool(lua.LVAsBool(v))
+				case lua.LTNil:
+					Row[0] = lua.LVAsString(k)
+					Row[1] = nil
+				default:
+					Row[0] = lua.LVAsString(k)
+					Row[1] = nil // 不支持其他类型
 				}
+				RowList = append(RowList, Row)
 			}
-		})
-		// create_at 最后追加
-		RowList = append(RowList, [2]interface{}{
-			"create_at", time.Now(),
 		})
 		if err := saveToDataCenter(fmt.Sprintf("data_center_%s", schema_uuid), RowList); err != nil {
 			l.Push(lua.LString(err.Error()))
@@ -158,6 +150,7 @@ func QueryDataCenterList(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 }
 func queryDataCenterList(schema_uuid string, page, size int, fields string) error {
 	glogger.GLogger.Debug(schema_uuid, page, size, fields)
+
 	return nil
 }
 

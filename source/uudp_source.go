@@ -89,6 +89,10 @@ func (u *udpSource) Init(inEndId string, configMap map[string]interface{}) error
 	return nil
 }
 
+func (u *udpSource) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 func (u *udpSource) Status() typex.SourceState {
 	return typex.SOURCE_UP
 }

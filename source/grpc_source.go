@@ -75,6 +75,10 @@ func (g *grpcInEndSource) Start(cctx typex.CCTX) error {
 	return nil
 }
 
+func (g *grpcInEndSource) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 func (g *grpcInEndSource) Stop() {
 	g.status = typex.SOURCE_DOWN
 	if g.CancelCTX != nil {

@@ -88,6 +88,10 @@ func (mm *mqttInEndSource) Start(cctx typex.CCTX) error {
 
 }
 
+func (mm *mqttInEndSource) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 func (mm *mqttInEndSource) Stop() {
 	mm.status = typex.SOURCE_DOWN
 	if mm.CancelCTX != nil {
