@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-const __DEFAULT_DB_PATH string = "./rhilex_datacenter.db"
+const __DEFAULT_DB_PATH string = "./rhilex_internal_datacenter.db"
 
 /*
 *

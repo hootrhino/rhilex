@@ -228,13 +228,6 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err2))
 		return
 	}
-	for _, record := range records {
-		for k, v := range record {
-			if v == nil {
-				record[k] = 0
-			}
-		}
-	}
 	Result := service.WrapPageResult(*pager, records, count)
 	c.JSON(common.HTTP_OK, common.OkWithData(Result))
 }
@@ -314,16 +307,4 @@ func SqliteTypeMappingGoDefault(dbType string) (string, interface{}) {
 	default:
 		return "STRING", "''"
 	}
-}
-
-/*
-*
-* 数据模型的列类型映射
-*
- */
-type SchemaColumn map[string]interface{}
-
-func (s *SchemaColumn) Scan(value interface{}) error {
-	panic(value)
-	return nil
 }
