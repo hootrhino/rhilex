@@ -190,9 +190,18 @@ uninstall(){
         $SERVICE_FILE stop
     fi
     __remove_files "$SERVICE_FILE"
-    __remove_files "$WORKING_DIRECTORY/license.*"
-    __remove_files "$WORKING_DIRECTORY/rhilex*"
+    __remove_files "$WORKING_DIRECTORY/rhilex"
+    __remove_files "$WORKING_DIRECTORY/rhilex.ini"
+    __remove_files "$WORKING_DIRECTORY/rhilex.db"
+    __remove_files "$WORKING_DIRECTORY/license.lic"
+    __remove_files "$WORKING_DIRECTORY/license.key"
+    __remove_files "$WORKING_DIRECTORY/rhilex_internal_datacenter.db"
     __remove_files "$WORKING_DIRECTORY/upload/"
+    __remove_files "$WORKING_DIRECTORY/rhilexlog.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilex-daemon-log.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilex-recover-log.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilex-upgrade-log.txt"
+    __remove_files "$WORKING_DIRECTORY/rhilexlog-*.txt.gz"
     log INFO "rhilex has been uninstalled."
 }
 
