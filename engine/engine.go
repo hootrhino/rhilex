@@ -536,10 +536,16 @@ func (e *RuleEngine) InitDeviceTypeManager() error {
 			NewDevice: device.NewGenericSnmpDevice,
 		},
 	)
-	e.DeviceTypeManager.Register(typex.GENERIC_UART_PROTOCOL,
+	e.DeviceTypeManager.Register(typex.ICMP_SENDER,
 		&typex.XConfig{
 			Engine:    e,
-			NewDevice: device.NewGenericUartProtocolDevice,
+			NewDevice: device.NewIcmpSender,
+		},
+	)
+	e.DeviceTypeManager.Register(typex.GENERIC_PROTOCOL,
+		&typex.XConfig{
+			Engine:    e,
+			NewDevice: device.NewCustomProtocolDevice,
 		},
 	)
 	e.DeviceTypeManager.Register(typex.GENERIC_OPCUA,
