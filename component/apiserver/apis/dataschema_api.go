@@ -221,7 +221,7 @@ func PublishSchema(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	if MSchema.Published {
-		c.JSON(common.HTTP_OK, common.Error("Data Schema Already published"))
+		c.JSON(common.HTTP_OK, common.Error("Already published"))
 		return
 	}
 	var records []model.MIotProperty
@@ -330,10 +330,6 @@ func CreateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if Schema.Published {
-		c.JSON(common.HTTP_OK, common.Error("Data Schema Already published"))
-		return
-	}
 	// Check Published
 	if Schema.Published {
 		c.JSON(common.HTTP_OK, common.Error("Schema Already Published:"+IotPropertyVo.Name))
@@ -375,13 +371,9 @@ func UpdateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	Schema, err := service.GetDataSchemaWithUUID(IotPropertyVo.SchemaId)
+	_, err := service.GetDataSchemaWithUUID(IotPropertyVo.SchemaId)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if Schema.Published {
-		c.JSON(common.HTTP_OK, common.Error("Data Schema Already published"))
 		return
 	}
 	err2 := service.UpdateIotSchemaProperty(model.MIotProperty{
@@ -406,24 +398,9 @@ func UpdateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 // 删除属性
 func DeleteIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
-	// Find Schema By UUID
-	Property, err := service.FindIotSchemaProperty(uuid)
+	err := service.DeleteIotSchemaProperty(uuid)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	Schema, err := service.GetDataSchemaWithUUID(Property.SchemaId)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if Schema.Published {
-		c.JSON(common.HTTP_OK, common.Error("Data Schema Already published"))
-		return
-	}
-	err1 := service.DeleteIotSchemaProperty(uuid)
-	if err1 != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err1))
 		return
 	}
 	c.JSON(common.HTTP_OK, common.Ok())
