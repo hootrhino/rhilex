@@ -161,7 +161,7 @@ EOL
 
     log INFO "Copy license.key to $WORKING_DIRECTORY"
     cp -rfp "$SOURCE_DIR/license.key" "$WORKING_DIRECTORY/"
-    chmod 755 $SERVICE_FILE
+    chmod 777 $SERVICE_FILE
     if [ $? -eq 0 ]; then
         log INFO "rhilex service has been created and extracted."
     else
