@@ -214,7 +214,7 @@ func main() {
 						return nil
 					}
 					if err := ossupport.MoveFile(ossupport.RecoveryDataCenterPath,
-						ossupport.DataCenterPath); err != nil {
+						ossupport.RunDbPath); err != nil {
 						utils.CLog("[DATA RECOVER] Move DataCenter File error:%s", err.Error())
 						return nil
 					}
