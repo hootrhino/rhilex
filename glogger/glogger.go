@@ -31,8 +31,8 @@ func StartGLogger(LogLevel string,
 	} else {
 		Logrus.SetOutput(&lumberjack.Logger{
 			Filename:   path + ".txt",
-			MaxSize:    10,   // 超过10Mb备份
-			MaxBackups: 3,    // 最多备份2次
+			MaxSize:    5,    // 超过5Mb备份
+			MaxBackups: 2,    // 最多备份2次
 			MaxAge:     7,    // 最大保留天数
 			Compress:   true, // 压缩备份
 		})
