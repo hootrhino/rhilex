@@ -19,8 +19,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-
-	"github.com/hootrhino/rhilex/glogger"
 )
 
 type DDLColumn struct {
@@ -46,24 +44,26 @@ func GenerateSQLiteCreateTableDDL(schemaDDL SchemaDDL) (string, error) {
 	var columns []string
 	for i, col := range schemaDDL.DDLColumns {
 		columnDefine := fmt.Sprintf("%s %s", col.Name, SqliteTypeMappingSchemaType(col.Type))
-		switch col.Type {
-		case "STRING":
-			columnDefine += " NOT NULL DEFAULT ''"
-		case "INTEGER":
-			if col.Name == "id" {
-				columnDefine += " NOT NULL PRIMARY KEY AUTOINCREMENT"
-			} else {
+		if col.Description != "" {
+			switch col.Type {
+			case "STRING":
+				columnDefine += " NOT NULL DEFAULT ''"
+			case "INTEGER":
+				if col.Name == "id" {
+					columnDefine += " NOT NULL PRIMARY KEY AUTOINCREMENT"
+				} else {
+					columnDefine += " NOT NULL DEFAULT 0"
+				}
+			case "FLOAT":
 				columnDefine += " NOT NULL DEFAULT 0"
+			case "BOOL":
+				columnDefine += " NOT NULL DEFAULT 0"
+			case "DATETIME":
+				columnDefine += " NOT NULL DEFAULT CURRENT_TIMESTAMP"
 			}
-		case "FLOAT":
-			columnDefine += " NOT NULL DEFAULT 0"
-		case "BOOL":
-			columnDefine += " NOT NULL DEFAULT 0"
-		case "DATETIME":
-			columnDefine += " NOT NULL DEFAULT CURRENT_TIMESTAMP"
-		}
-		if i != len(schemaDDL.DDLColumns)-1 {
-			columnDefine += ","
+			if i != len(schemaDDL.DDLColumns)-1 {
+				columnDefine += ","
+			}
 		}
 		columns = append(columns, columnDefine)
 	}
@@ -71,7 +71,7 @@ func GenerateSQLiteCreateTableDDL(schemaDDL SchemaDDL) (string, error) {
 	tableName := schemaDDL.SchemaUUID
 	createTableStmt := fmt.Sprintf("CREATE TABLE IF NOT EXISTS '%s' (\n%s\n)",
 		tableName, strings.Join(columns, "\n"))
-	glogger.GLogger.Debug(createTableStmt)
+
 	return createTableStmt, nil
 }
 
