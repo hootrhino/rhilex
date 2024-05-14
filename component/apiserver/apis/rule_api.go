@@ -735,30 +735,44 @@ func GetAllResources(c *gin.Context, ruleEngine typex.Rhilex) {
 	MDevices := service.AllDevices()
 	OutEnds := []RhilexResource{}
 	Devices := []RhilexResource{}
-	Schemas := []RhilexResource{}
 	for _, v := range MDevices {
-		Devices = append(Devices, RhilexResource{
-			UUID: v.UUID,
-			Name: v.Name,
-		})
+		if utils.SContains([]string{
+			"SIEMENS_PLC",
+			"GENERIC_MODBUS",
+			"GENERIC_UART",
+			"GENERIC_PROTOCOL",
+			"GENERIC_OPCUA",
+			"RHILEXG1_IR",
+			"GENERIC_HTTP_DEVICE",
+		}, v.Type) {
+			Devices = append(Devices, RhilexResource{
+				UUID: v.UUID,
+				Name: v.Name,
+			})
+		}
+
 	}
 	for _, v := range MOutEnds {
-		OutEnds = append(OutEnds, RhilexResource{
-			UUID: v.UUID,
-			Name: v.Name,
-		})
-	}
-	MSchemas := service.AllDataSchema()
-	for _, v := range MSchemas {
-		Schemas = append(Schemas, RhilexResource{
-			UUID: v.UUID,
-			Name: v.Name,
-		})
+		if utils.SContains([]string{
+			"MONGO_SINGLE",
+			"MONGO_CLUSTER",
+			"MQTT",
+			"NATS",
+			"HTTP",
+			"TDENGINE",
+			"GRPC_CODEC_TARGET",
+			"UDP_TARGET",
+			"TCP_TRANSPORT",
+		}, v.Type) {
+			OutEnds = append(OutEnds, RhilexResource{
+				UUID: v.UUID,
+				Name: v.Name,
+			})
+		}
 	}
 	c.JSON(common.HTTP_OK, common.OkWithData(map[string]any{
 		"devices": Devices,
 		"outends": OutEnds,
-		"schemas": Schemas,
 	}))
 }
 

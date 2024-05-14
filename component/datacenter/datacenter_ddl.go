@@ -43,7 +43,7 @@ func GenerateSQLiteCreateTableDDL(schemaDDL SchemaDDL) (string, error) {
 
 	var columns []string
 	for i, col := range schemaDDL.DDLColumns {
-		columnDef := fmt.Sprintf("%s %s", col.Name, SqliteTypeMapping(col.Type))
+		columnDef := fmt.Sprintf("%s %s", col.Name, sqliteTypeMapping(col.Type))
 		if col.Description != "" {
 			if i == len(schemaDDL.DDLColumns)-1 {
 				if col.Name == "id" {
@@ -75,7 +75,7 @@ func GenerateSQLiteCreateTableDDL(schemaDDL SchemaDDL) (string, error) {
 *
  */
 
-func SqliteTypeMapping(goType string) string {
+func sqliteTypeMapping(goType string) string {
 	switch goType {
 	case "STRING":
 		return "TEXT"
