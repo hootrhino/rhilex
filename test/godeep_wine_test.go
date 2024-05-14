@@ -20,9 +20,8 @@ import (
 
 func Test_wine_demo(t *testing.T) {
 
-	source := rand.NewSource(time.Now().UnixNano())
-	rng := rand.New(source)
-	rng.Int()
+	rand.Seed(time.Now().UnixNano())
+
 	data, err := load("./data/wine.data")
 	if err != nil {
 		panic(err)
@@ -145,9 +144,7 @@ func toExample(in []string) training.Example {
 }
 
 func Test_Prediction(t *testing.T) {
-	source := rand.NewSource(time.Now().UnixNano())
-	rng := rand.New(source)
-	rng.Int()
+	rand.Seed(0)
 	var data = []training.Example{
 		{Input: []float64{2.7810836, 2.550537003}, Response: []float64{0}},
 		{Input: []float64{1.465489372, 2.362125076}, Response: []float64{0}},

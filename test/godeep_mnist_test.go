@@ -24,9 +24,7 @@ the dataset in a sane format (as used here) can be found at:
 https://pjreddie.com/projects/mnist-in-csv/
 */
 func Test_MNIST(t *testing.T) {
-	source := rand.NewSource(time.Now().UnixNano())
-	rng := rand.New(source)
-	rng.Int()
+	rand.Seed(time.Now().UnixNano())
 	// wget https://pjreddie.com/media/files/mnist_train.csv
 	train, err := load1("./data/mnist_train.csv")
 	if err != nil {

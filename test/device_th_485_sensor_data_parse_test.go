@@ -74,9 +74,7 @@ func Test_modbus_485_sensor_data_parse(t *testing.T) {
 	}
 	defer conn.Close()
 	client := rhilexrpc.NewRhilexRpcClient(conn)
-	source := rand.NewSource(time.Now().UnixNano())
-	rng := rand.New(source)
-	rng.Int()
+	rand.Seed(time.Now().Unix())
 	for i := 0; i < 2; i++ {
 		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: `

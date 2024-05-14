@@ -28,40 +28,40 @@ import (
 // as use of the Unquote filter, which unquotes string tokens.
 var (
 	iniLexer = lexer.MustSimple([]lexer.SimpleRule{
-		{Name: `Ident`, Pattern: `[a-zA-Z][a-zA-Z_\d]*`},
-		{Name: `String`, Pattern: `"(?:\\.|[^"])*"`},
-		{Name: `Float`, Pattern: `\d+(?:\.\d+)?`},
-		{Name: `Punct`, Pattern: `[][=]`},
-		{Name: "comment", Pattern: `[#;][^\n]*`},
-		{Name: "whitespace", Pattern: `\s+`},
+		{`Ident`, `[a-zA-Z][a-zA-Z_\d]*`},
+		{`String`, `"(?:\\.|[^"])*"`},
+		{`Float`, `\d+(?:\.\d+)?`},
+		{`Punct`, `[][=]`},
+		{"comment", `[#;][^\n]*`},
+		{"whitespace", `\s+`},
 	})
 )
 
 type INI struct {
-	Properties []*_Property `parser:"@@*"`
-	Sections   []*Section   `parser:"@@*"`
+	Properties []*_Property `@@*`
+	Sections   []*Section   `@@*`
 }
 
 type Section struct {
-	Identifier string       `parser:"\"[\" @Ident \"]\""`
-	Properties []*_Property `parser:"@@*"`
+	Identifier string       `"[" @Ident "]"`
+	Properties []*_Property `@@*`
 }
 
 type _Property struct {
-	Key   string `parser:"@Ident \"=\""`
-	Value Value  `parser:"@@"`
+	Key   string `@Ident "="`
+	Value Value  `@@`
 }
 
 type Value interface{ value() }
 
 type _String struct {
-	String string `parser:"@String"`
+	String string `@String`
 }
 
 func (_String) value() {}
 
 type Number struct {
-	Number float64 `parser:"@Float"`
+	Number float64 `@Float`
 }
 
 func (Number) value() {}

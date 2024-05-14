@@ -95,9 +95,7 @@ func Test_data_to_tdengine(t *testing.T) {
 	}
 	defer conn.Close()
 	client := rhilexrpc.NewRhilexRpcClient(conn)
-	source := rand.NewSource(time.Now().UnixNano())
-	rng := rand.New(source)
-	rng.Int()
+	rand.Seed(time.Now().Unix())
 	for i := 0; i < 3; i++ {
 		resp, err := client.Work(context.Background(), &rhilexrpc.Data{
 			Value: fmt.Sprintf(`{"co2":%v,"hum":%v,"lex":%v,"temp":%v}`, rand.Int63n(100), rand.Int63n(100), rand.Int63n(100), rand.Int63n(100)),
