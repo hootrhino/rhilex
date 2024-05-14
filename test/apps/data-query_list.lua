@@ -15,7 +15,7 @@
 
 
 function Main(arg)
-    local err = rds:QueryList('SCHEMAHHCOOYVY', 1, 10, "temp,humi")
+    local err = data:QueryRDS('SCHEMAHHCOOYVY', 1, 10, "temp,humi")
     if err ~= nil then
         Throw(err)
         return 0

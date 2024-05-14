@@ -209,8 +209,7 @@ func LoadAppLibGroup(app *Application, e typex.Rhilex) {
 	}
 	{
 		Funcs := map[string]func(l *lua.LState) int{
-			"TFloat":    rhilexlib.TruncateFloat(e, app.UUID),
-			"RandomInt": rhilexlib.RandomInt(e, app.UUID),
+			"TFloat": rhilexlib.TruncateFloat(e, app.UUID),
 		}
 		AddAppLibToGroup(app, e, "math", Funcs)
 	}
@@ -257,13 +256,5 @@ func LoadAppLibGroup(app *Application, e typex.Rhilex) {
 			"Update": rhilexlib.DataSchemaValueUpdate(e, app.UUID),
 		}
 		AddAppLibToGroup(app, e, "dataschema", Funcs)
-	}
-	{
-		Funcs := map[string]func(l *lua.LState) int{
-			"Save":      rhilexlib.InsertToDataCenterTable(e, app.UUID),
-			"QueryList": rhilexlib.QueryDataCenterList(e, app.UUID),
-			"QueryLast": rhilexlib.QueryDataCenterLast(e, app.UUID),
-		}
-		AddAppLibToGroup(app, e, "rds", Funcs)
 	}
 }
