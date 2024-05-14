@@ -117,10 +117,6 @@ func (ht *TTcpTarget) Start(cctx typex.CCTX) error {
 }
 
 func (ht *TTcpTarget) Status() typex.SourceState {
-	_, err := ht.client.Write([]byte(ht.mainConfig.PingPacket))
-	if err != nil {
-		return typex.SOURCE_DOWN
-	}
 	return ht.status
 }
 
