@@ -44,7 +44,7 @@ const (
 )
 
 type TencentIoTGatewayConfig struct {
-	// "tcp://$.iotcloud.tencentdevices.com:1883"
+	// "tcp://$productID.iotcloud.tencentdevices.com:1883"
 	ServerEndpoint string `json:"serverEndpoint" validate:"required"` //服务地址
 	Mode           string `json:"mode" validate:"required"`           //模式: DEVICE|GATEWAY
 	ProductId      string `json:"productId" validate:"required"`      //产品名
@@ -234,8 +234,10 @@ func (hd *TencentIoTGateway) subscribe(topic string) error {
 		glogger.GLogger.Debug(topic, msg)
 	})
 	if token.Error() != nil {
+		glogger.GLogger.Error(token.Error())
 		return token.Error()
 	} else {
+		glogger.GLogger.Info("topic:", topic, " subscribed")
 		return nil
 	}
 }

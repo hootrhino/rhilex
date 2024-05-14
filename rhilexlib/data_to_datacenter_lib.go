@@ -86,10 +86,6 @@ func InsertToDataCenterTable(rx typex.Rhilex, uuid string) func(L *lua.LState) i
 		schema_uuid := l.ToString(2)
 		kvs := l.ToTable(3)
 		RowList := [][2]interface{}{}
-		// create_at
-		RowList = append(RowList, [2]interface{}{
-			"create_at", time.Now(),
-		})
 		kvs.ForEach(func(k, v lua.LValue) {
 			Row := [2]interface{}{}
 			// K 只能String
@@ -117,7 +113,10 @@ func InsertToDataCenterTable(rx typex.Rhilex, uuid string) func(L *lua.LState) i
 				}
 			}
 		})
-
+		// create_at 最后追加
+		RowList = append(RowList, [2]interface{}{
+			"create_at", time.Now(),
+		})
 		if err := saveToDataCenter(fmt.Sprintf("data_center_%s", schema_uuid), RowList); err != nil {
 			l.Push(lua.LString(err.Error()))
 		} else {

@@ -17,6 +17,7 @@ package apis
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -217,6 +218,32 @@ func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	c.JSON(common.HTTP_OK, common.OkWithData(record))
+}
+
+/*
+*
+*Lua辅助生成器
+*
+ */
+func GenDataToLuaFunc(c *gin.Context, ruleEngine typex.Rhilex) {
+	uuid, _ := c.GetQuery("uuid")
+	TableColumnInfos, err := service.GetTableSchema(uuid)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	// {k=v...}
+	s := []string{}
+	for _, TableColumn := range TableColumnInfos {
+		if TableColumn.Name == "id" || TableColumn.Name == "create_at" {
+			continue
+		}
+		_, D := SqliteTypeMappingGoDefault(TableColumn.Type)
+		s = append(s, fmt.Sprintf("%s=%v", TableColumn.Name, D))
+	}
+	luaS := fmt.Sprintf("local errRdsSave = rds:Save('%s', {%s\n}\n)",
+		uuid, strings.Join(s, ", "))
+	c.JSON(common.HTTP_OK, common.OkWithData(luaS))
 }
 
 /*
