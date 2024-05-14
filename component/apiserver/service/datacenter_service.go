@@ -52,22 +52,6 @@ func GetTableSchema(tableName string) ([]TableColumnInfo, error) {
 			&column.PrimaryKey); err != nil {
 			return nil, err
 		}
-		switch column.Type {
-		case "INTEGER":
-			column.Default = 0
-		case "BOOLEAN":
-			column.Default = false
-		case "DATETIME":
-			column.Default = ""
-		case "TIMESTAMP":
-			column.Default = 0
-		case "TEXT":
-			column.Default = ""
-		case "REAL":
-			column.Default = 0
-		default:
-			column.Default = ""
-		}
 		columns = append(columns, column)
 	}
 	if err := rows.Err(); err != nil {
