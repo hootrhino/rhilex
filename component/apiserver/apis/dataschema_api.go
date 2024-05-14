@@ -480,8 +480,7 @@ func IotSchemaPropertyPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 	db := interdb.DB()
 	tx := db.Scopes(service.Paginate(*pager))
 	var count int64
-	err1 := interdb.DB().Model(&model.MIotProperty{}).
-		Where("schema_id=?", schemaUuid).Count(&count).Error
+	err1 := interdb.DB().Model(&model.MIotProperty{}).Count(&count).Error
 	if err1 != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err1))
 		return
