@@ -73,34 +73,20 @@ func ListSchemaDDL(c *gin.Context, ruleEngine typex.Rhilex) {
 func SchemaDDLDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
 	// 取单位
-	// id
-	recordsHead := []ddl_define{}
-
-	recordsHead = append(recordsHead, ddl_define{
-		Id:   101,
-		Name: "id",
-		Type: "INTEGER",
-		Uuid: "101",
-		Unit: "",
-	})
-	// 时间
-	recordsHead = append(recordsHead, ddl_define{
-		Id:   100,
-		Name: "create_at",
-		Type: "STRING",
-		Uuid: "100",
-		Unit: "",
-	})
-	records := []ddl_define{}
+	var records []ddl_define
 	tx := interdb.DB()
-	result := tx.Model(&model.MIotProperty{}).Select("id,name,type,uuid,unit").
+	result := tx.Model(&model.MIotProperty{}).Select("name,type,uuid,unit").
 		Where("schema_id=?", uuid).Find(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
 	}
-	recordsHead = append(recordsHead, records...)
-	c.JSON(common.HTTP_OK, common.OkWithData(recordsHead))
+	for i, record := range records {
+		if record.Unit == "" {
+			records[i].Unit = "./." // 默认无单位
+		}
+	}
+	c.JSON(common.HTTP_OK, common.OkWithData(records))
 }
 
 /*
@@ -303,7 +289,6 @@ func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
 *
  */
 type ddl_define struct {
-	Id   int    `json:"id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
 	Uuid string `json:"uuid"`
