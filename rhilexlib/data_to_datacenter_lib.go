@@ -108,10 +108,10 @@ func InsertToDataCenterTable(rx typex.Rhilex, uuid string) func(L *lua.LState) i
 						Row[1] = bool(lua.LVAsBool(v))
 					case lua.LTNil:
 						Row[0] = lua.LVAsString(k)
-						Row[1] = ""
+						Row[1] = nil
 					default:
 						Row[0] = lua.LVAsString(k)
-						Row[1] = "" // 不支持其他类型
+						Row[1] = nil // 不支持其他类型
 					}
 					RowList = append(RowList, Row)
 				}
