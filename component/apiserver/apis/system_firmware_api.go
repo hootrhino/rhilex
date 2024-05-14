@@ -16,9 +16,7 @@
 package apis
 
 import (
-	"bytes"
 	"crypto/md5"
-	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -93,11 +91,6 @@ func UpgradeFirmWare(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err1))
 		return
 	}
-	errCheckFileType := CheckFileType(tempPath + "/rhilex")
-	if errCheckFileType != nil {
-		c.JSON(common.HTTP_OK, common.Error400(errCheckFileType))
-		return
-	}
 	// 从解压后的目录提取Md5
 	readBytes, err2 := os.ReadFile(tempPath + "/md5.sum")
 	if err2 != nil {
@@ -166,73 +159,4 @@ func MoveFile(sourcePath, destPath string) error {
 		return fmt.Errorf("Failed removing original file: %s", err)
 	}
 	return nil
-}
-
-func CheckFileType(filePath string) error {
-	currentArch := runtime.GOARCH
-	file, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	var magicNumber [4]byte
-	_, err = file.Read(magicNumber[:])
-	if err != nil {
-		return err
-	}
-	switch {
-	case bytes.Equal(magicNumber[:], []byte{0x7F, 'E', 'L', 'F'}):
-		// ELF文件，用于Linux
-		elfArch, err := checkELFArch(file)
-		if err != nil {
-			return err
-		}
-		if elfArch != currentArch {
-			return fmt.Errorf("ELF architecture mismatch: %s != %s", elfArch, currentArch)
-		}
-
-	default:
-		return fmt.Errorf("unknown file type")
-	}
-
-	return nil
-}
-
-// checkELFArch 检查ELF文件的架构
-func checkELFArch(file *os.File) (string, error) {
-	type elfHeader struct {
-		Ident     [16]byte
-		Type      uint16
-		Machine   uint16
-		Version   uint32
-		Entry     uint64
-		Phoff     uint64
-		Shoff     uint64
-		Flags     uint32
-		Ehsize    uint16
-		Phentsize uint16
-		Phnum     uint16
-		Shentsize uint16
-		Shnum     uint16
-		Shstrndx  uint16
-	}
-	_, err := file.Seek(0, 0)
-	if err != nil {
-		return "", err
-	}
-	var hdr elfHeader
-	err = binary.Read(file, binary.LittleEndian, &hdr)
-	if err != nil {
-		return "", err
-	}
-	switch hdr.Machine {
-	case 3:
-		return "386", nil // x86
-	case 62:
-		return "amd64", nil // x86_64
-	case 40:
-		return "arm", nil // ARM
-	default:
-		return "", fmt.Errorf("unknown ELF architecture")
-	}
 }
