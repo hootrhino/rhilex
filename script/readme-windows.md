@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2024 wwhai
+ Copyright (C) 2023 wwhai
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Affero General Public License as
@@ -15,5 +15,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-# rhilex 安装脚本
-Linux下推荐使用 `rhilex-daemon.sh`, 虽然说脚本之间区别不大，但是其他的没有经过大量测试不确定其稳定性。
+# Windows 服务安装
+- 安装:rhilex_install.bat
+- 卸载:rhilex_uninstall.bat
+
+> 只支持windows10+
