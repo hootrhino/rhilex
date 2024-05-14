@@ -193,17 +193,9 @@ func ClearSchemaData(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
 	tableName := fmt.Sprintf("data_center_%s", uuid)
 	TxDbError := datacenter.DB().Transaction(func(tx *gorm.DB) error {
-		{
-			err := tx.Exec(fmt.Sprintf("DELETE FROM %s;", tableName)).Error
-			if err != nil {
-				return err
-			}
-		}
-		{
-			err := tx.Exec(fmt.Sprintf("DELETE FROM sqlite_sequence WHERE name = '%s';", tableName)).Error
-			if err != nil {
-				return err
-			}
+		err := tx.Exec(fmt.Sprintf("DELETE FROM %s;", tableName)).Error
+		if err != nil {
+			return err
 		}
 		return nil
 	})

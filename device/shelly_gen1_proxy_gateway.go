@@ -124,6 +124,7 @@ func (Shelly *ShellyGen1ProxyGateway) Start(cctx typex.CCTX) error {
 					Shelly.locker.Unlock()
 				default:
 				}
+				glogger.GLogger.Debug("ScanDevice")
 				Shelly.ScanDevice(Shelly.PointId)
 				time.Sleep(time.Duration(Shelly.mainConfig.CommonConfig.Frequency) * time.Millisecond)
 				<-ticker.C
