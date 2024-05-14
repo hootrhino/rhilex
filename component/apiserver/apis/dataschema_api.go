@@ -72,12 +72,12 @@ type IotPropertyVo struct {
 	Rule        IoTPropertyRuleVo `json:"rule"`        // 规则,IoTPropertyRule
 }
 type IoTPropertyRuleVo struct {
-	DefaultValue interface{} `json:"defaultValue"` // 默认值
-	Max          *int        `json:"max"`          // 最大值
-	Min          *int        `json:"min"`          // 最小值
-	TrueLabel    string      `json:"trueLabel"`    // 真值label
-	FalseLabel   string      `json:"falseLabel"`   // 假值label
-	Round        *int        `json:"round"`        // 小数点位
+	DefaultValue any    `json:"defaultValue"` // 默认值
+	Max          *int   `json:"max"`          // 最大值
+	Min          *int   `json:"min"`          // 最小值
+	TrueLabel    string `json:"trueLabel"`    // 真值label
+	FalseLabel   string `json:"falseLabel"`   // 假值label
+	Round        *int   `json:"round"`        // 小数点位
 }
 
 /*
@@ -326,10 +326,6 @@ func CreateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	if err := dataschema.CheckPropertyType(IotPropertyVo.Type); err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if err := dataschema.ValidateRw(IotPropertyVo.Rw); err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}

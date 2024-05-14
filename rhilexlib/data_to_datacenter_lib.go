@@ -141,15 +141,6 @@ func saveToDataCenter(schema_uuid string, RowList [][2]interface{}) error {
 	return nil
 }
 
-/*
-*
-* 检查属性约束
-*
- */
-func checkValue(schema_uuid string, RowList [][2]interface{}) error {
-	return nil
-}
-
 // Query List
 // GET /api/v1/datacenter/queryDataList?uuid=<uuid>&current=<current>&size=<size>&order=<order>&select=<select> HTTP/1.1
 // Host: 127.0.0.1:2580
