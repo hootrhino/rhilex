@@ -171,10 +171,14 @@ func calculateCpuPercent(cpus []float64) float64 {
 
 func (dm *NetDiscover) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        dm.uuid,
-		Name:        "NetDiscover",
-		Version:     "v0.0.1",
-		Description: "Rhilex Cluster Discover",
+		UUID:     dm.uuid,
+		Name:     "NetDiscover",
+		Version:  "v0.0.1",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 

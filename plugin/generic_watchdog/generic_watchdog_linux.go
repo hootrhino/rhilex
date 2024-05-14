@@ -107,10 +107,14 @@ func (dog *genericWatchDog) Stop() error {
 
 func (hh *genericWatchDog) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        hh.uuid,
-		Name:        "SoftWatchDog",
-		Version:     "v0.0.1",
-		Description: "Linux Soft WatchDog",
+		UUID:     hh.uuid,
+		Name:     "Linux Soft WatchDog",
+		Version:  "v0.0.1",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 

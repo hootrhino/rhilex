@@ -151,9 +151,13 @@ func (dm *LicenseManager) Stop() error {
 
 func (dm *LicenseManager) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        "LicenseManager",
-		Name:        "LicenseManager",
-		Version:     "v0.0.1",
-		Description: "Rhilex License Manager",
+		UUID:     "LicenseManager",
+		Name:     "LicenseManager",
+		Version:  "v0.0.1",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }

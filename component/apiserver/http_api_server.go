@@ -493,10 +493,14 @@ func (hs *ApiServerPlugin) Stop() error {
 
 func (hs *ApiServerPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        hs.uuid,
-		Name:        "Api Server",
-		Version:     "v1.0.0",
-		Description: "RHILEX HTTP RESTFul Api Server",
+		UUID:     hs.uuid,
+		Name:     "RHILEX HTTP RESTFul Api Server",
+		Version:  "v1.0.0",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 

@@ -43,10 +43,14 @@ func (dm *SensorServer) Stop() error {
 
 func (dm *SensorServer) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        dm.uuid,
-		Name:        "SensorServer",
-		Version:     "v0.0.1",
-		Description: "Generic Sensor Server",
+		UUID:     dm.uuid,
+		Name:     "GenericSensorServer",
+		Version:  "v0.0.1",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 

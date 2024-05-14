@@ -28,10 +28,14 @@ func (dm *DemoPlugin) Stop() error {
 
 func (dm *DemoPlugin) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        dm.uuid,
-		Name:        "DemoPlugin",
-		Version:     "v0.0.1",
-		Description: "",
+		UUID:     dm.uuid,
+		Name:     "DemoPlugin",
+		Version:  "v0.0.1",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 

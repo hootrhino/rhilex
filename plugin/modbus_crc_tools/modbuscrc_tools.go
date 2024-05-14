@@ -43,9 +43,13 @@ func (ms *modbusCRCCalculator) Stop() error {
 
 func (ms *modbusCRCCalculator) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        ms.uuid,
-		Name:        "CRC Calculator",
-		Version:     "v0.0.1",
-		Description: "Simple CRC Calculator",
+		UUID:     ms.uuid,
+		Name:     "Modbus CRC Calculator",
+		Version:  "v0.0.1",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }

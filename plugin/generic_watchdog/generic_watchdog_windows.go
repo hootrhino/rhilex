@@ -54,7 +54,11 @@ func (dog *genericWatchDog) PluginMetaInfo() typex.XPluginMetaInfo {
 		UUID:     dog.uuid,
 		Name:     "Soft WatchDog",
 		Version:  "v0.0.1",
-		Description: "Soft WatchDog",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 

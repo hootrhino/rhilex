@@ -81,10 +81,14 @@ func (s *MqttServer) Stop() error {
 
 func (s *MqttServer) PluginMetaInfo() typex.XPluginMetaInfo {
 	return typex.XPluginMetaInfo{
-		UUID:        s.uuid,
-		Name:        "MqttServer",
-		Version:     "v2.0.0",
-		Description: "Simple Light Weight MqttServer",
+		UUID:     s.uuid,
+		Name:     "Light Weight MqttServer",
+		Version:  "v2.0.0",
+		Homepage: "https://www.hootrhino.com",
+		HelpLink: "https://www.hootrhino.com",
+		Author:   "RHILEXTeam",
+		Email:    "RHILEXTeam@hootrhino.com",
+		License:  "",
 	}
 }
 
