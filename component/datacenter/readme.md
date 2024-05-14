@@ -44,17 +44,3 @@ curl --location --request GET 'http://192.168.1.185:2580/api/v1/datacenter/query
 curl --location --request GET 'http://192.168.1.185:2580/api/v1/datacenter/queryLastData?uuid=SCHEMAZ848ZRDG' \
 --header 'User-Agent: localhost'
 ```
-
-## 数据存储机制
-RHILEX默认保存7天内数据，每天会有计时器自动清除计划之外的数据。下面是配置保存的时间周期：
-- `-7 day`：表示当前日期减去7天。
-- `-1 month`：表示当前日期减去1个月。
-- `-1 year`：表示当前日期减去1年。
-- `-1 hour`：表示当前日期减去1小时。
-- `-1 minute`：表示当前日期减去1分钟。
-- `-1 second`：表示当前日期减去1秒。
-这些参数可以组合使用，例如`-7 day -1 month`表示当前日期减去7天和1个月。您也可以使用`+`符号来表示未来的时间偏移量。
-此外，SQLite还支持其他日期和时间函数，如`datetime('now', '-7 day')`，它返回当前日期和时间减去7天的值。这些函数可以根据您的具体需求进行组合，以获取所需的时间点。
-
-## 注意事项
-数据中心和配置用的不是同一个数据库。API接口也不一样。

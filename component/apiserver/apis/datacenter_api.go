@@ -23,7 +23,7 @@ import (
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
-	"github.com/hootrhino/rhilex/component/datacenter"
+	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/xuri/excelize/v2"
@@ -121,7 +121,7 @@ func ExportData(c *gin.Context, ruleEngine typex.Rhilex) {
 	cell, _ := excelize.CoordinatesToCellName(1, 1)
 	xlsx.SetSheetRow("Sheet1", cell, &Headers)
 	tableName := fmt.Sprintf("data_center_%s", uuid)
-	rows, Error := datacenter.DB().Table(tableName).Rows()
+	rows, Error := interdb.DB().Table(tableName).Rows()
 	if Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(Error))
 		return
@@ -167,7 +167,7 @@ func ExportData(c *gin.Context, ruleEngine typex.Rhilex) {
 func ClearSchemaData(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
 	tableName := fmt.Sprintf("data_center_%s", uuid)
-	TxDbError := datacenter.DB().Transaction(func(tx *gorm.DB) error {
+	TxDbError := interdb.DB().Transaction(func(tx *gorm.DB) error {
 		err := tx.Exec(fmt.Sprintf("DELETE FROM %s;", tableName)).Error
 		if err != nil {
 			return err
@@ -209,7 +209,7 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error("The schema must be published before it can be operated"))
 		return
 	}
-	DbTx := datacenter.DB().Scopes(service.Paginate(*pager))
+	DbTx := interdb.DB().Scopes(service.Paginate(*pager))
 	records := []map[string]interface{}{}
 	tableName := fmt.Sprintf("data_center_%s", uuid)
 	// Default order by ts desc
@@ -251,7 +251,7 @@ func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	tableName := fmt.Sprintf("data_center_%s", uuid)
 	record := map[string]interface{}{}
-	result := datacenter.DB().Select(selectFields).
+	result := interdb.DB().Select(selectFields).
 		Table(tableName).Order("create_at DESC").Limit(1).Scan(&record)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))

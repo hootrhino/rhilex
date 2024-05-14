@@ -266,7 +266,7 @@ func PublishSchema(c *gin.Context, ruleEngine typex.Rhilex) {
 		if err1 != nil {
 			return err1
 		}
-		if err2 := datacenter.DB().Exec(sql).Error; err2 != nil {
+		if err2 := tx.Exec(sql).Error; err2 != nil {
 			return err2
 		}
 		return nil

@@ -34,7 +34,6 @@ import (
 	"github.com/hootrhino/rhilex/component/shellymanager"
 	supervisor "github.com/hootrhino/rhilex/component/supervisor"
 
-	datacenter "github.com/hootrhino/rhilex/component/datacenter"
 	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/component/intermetric"
 	"github.com/hootrhino/rhilex/component/internotify"
@@ -111,7 +110,7 @@ func InitRuleEngine(config typex.RhilexConfig) typex.Rhilex {
 	// Internal Queue
 	interqueue.InitDataCacheQueue(__DefaultRuleEngine, core.GlobalConfig.MaxQueueSize)
 	// Data center: future version maybe support
-	datacenter.InitDataCenter(__DefaultRuleEngine)
+	// datacenter.InitDataCenter(__DefaultRuleEngine)
 	// Rtsp server
 	rtspserver.InitRtspServer(__DefaultRuleEngine)
 	// Jpeg Stream Server

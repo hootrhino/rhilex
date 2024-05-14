@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hootrhino/rhilex/component/datacenter"
+	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 
@@ -134,7 +134,7 @@ func saveToDataCenter(schema_uuid string, RowList [][2]interface{}) error {
 	if err0 != nil {
 		return err0
 	}
-	err1 := datacenter.DB().Exec(Sql).Error
+	err1 := interdb.DB().Exec(Sql).Error
 	if err1 != nil {
 		return err1
 	}
