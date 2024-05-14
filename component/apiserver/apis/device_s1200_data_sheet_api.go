@@ -64,7 +64,9 @@ type SiemensPointVo struct {
 // SiemensPoints 获取Siemens_excel类型的点位数据
 func SiemensPointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	deviceUuid, _ := c.GetQuery("device_uuid")
-
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
+		time.Now().UnixMilli()))
 	var records []model.MSiemensDataPoint
 	result := interdb.DB().Table("m_siemens_data_points").
 		Where("device_uuid=?", deviceUuid).Find(&records)
@@ -99,9 +101,7 @@ func SiemensPointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 			xlsx.SetSheetRow("Sheet1", cell, &Row)
 		}
 	}
-	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
-		time.Now().UnixMilli()))
+
 	xlsx.WriteTo(c.Writer)
 
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"github.com/hootrhino/rhilex/component/datacenter"
-	"github.com/hootrhino/rhilex/component/dataschema"
 	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -232,7 +231,7 @@ func PublishSchema(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	DDLColumns := []datacenter.DDLColumn{}
-	// 默认加入PK
+
 	DDLColumns = append(DDLColumns, datacenter.DDLColumn{
 		Name: "id", Type: "int", Description: "PRIMARY KEY",
 	})
@@ -314,25 +313,16 @@ func DataSchemaDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 	c.JSON(common.HTTP_OK, common.OkWithData(IoTSchemaVo))
 }
 
-// CreateIotSchemaProperty
+// 分页获取
 func CreateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 	IotPropertyVo := IotPropertyVo{}
 	if err := c.ShouldBindJSON(&IotPropertyVo); err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if err := dataschema.CheckPropertyType(IotPropertyVo.Type); err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
 	Schema, err := service.GetDataSchemaWithUUID(IotPropertyVo.SchemaId)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	// Check Published
-	if Schema.Published {
-		c.JSON(common.HTTP_OK, common.Error("Schema Already Published:"+IotPropertyVo.Name))
 		return
 	}
 	// 不允许重复name
@@ -364,10 +354,6 @@ func CreateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 func UpdateIotSchemaProperty(c *gin.Context, ruleEngine typex.Rhilex) {
 	IotPropertyVo := IotPropertyVo{}
 	if err := c.ShouldBindJSON(&IotPropertyVo); err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if err := dataschema.CheckPropertyType(IotPropertyVo.Type); err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}

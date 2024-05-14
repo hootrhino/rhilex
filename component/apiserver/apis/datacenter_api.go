@@ -17,16 +17,13 @@ package apis
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"github.com/hootrhino/rhilex/component/interdb"
-	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
-	"github.com/xuri/excelize/v2"
 )
 
 type SchemaDDLVo struct {
@@ -78,82 +75,10 @@ func SchemaDDLDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 
 /*
 *
-* 导出, ids[]
+* 导出
 *
  */
 func ExportData(c *gin.Context, ruleEngine typex.Rhilex) {
-	uuid, _ := c.GetQuery("uuid")
-	TableSchemas, err := service.GetTableSchema(uuid) // PRAGMA table_info
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	Headers := []string{}
-	OneRow := make([]interface{}, len(TableSchemas))
-	for i, TableSchema := range TableSchemas {
-		Headers = append(Headers, TableSchema.Name)
-		switch TableSchema.Type {
-		case "INTEGER":
-			OneRow[i] = new(int)
-		case "BOOLEAN":
-			OneRow[i] = new(bool)
-		case "DATETIME":
-			OneRow[i] = new(string)
-		case "TIMESTAMP":
-			OneRow[i] = new(string)
-		case "TEXT":
-			OneRow[i] = new(string)
-		case "REAL":
-			OneRow[i] = new(float32)
-		default:
-			OneRow[i] = new(string) // 不知道啥类型就String
-		}
-	}
-
-	xlsx := excelize.NewFile()
-	defer func() {
-		if err := xlsx.Close(); err != nil {
-			glogger.GLogger.Errorf("close excel file, err=%v", err)
-		}
-	}()
-	cell, _ := excelize.CoordinatesToCellName(1, 1)
-	xlsx.SetSheetRow("Sheet1", cell, &Headers)
-	tableName := fmt.Sprintf("data_center_%s", uuid)
-	rows, Error := interdb.DB().Table(tableName).Rows()
-	if Error != nil {
-		c.JSON(common.HTTP_OK, common.Error400(Error))
-		return
-	}
-	idx := 0
-	for rows.Next() {
-		if err := rows.Scan(OneRow...); err != nil {
-			c.JSON(common.HTTP_OK, common.Error400(err))
-			return
-		}
-		cell, _ = excelize.CoordinatesToCellName(1, idx+2)
-		SheetRow := []interface{}{}
-		for _, Column := range OneRow {
-			switch T := Column.(type) {
-			case *bool:
-				SheetRow = append(SheetRow, *T)
-			case *int:
-				SheetRow = append(SheetRow, *T)
-			case *float32:
-				SheetRow = append(SheetRow, *T)
-			case *string:
-				SheetRow = append(SheetRow, *T)
-			default:
-				SheetRow = append(SheetRow, "NULL") // 不支持的类型
-			}
-		}
-		xlsx.SetSheetRow("Sheet1", cell, &SheetRow)
-		idx++
-	}
-
-	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
-		time.Now().UnixMilli()))
-	xlsx.WriteTo(c.Writer)
 	c.JSON(common.HTTP_OK, common.Ok())
 }
 
@@ -171,10 +96,6 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	if pager.Size > 1000 {
-		c.JSON(common.HTTP_OK, common.Error("Query size too large, Must less than 1000"))
-		return
-	}
 	DbTx := interdb.DB().Scopes(service.Paginate(*pager))
 	records := []map[string]any{}
 	tableName := fmt.Sprintf("data_center_%s", uuid)
@@ -182,7 +103,6 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 	if order == "DESC" || order == "ASC" {
 		Order = order
 	}
-	// Default order by ts desc
 	result := DbTx.Select(selectFields).Table(tableName).Order("ts " + Order).Scan(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))

@@ -65,7 +65,9 @@ type ModbusPointVo struct {
 // ModbusPoints 获取modbus_excel类型的点位数据
 func ModbusPointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	deviceUuid, _ := c.GetQuery("device_uuid")
-
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
+		time.Now().UnixMilli()))
 	var records []model.MModbusDataPoint
 	result := interdb.DB().Table("m_modbus_data_points").
 		Where("device_uuid=?", deviceUuid).Find(&records)
@@ -105,9 +107,6 @@ func ModbusPointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 		cell, _ = excelize.CoordinatesToCellName(1, idx+2)
 		xlsx.SetSheetRow("Sheet1", cell, &Row)
 	}
-	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
-		time.Now().UnixMilli()))
 	xlsx.WriteTo(c.Writer)
 }
 

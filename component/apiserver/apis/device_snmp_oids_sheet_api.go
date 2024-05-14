@@ -72,7 +72,9 @@ type SnmpOidVo struct {
 // SnmpOids 获取Snmp_excel类型的点位数据
 func SnmpOidsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	deviceUuid, _ := c.GetQuery("device_uuid")
-
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
+		time.Now().UnixMilli()))
 	var records []model.MSnmpOid
 	result := interdb.DB().Table("m_snmp_oids").
 		Where("device_uuid=?", deviceUuid).Find(&records)
@@ -101,9 +103,6 @@ func SnmpOidsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 			xlsx.SetSheetRow("Sheet1", cell, &Row)
 		}
 	}
-	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
-		time.Now().UnixMilli()))
 	xlsx.WriteTo(c.Writer)
 }
 
