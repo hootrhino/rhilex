@@ -17,7 +17,6 @@ package apis
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -40,7 +39,7 @@ func InitDataCenterApi() {
 	datacenterApi.GET("/queryDataList", server.AddRoute(QueryDDLDataList))
 	datacenterApi.GET("/queryLastData", server.AddRoute(QueryDDLLastData))
 	datacenterApi.GET("/exportData", server.AddRoute(ExportData))
-	datacenterApi.GET("/schemaDDLDefine", server.AddRoute(GetSchemaDDLDefine))
+
 }
 
 /*
@@ -184,7 +183,7 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		Order = order
 	}
 	// Default order by ts desc
-	result := DbTx.Select(selectFields).Table(tableName).Order("create_at " + Order).Scan(&records)
+	result := DbTx.Select(selectFields).Table(tableName).Order("ts " + Order).Scan(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
@@ -212,80 +211,10 @@ func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
 	record := map[string]any{}
 	result := interdb.DB().Select(selectFields).
 		Table(tableName).
-		Order("create_at DESC").Limit(1).Find(&record)
+		Order("ts DESC").Limit(1).Find(&record)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
 	}
 	c.JSON(common.HTTP_OK, common.OkWithData(record))
-}
-
-/*
-*
-*Lua辅助生成器
-*
- */
-func GenDataToLuaFunc(c *gin.Context, ruleEngine typex.Rhilex) {
-	uuid, _ := c.GetQuery("uuid")
-	TableColumnInfos, err := service.GetTableSchema(uuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	// {k=v...}
-	s := []string{}
-	for _, TableColumn := range TableColumnInfos {
-		if TableColumn.Name == "id" || TableColumn.Name == "create_at" {
-			continue
-		}
-		s = append(s, fmt.Sprintf("%s=%v",
-			TableColumn.Name, parse_type(TableColumn.Type)))
-	}
-	luaS := fmt.Sprintf("local errRdsSave = rds:Save('%s', {%s\n}\n)",
-		uuid, strings.Join(s, ", "))
-	c.JSON(common.HTTP_OK, common.OkWithData(luaS))
-}
-
-/*
-*
-* 获取定义
-*
- */
-func GetSchemaDDLDefine(c *gin.Context, ruleEngine typex.Rhilex) {
-	type tableColumn struct {
-		Name string `json:"name"`
-		Type string `json:"type"`
-	}
-	uuid, _ := c.GetQuery("uuid")
-	TableColumnInfos, err := service.GetTableSchema(uuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	tableColumns := []tableColumn{}
-	for _, TableColumn := range TableColumnInfos {
-		if TableColumn.Name == "id" || TableColumn.Name == "create_at" {
-			continue
-		}
-		tableColumns = append(tableColumns, tableColumn{
-			Name: TableColumn.Name,
-			Type: TableColumn.Type,
-		})
-	}
-	c.JSON(common.HTTP_OK, common.OkWithData(tableColumns))
-
-}
-func parse_type(dbType string) interface{} {
-	switch dbType {
-	case "TEXT":
-		return "''"
-	case "INTEGER":
-		return 0
-	case "REAL":
-		return 0
-	case "BOOLEAN":
-		return false
-	default:
-		return "''"
-	}
 }

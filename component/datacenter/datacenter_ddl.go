@@ -77,13 +77,13 @@ func GenerateSQLiteCreateTableDDL(schemaDDL SchemaDDL) (string, error) {
 
 func sqliteTypeMapping(goType string) string {
 	switch goType {
-	case "STRING":
+	case "string":
 		return "TEXT"
-	case "INTEGER":
+	case "int":
 		return "INTEGER"
-	case "FLOAT":
+	case "float":
 		return "REAL"
-	case "BOOL":
+	case "bool":
 		return "BOOLEAN"
 	default:
 		return "TEXT"
@@ -108,8 +108,7 @@ func GetTableSchema(db *sql.DB, tableName string) ([]TableColumnInfo, error) {
 	for rows.Next() {
 		var columnName, dataType, defaultValue string
 		var notNull, primaryKey, autoIncrement int
-		if err := rows.Scan(&columnName, &dataType,
-			&defaultValue, &notNull, &primaryKey, &autoIncrement); err != nil {
+		if err := rows.Scan(&columnName, &dataType, &defaultValue, &notNull, &primaryKey, &autoIncrement); err != nil {
 			return nil, err
 		}
 		columns = append(columns, TableColumnInfo{
