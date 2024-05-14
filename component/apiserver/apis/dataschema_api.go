@@ -487,7 +487,7 @@ func IotSchemaPropertyPageList(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	var records []model.MIotProperty
 	result := tx.Model(&model.MIotProperty{}).
-		Where("schema_id=?", schemaUuid).Find(&records).Order("created_at DESC")
+		Where("schema_uuid=?", schemaUuid).Find(&records).Order("created_at DESC")
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
