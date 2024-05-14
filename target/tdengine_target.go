@@ -21,7 +21,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/hootrhino/rhilex/common"
 	"github.com/hootrhino/rhilex/glogger"
@@ -49,7 +48,7 @@ type tdHttpResult struct {
 
 func NewTdEngineTarget(e typex.Rhilex) typex.XTarget {
 	td := tdEngineTarget{
-		client:     http.Client{Timeout: 2000 * time.Millisecond},
+		client:     http.Client{},
 		mainConfig: common.TDEngineConfig{},
 	}
 	td.RuleEngine = e
@@ -98,12 +97,17 @@ func (td *tdEngineTarget) Start(cctx typex.CCTX) error {
 	return nil
 }
 
+// 数据模型, 用来描述该资源支持的数据, 对应的是云平台的物模型
+func (td *tdEngineTarget) DataModels() []typex.XDataModel {
+	return []typex.XDataModel{}
+}
+
 // 获取资源状态
 func (td *tdEngineTarget) Status() typex.SourceState {
 	if td.test() {
 		return typex.SOURCE_UP
 	}
-	return typex.SOURCE_DOWN
+	return td.status
 }
 
 // 获取资源绑定的的详情

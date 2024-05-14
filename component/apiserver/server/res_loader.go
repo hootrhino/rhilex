@@ -70,7 +70,7 @@ func LoadNewestInEnd(uuid string, ruleEngine typex.Rhilex) error {
 	ctx, cancelCTX := typex.NewCCTX()
 	if err2 := ruleEngine.LoadInEndWithCtx(in, ctx, cancelCTX); err2 != nil {
 		glogger.GLogger.Error(err2)
-		// return err2
+		return err2
 	}
 	go StartInSupervisor(ctx, in, ruleEngine)
 	return nil
@@ -100,7 +100,7 @@ func LoadNewestOutEnd(uuid string, ruleEngine typex.Rhilex) error {
 	out.Config = mOutEnd.GetConfig()
 	ctx, cancelCTX := typex.NewCCTX()
 	if err := ruleEngine.LoadOutEndWithCtx(out, ctx, cancelCTX); err != nil {
-		glogger.GLogger.Error(err)
+		return err
 	}
 	go StartOutSupervisor(ctx, out, ruleEngine)
 	return nil
@@ -168,7 +168,7 @@ func LoadNewestDevice(uuid string, ruleEngine typex.Rhilex) error {
 	err2 := ruleEngine.LoadDeviceWithCtx(dev, ctx, cancelCTX)
 	if err2 != nil {
 		glogger.GLogger.Error(err2)
-		// return err2
+		return err2
 	}
 	go StartDeviceSupervisor(ctx, dev, ruleEngine)
 	return nil
