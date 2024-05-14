@@ -235,7 +235,7 @@ func LoadRuleLibGroup(r *typex.Rule, e typex.Rhilex) {
 *
  */
 func LoadExtLuaLib(e typex.Rhilex, r *typex.Rule) error {
-	for _, s := range core.GlobalConfig.ExtLibs.Value {
+	for _, s := range core.GlobalConfig.Extlibs.Value {
 		err := r.LoadExternLuaLib(s)
 		if err != nil {
 			return err

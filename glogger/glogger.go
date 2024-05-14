@@ -16,10 +16,12 @@ import (
 var Logrus *logrus.Logger = logrus.New()
 var GLogger *logrus.Entry
 
-func StartGLogger(appId string, LogLevel string, EnableConsole bool,
-	AppDebugMode bool, LogPath string, LogMaxSize,
-	LogMaxBackups, LogMaxAge int, LogCompress bool) {
-	GLogger = Logrus.WithField("appId", appId)
+func StartGLogger(LogLevel string,
+	EnableConsole bool,
+	AppDebugMode bool,
+	path string,
+	key string, value interface{}) {
+	GLogger = Logrus.WithField("appId", value)
 	Logrus.Formatter = new(logrus.JSONFormatter)
 	if AppDebugMode {
 		Logrus.SetReportCaller(true)
@@ -28,11 +30,11 @@ func StartGLogger(appId string, LogLevel string, EnableConsole bool,
 		Logrus.SetOutput(os.Stdout)
 	} else {
 		Logrus.SetOutput(&lumberjack.Logger{
-			Filename:   LogPath + ".txt",
-			MaxSize:    LogMaxSize,    // 超过10Mb备份
-			MaxBackups: LogMaxBackups, // 最多备份3次
-			MaxAge:     LogMaxAge,     // 最大保留天数
-			Compress:   LogCompress,   // 压缩备份
+			Filename:   path + ".txt",
+			MaxSize:    10,   // 超过10Mb备份
+			MaxBackups: 3,    // 最多备份2次
+			MaxAge:     7,    // 最大保留天数
+			Compress:   true, // 压缩备份
 		})
 	}
 

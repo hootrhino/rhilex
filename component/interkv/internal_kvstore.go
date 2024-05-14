@@ -26,8 +26,9 @@ import (
 
 var GlobalStore typex.XStore
 
-func InitInterKVStore(maxSize int) {
+func StartStore(maxSize int) {
 	GlobalStore = NewRhilexStore(maxSize)
+
 }
 
 type RhilexStore struct {
