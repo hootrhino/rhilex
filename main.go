@@ -61,8 +61,8 @@ func init() {
 //go:generate bash ./gen_info.sh
 func main() {
 	app := &cli.App{
-		Name:  "rhilex",
-		Usage: "For more documentation, please refer to: http://rhilex.hootrhino.com",
+		Name:  "RHILEX Gateway FrameWork",
+		Usage: "Homepage: http://rhilex.hootrhino.com",
 		Commands: []*cli.Command{
 			{
 				Name:  "run",
@@ -290,37 +290,6 @@ func main() {
 						return nil
 					}
 					return fmt.Errorf("[LICENCE ACTIVE]: Active not supported on current distribution.")
-				},
-			},
-			{
-				Name:   "validate",
-				Usage:  "validate rhilex license",
-				Hidden: true,
-				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:  "key",
-						Usage: "license key path",
-					},
-					&cli.StringFlag{
-						Name:  "lic",
-						Usage: "license path",
-					},
-				},
-				Action: func(c *cli.Context) error {
-					keyPath := c.String("key")
-					if keyPath == "" {
-						return fmt.Errorf("[LICENCE ACTIVE]: missing admin 'key' parameter")
-					}
-					licPath := c.String("lic")
-					if licPath == "" {
-						return fmt.Errorf("[LICENCE ACTIVE]: missing admin 'lic' parameter")
-					}
-					LocalLicense, err := utils.ValidateLicense(keyPath, licPath)
-					if err != nil {
-						return fmt.Errorf("[LICENCE ACTIVE]: Validate License Failed: %s", err.Error())
-					}
-					fmt.Println(LocalLicense.ToString())
-					return nil
 				},
 			},
 			// version

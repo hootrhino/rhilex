@@ -56,14 +56,25 @@ type LicenseManager struct {
 func NewLicenseManager(r typex.Rhilex) *LicenseManager {
 	return &LicenseManager{}
 }
-func validateLicense(key_path, license_path string) error {
+
+func (dm *LicenseManager) Init(section *ini.Section) error {
+	license_path, err1 := section.GetKey("license_path")
 	errMsg := "License loading failed. Your License may not be compliant."
-	licBytesB64, err := os.ReadFile(license_path)
+	if err1 != nil {
+		glogger.GLogger.Fatal()
+		os.Exit(0)
+	}
+	key_path, err := section.GetKey("key_path")
 	if err != nil {
 		glogger.GLogger.Fatal(errMsg)
 		os.Exit(0)
 	}
-	keyBytes, err := os.ReadFile(key_path)
+	licBytesB64, err := os.ReadFile(license_path.String())
+	if err != nil {
+		glogger.GLogger.Fatal(errMsg)
+		os.Exit(0)
+	}
+	keyBytes, err := os.ReadFile(key_path.String())
 	if err != nil {
 		glogger.GLogger.Fatal(errMsg)
 		os.Exit(0)
@@ -120,20 +131,6 @@ func validateLicense(key_path, license_path string) error {
 	fmt.Println("|>>| * End      *", T2s)
 	fmt.Println("[∫∫] -----------------------------------")
 	return nil
-}
-func (dm *LicenseManager) Init(section *ini.Section) error {
-	errMsg := "License loading failed. Your License may not be compliant."
-	license_path, err1 := section.GetKey("license_path")
-	if err1 != nil {
-		glogger.GLogger.Fatal(errMsg)
-		os.Exit(0)
-	}
-	key_path, err2 := section.GetKey("key_path")
-	if err2 != nil {
-		glogger.GLogger.Fatal(errMsg)
-		os.Exit(0)
-	}
-	return validateLicense(key_path.String(), license_path.String())
 }
 
 // Start 未实现
