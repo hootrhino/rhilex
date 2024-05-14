@@ -38,7 +38,6 @@ require (
 	github.com/muka/go-bluetooth v0.0.0-20240115085408-dfdf79b8f61d
 	github.com/nats-io/nats.go v1.33.1
 	github.com/patrikeh/go-deep v0.0.0-20230427173908-a2775168ab3d
-	github.com/pkg6/go-sms v0.1.2
 	github.com/plgd-dev/go-coap/v3 v3.3.3
 	github.com/plgd-dev/kit/v2 v2.0.0-20211006190727-057b33161b90
 	github.com/robfig/cron/v3 v3.0.1
@@ -80,7 +79,6 @@ require (
 	github.com/inconshreveable/log15 v3.0.0-testing.3+incompatible // indirect
 	github.com/inconshreveable/log15/v3 v3.0.0-testing.5 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
-	github.com/pkg6/go-requests v0.2.2 // indirect
 	golang.ngrok.com/muxado/v2 v2.0.0 // indirect
 	golang.org/x/term v0.19.0 // indirect
 )
