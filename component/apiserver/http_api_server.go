@@ -414,6 +414,27 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		userLuaApi.GET("/search", server.AddRoute(apis.SearchUserLuaTemplateGroup))
 	}
 
+	/*
+	*
+	* 模型管理
+	*
+	 */
+	schemaApi := server.RouteGroup(server.ContextUrl("/schema"))
+	{
+		// 物模型
+		schemaApi.POST("/create", server.AddRoute(apis.CreateDataSchema))
+		schemaApi.DELETE("/del", server.AddRoute(apis.DeleteDataSchema))
+		schemaApi.PUT("/update", server.AddRoute(apis.UpdateDataSchema))
+		schemaApi.GET("/list", server.AddRoute(apis.ListDataSchema))
+		schemaApi.GET(("/detail"), server.AddRoute(apis.DataSchemaDetail))
+		// 属性
+		schemaApi.POST(("/properties/create"), server.AddRoute(apis.CreateIotSchemaProperty))
+		schemaApi.PUT(("/properties/update"), server.AddRoute(apis.UpdateIotSchemaProperty))
+		schemaApi.DELETE(("/properties/del"), server.AddRoute(apis.DeleteIotSchemaProperty))
+		schemaApi.GET(("/properties/list"), server.AddRoute(apis.IotSchemaPropertyPageList))
+		schemaApi.GET(("/properties/detail"), server.AddRoute(apis.IotSchemaPropertyDetail))
+
+	}
 	trailerApi := server.RouteGroup(server.ContextUrl("/goods"))
 	{
 		trailerApi.GET("/list", server.AddRoute(apis.GoodsList))
@@ -424,6 +445,15 @@ func (hs *ApiServerPlugin) LoadRoute() {
 		trailerApi.PUT("/start", server.AddRoute(apis.StartGoods))
 		trailerApi.PUT("/stop", server.AddRoute(apis.StopGoods))
 		trailerApi.DELETE("/", server.AddRoute(apis.DeleteGoods))
+	}
+	// 数据中心
+	dataCenterApi := server.RouteGroup(server.ContextUrl("/dataCenter"))
+	{
+		dataCenterApi.GET("/schema/define", server.AddRoute(apis.GetSchemaDefine))
+		dataCenterApi.GET("/schema/detail", server.AddRoute(apis.GetSchemaDetail))
+		dataCenterApi.GET("/schema/list", server.AddRoute(apis.GetSchemaList))
+		dataCenterApi.GET("/schema/defineList", server.AddRoute(apis.GetSchemaDefineList))
+		dataCenterApi.POST("/data/query", server.AddRoute(apis.GetQueryData))
 	}
 	// 硬件接口API
 	HwIFaceApi := server.DefaultApiServer.GetGroup(server.ContextUrl("/hwiface"))
@@ -469,14 +499,9 @@ func (hs *ApiServerPlugin) LoadRoute() {
 	//
 	//New Api
 	//
-	//Shelly
 	shelly.InitShellyRoute()
-	// Snmp Route
+	//
 	apis.InitSnmpRoute()
-	// Data Schema
-	apis.InitDataSchemaApi()
-	// Data Center
-	apis.InitDataCenterApi()
 }
 
 // ApiServerPlugin Start

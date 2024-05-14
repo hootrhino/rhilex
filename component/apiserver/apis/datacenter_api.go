@@ -1,4 +1,4 @@
-// Copyright (C) 2024 wwhai
+// Copyright (C) 2023 wwhai
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -11,130 +11,89 @@
 // GNU Affero General Public License for more details.
 //
 // You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package apis
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
+	"github.com/hootrhino/rhilex/component/datacenter"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
-	"github.com/hootrhino/rhilex/component/apiserver/server"
-	"github.com/hootrhino/rhilex/component/apiserver/service"
-	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/typex"
 )
 
-type SchemaDDLVo struct {
-}
-
-func InitDataCenterApi() {
-	datacenterApi := server.RouteGroup(server.ContextUrl("/datacenter"))
-	datacenterApi.GET("/listSchemaDDL", server.AddRoute(ListSchemaDDL))
-	datacenterApi.GET("/schemaDDLDetail", server.AddRoute(SchemaDDLDetail))
-	datacenterApi.GET("/queryDataList", server.AddRoute(QueryDDLDataList))
-	datacenterApi.GET("/queryLastData", server.AddRoute(QueryDDLLastData))
-	datacenterApi.GET("/exportData", server.AddRoute(ExportData))
-
-}
-
 /*
 *
-* 列表, 先获取数据模型，然后拼接Table(CREATE TABLE data_center_0002)
+* 获取仓库细节
 *
  */
-func ListSchemaDDL(c *gin.Context, ruleEngine typex.Rhilex) {
-	DataSchemas := []IoTSchemaVo{}
-	for _, vv := range service.AllDataSchema() {
-		IoTSchemaVo := IoTSchemaVo{
-			UUID:        vv.UUID,
-			Published:   vv.Published,
-			Name:        vv.Name,
-			Description: vv.Description,
-		}
-		DataSchemas = append(DataSchemas, IoTSchemaVo)
-	}
-	c.JSON(common.HTTP_OK, common.OkWithData(DataSchemas))
-}
-
-/*
-*
-* 详情, 先返回DDL算了
-*
- */
-func SchemaDDLDetail(c *gin.Context, ruleEngine typex.Rhilex) {
+func GetSchemaDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
-	TableSchemas, err := service.GetTableSchema(uuid)
+	schema := datacenter.GetSchemaDetail(uuid)
+	c.JSON(common.HTTP_OK, common.OkWithData(schema))
+}
+
+/*
+*
+* 获取仓库列表
+*
+ */
+func GetSchemaDefineList(c *gin.Context, ruleEngine typex.Rhilex) {
+	Column, err := datacenter.SchemaDefineList()
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	c.JSON(common.HTTP_OK, common.OkWithData(TableSchemas))
+	c.JSON(common.HTTP_OK, common.OkWithData(Column))
 }
 
 /*
 *
-* 导出
+* 获取单个仓库的表结构定义
 *
  */
-func ExportData(c *gin.Context, ruleEngine typex.Rhilex) {
-	c.JSON(common.HTTP_OK, common.Ok())
-}
-
-/*
-*
-* 分页查找
-*
- */
-func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
+func GetSchemaDefine(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
-	order, _ := c.GetQuery("order")
-	selectFields, _ := c.GetQueryArray("select")
-	pager, err := service.ReadPageRequest(c)
+	Schema, err := datacenter.GetSchemaDefine(uuid)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	DbTx := interdb.DB().Scopes(service.Paginate(*pager))
-	records := []map[string]any{}
-	tableName := fmt.Sprintf("data_center_%s", uuid)
-	Order := "DESC"
-	if order == "DESC" || order == "ASC" {
-		Order = order
-	}
-	result := DbTx.Select(selectFields).Table(tableName).Order("ts " + Order).Scan(&records)
-	if result.Error != nil {
-		c.JSON(common.HTTP_OK, common.Error400(result.Error))
+	if Schema.UUID == "" {
+		c.JSON(common.HTTP_OK, common.Error("Schema not found"))
 		return
 	}
-	var count int64
-	err2 := DbTx.Table(tableName).Count(&count).Error
-	if err2 != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err2))
-		return
-	}
-	Result := service.WrapPageResult(*pager, records, count)
-	c.JSON(common.HTTP_OK, common.OkWithData(Result))
+	c.JSON(common.HTTP_OK, common.OkWithData(Schema))
 }
 
 /*
 *
-* 最新数据
+* 获取仓库结构列表
 *
  */
-func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
-	uuid, _ := c.GetQuery("uuid")
-	selectFields, _ := c.GetQueryArray("select")
+func GetSchemaList(c *gin.Context, ruleEngine typex.Rhilex) {
+	c.JSON(common.HTTP_OK, common.OkWithData(datacenter.SchemaList()))
+}
 
-	tableName := fmt.Sprintf("data_center_%s", uuid)
-	record := map[string]any{}
-	result := interdb.DB().Select(selectFields).
-		Table(tableName).
-		Order("ts DESC").Limit(1).Find(&record)
-	if result.Error != nil {
-		c.JSON(common.HTTP_OK, common.Error400(result.Error))
+/*
+*
+* 执行查询
+*
+ */
+func GetQueryData(c *gin.Context, ruleEngine typex.Rhilex) {
+	type Form struct {
+		Uuid  string `json:"uuid,omitempty"`
+		Query string `json:"query,omitempty"`
+	}
+	form := Form{}
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	c.JSON(common.HTTP_OK, common.OkWithData(record))
+	Column, err := datacenter.Query(form.Uuid, form.Query)
+	if err != nil {
+		c.JSON(common.HTTP_OK, common.Error400(err))
+		return
+	}
+	c.JSON(common.HTTP_OK, common.OkWithData(Column))
 }

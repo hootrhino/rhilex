@@ -2,45 +2,15 @@ package apis
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hootrhino/rhilex/component/interdb"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
-	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
-	"github.com/hootrhino/rhilex/component/datacenter"
-	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
-	"gorm.io/gorm"
 )
-
-/*
-*
-* 模型管理
-*
- */
-func InitDataSchemaApi() {
-
-	schemaApi := server.RouteGroup(server.ContextUrl("/schema"))
-	{
-		// 物模型
-		schemaApi.POST("/create", server.AddRoute(CreateDataSchema))
-		schemaApi.DELETE("/del", server.AddRoute(DeleteDataSchema))
-		schemaApi.PUT("/update", server.AddRoute(UpdateDataSchema))
-		schemaApi.GET("/list", server.AddRoute(ListDataSchema))
-		schemaApi.GET(("/detail"), server.AddRoute(DataSchemaDetail))
-		schemaApi.POST(("/publish"), server.AddRoute(PublishSchema))
-		// 属性
-		schemaApi.POST(("/properties/create"), server.AddRoute(CreateIotSchemaProperty))
-		schemaApi.PUT(("/properties/update"), server.AddRoute(UpdateIotSchemaProperty))
-		schemaApi.DELETE(("/properties/del"), server.AddRoute(DeleteIotSchemaProperty))
-		schemaApi.GET(("/properties/list"), server.AddRoute(IotSchemaPropertyPageList))
-		schemaApi.GET(("/properties/detail"), server.AddRoute(IotSchemaPropertyDetail))
-
-	}
-}
 
 /*
 *
@@ -49,7 +19,6 @@ func InitDataSchemaApi() {
  */
 type IoTSchemaVo struct {
 	UUID        string `json:"uuid,omitempty"`
-	Published   bool   `json:"published"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
@@ -157,7 +126,6 @@ func CreateDataSchema(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	MIotSchema := model.MIotSchema{
 		UUID:        utils.DataSchemaUuid(),
-		Published:   false,
 		Name:        IoTSchemaVo.Name,
 		Description: IoTSchemaVo.Description,
 	}
@@ -209,72 +177,6 @@ func DeleteDataSchema(c *gin.Context, ruleEngine typex.Rhilex) {
 
 /*
 *
-* 发布模型
-*
- */
-func PublishSchema(c *gin.Context, ruleEngine typex.Rhilex) {
-	uuid, _ := c.GetQuery("uuid")
-	MSchema, err := service.GetDataSchemaWithUUID(uuid)
-	if err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
-	if MSchema.Published {
-		c.JSON(common.HTTP_OK, common.Error("Already published"))
-		return
-	}
-	var records []model.MIotProperty
-	result := interdb.DB().Order("created_at DESC").
-		Find(&records, &model.MIotProperty{SchemaId: MSchema.UUID})
-	if result.Error != nil {
-		c.JSON(common.HTTP_OK, common.Error400(result.Error))
-		return
-	}
-	DDLColumns := []datacenter.DDLColumn{}
-
-	DDLColumns = append(DDLColumns, datacenter.DDLColumn{
-		Name: "id", Type: "int", Description: "PRIMARY KEY",
-	})
-	DDLColumns = append(DDLColumns, datacenter.DDLColumn{
-		Name: "ts", Type: "int", Description: "Timestamp",
-	})
-	for _, record := range records {
-		DDLColumns = append(DDLColumns, datacenter.DDLColumn{
-			Name:        record.Name,
-			Type:        record.Type,
-			Description: record.Description,
-		})
-	}
-	txErr := interdb.DB().Transaction(func(tx *gorm.DB) error {
-		// Publish Schema
-		MSchema.Published = true
-		err3 := tx.Model(MSchema).Where("uuid=?", MSchema.UUID).Updates(&MSchema).Error
-		if err3 != nil {
-			return err3
-		}
-		// 发布完了还得生成表结构
-		tableName := fmt.Sprintf("data_center_%s", MSchema.UUID)
-		sql, err1 := datacenter.GenerateSQLiteCreateTableDDL(datacenter.SchemaDDL{
-			SchemaUUID: tableName,
-			DDLColumns: DDLColumns,
-		})
-		if err1 != nil {
-			return err1
-		}
-		if err2 := tx.Exec(sql).Error; err2 != nil {
-			return err2
-		}
-		return nil
-	})
-	if txErr != nil {
-		c.JSON(common.HTTP_OK, common.Error400(txErr))
-		return
-	}
-	c.JSON(common.HTTP_OK, common.Ok())
-}
-
-/*
-*
 * 模型列表
 *
  */
@@ -283,7 +185,6 @@ func ListDataSchema(c *gin.Context, ruleEngine typex.Rhilex) {
 	for _, vv := range service.AllDataSchema() {
 		IoTSchemaVo := IoTSchemaVo{
 			UUID:        vv.UUID,
-			Published:   vv.Published,
 			Name:        vv.Name,
 			Description: vv.Description,
 		}
@@ -306,7 +207,6 @@ func DataSchemaDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	IoTSchemaVo := IoTSchemaVo{
 		UUID:        MIotSchema.UUID,
-		Published:   MIotSchema.Published,
 		Name:        MIotSchema.Name,
 		Description: MIotSchema.Description,
 	}

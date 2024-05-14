@@ -22,8 +22,7 @@ package model
  */
 type MIotSchema struct {
 	RhilexModel
-	UUID        string `gorm:"not null"` // uuid
-	Published   bool   `gorm:"not null"` // 是否发布
+	UUID        string `gorm:"not null"`
 	Name        string `gorm:"not null"` // 名称
 	Description string // 额外信息
 }
