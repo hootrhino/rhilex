@@ -29,7 +29,7 @@ func NewYolo8ObjectDetectionCpu() XAlgorithm {
 	}
 }
 func (Yolo8 *Yolo8ObjectDetectionCpu) Init(Config map[string]interface{}) error {
-	return fmt.Errorf("NOT support Arm64")
+	return fmt.Errorf("NOT support Arm32")
 }
 func (Yolo8 *Yolo8ObjectDetectionCpu) Load() error {
 	return nil

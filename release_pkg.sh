@@ -63,7 +63,7 @@ build_mips32linux() {
 }
 #------------------------------------------
 cross_compile() {
-    ARCHS=("arm64linux" "arm32linux" "x64linux")
+    ARCHS=("arm64linux" "arm32linux")
     if [ ! -d "./_release/" ]; then
         mkdir -p ./_release/
     else
