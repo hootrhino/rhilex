@@ -25,6 +25,7 @@ type XQueue interface {
 	GetDeviceQueue() chan QueueData
 	GetSize() int
 	Push(QueueData) error
+	PushQueue(QueueData) error
 	PushInQueue(in *typex.InEnd, data string) error
 	PushOutQueue(in *typex.OutEnd, data string) error
 	PushDeviceQueue(in *typex.Device, data string) error
@@ -95,6 +96,22 @@ func (q *DataCacheQueue) Push(d QueueData) error {
 		return nil
 	}
 }
+func processQueueData(xQueue XQueue) {
+	select {
+	case qd := <-xQueue.GetInQueue():
+		if qd.I != nil {
+			qd.E.RunSourceCallbacks(qd.I, qd.Data)
+		}
+	case qd := <-xQueue.GetDeviceQueue():
+		if qd.D != nil {
+			qd.E.RunDeviceCallbacks(qd.D, qd.Data)
+		}
+	case qd := <-xQueue.GetOutQueue():
+		processOutQueueData(qd, qd.E)
+	case <-xQueue.GetQueue():
+		// 马上废弃
+	}
+}
 
 func processOutQueueData(qd QueueData, e typex.Rhilex) {
 	if qd.O != nil {
@@ -152,31 +169,101 @@ func (q *DataCacheQueue) GetDeviceQueue() chan QueueData {
 
 // TODO: 下个版本更换为可扩容的Chan
 func StartDataCacheQueue() {
-	ctx := typex.GCTX
-	xQueue := DefaultDataCacheQueue
+
 	go func(ctx context.Context, xQueue XQueue) {
-		ticker := time.NewTicker(100 * time.Millisecond)
-		defer ticker.Stop()
 		for {
 			select {
 			case <-ctx.Done():
-				// 优雅地处理上下文取消
 				return
-			case qd := <-xQueue.GetInQueue():
-				if qd.I != nil {
-					qd.E.RunSourceCallbacks(qd.I, qd.Data)
-				}
-			case qd := <-xQueue.GetDeviceQueue():
-				if qd.D != nil {
-					qd.E.RunDeviceCallbacks(qd.D, qd.Data)
-				}
-			case qd := <-xQueue.GetOutQueue():
-				processOutQueueData(qd, qd.E)
-			case <-ticker.C:
-
+			case <-time.After(100 * time.Millisecond):
+				processQueueData(xQueue)
 			}
 		}
-	}(ctx, xQueue)
+		// for {
+		// 	select {
+		// 	case <-ctx.Done():
+		// 		return
+		// 	case <-time.After(100 * time.Millisecond):
+
+		// 		select {
+		// 		case qd := <-xQueue.GetInQueue():
+		// 			{
+		// 				if qd.I != nil {
+		// 					qd.E.RunSourceCallbacks(qd.I, qd.Data)
+		// 				}
+		// 			}
+		// 		case qd := <-xQueue.GetDeviceQueue():
+		// 			{
+		// 				if qd.D != nil {
+		// 					qd.E.RunDeviceCallbacks(qd.D, qd.Data)
+		// 				}
+		// 			}
+		// 		case qd := <-xQueue.GetOutQueue():
+		// 			{
+		// 				if qd.O != nil {
+		// 					v, ok := qd.E.AllOutEnds().Load(qd.O.UUID)
+		// 					if ok {
+		// 						target := v.(*typex.OutEnd).Target
+		// 						if target == nil {
+		// 							continue
+		// 						}
+		// 						if _, err := target.To(qd.Data); err != nil {
+		// 							glogger.GLogger.Error(err)
+		// 							intermetric.IncOutFailed()
+		// 						} else {
+		// 							intermetric.IncOut()
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		case qd := <-xQueue.GetQueue(): // 马上废弃
+		// 			{
+		// 				if qd.I != nil {
+		// 					qd.E.RunSourceCallbacks(qd.I, qd.Data)
+		// 				}
+		// 				if qd.D != nil {
+		// 					qd.E.RunDeviceCallbacks(qd.D, qd.Data)
+		// 				}
+		// 				if qd.O != nil {
+		// 					v, ok := qd.E.AllOutEnds().Load(qd.O.UUID)
+		// 					if ok {
+		// 						target := v.(*typex.OutEnd).Target
+		// 						if target == nil {
+		// 							continue
+		// 						}
+		// 						if _, err := target.To(qd.Data); err != nil {
+		// 							glogger.GLogger.Error(err)
+		// 							intermetric.IncOutFailed()
+		// 						} else {
+		// 							intermetric.IncOut()
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		default:
+		// 			{
+		// 				break
+		// 			}
+		// 		}
+		// 	}
+		// }
+	}(typex.GCTX, DefaultDataCacheQueue)
+}
+
+/*
+*
+*
+*
+ */
+func (q *DataCacheQueue) PushQueue(qd QueueData) error {
+	err := DefaultDataCacheQueue.Push(qd)
+	if err != nil {
+		glogger.GLogger.Error("PushInQueue error:", err)
+		intermetric.IncInFailed()
+	} else {
+		intermetric.IncIn()
+	}
+	return err
 }
 
 /*
