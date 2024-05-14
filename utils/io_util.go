@@ -86,13 +86,13 @@ func SliceReceiveWithoutError(ctx context.Context,
 * 通过一个定时时间片读取
 *
  */
-func SliceReceive(ctx context.Context, iio io.Reader, resultBuffer []byte,
-	showError bool, td time.Duration) (int, error) {
+func SliceReceive(ctx context.Context,
+	iio io.Reader, resultBuffer []byte,
+	showError bool,
+	td time.Duration) (int, error) {
+	var peerCount int
 	sliceTimer := time.NewTimer(td)
 	sliceTimer.Stop()
-	var errR error
-	peerCount := 0
-	readCount := 0
 	for {
 		select {
 		case <-ctx.Done():
@@ -100,16 +100,20 @@ func SliceReceive(ctx context.Context, iio io.Reader, resultBuffer []byte,
 		case <-sliceTimer.C:
 			return peerCount, nil
 		default:
-		}
-		readCount, errR = iio.Read(resultBuffer[peerCount:])
-		if errR != nil {
-			if showError {
-				return peerCount, errR
+			readCount, errR := iio.Read(resultBuffer[peerCount:])
+			// Note:当串口设置超时以后会输出：
+			//    This operation returned because the timeout period expired.
+			// 因此这里需要过滤这个异常, 当出现这个异常信息的时候认为其是正常的
+			//
+			if errR != nil {
+				if showError {
+					return peerCount, errR
+				}
 			}
-		}
-		if readCount != 0 {
-			sliceTimer.Reset(td)
-			peerCount += readCount
+			if readCount != 0 {
+				sliceTimer.Reset(td)
+				peerCount += readCount
+			}
 		}
 	}
 }
