@@ -71,8 +71,6 @@ func formatValue(val interface{}) (string, error) {
 		} else {
 			return "0", nil
 		}
-	case time.Time:
-		return fmt.Sprintf("'%s'", v.Format("2006-01-02 15:04:05")), nil
 	default:
 		return "", fmt.Errorf("unsupported type: %s", reflect.TypeOf(val))
 	}
