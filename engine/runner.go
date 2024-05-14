@@ -21,6 +21,7 @@ import (
 	"strings"
 	"syscall"
 
+	frpc "github.com/hootrhino/rhilex/plugin/frpc"
 	wdog "github.com/hootrhino/rhilex/plugin/generic_watchdog"
 	modbusscrc "github.com/hootrhino/rhilex/plugin/modbus_crc_tools"
 	modbusscanner "github.com/hootrhino/rhilex/plugin/modbus_scanner"
@@ -121,6 +122,9 @@ func loadPlugin(engine typex.Rhilex) {
 		}
 		if name == "soft_wdog" {
 			plugin = wdog.NewGenericWatchDog()
+		}
+		if name == "frpc" {
+			plugin = frpc.NewFrpcProxy()
 		}
 		if name == "ngrokc" {
 			plugin = ngrokc.NewNgrokClient()
