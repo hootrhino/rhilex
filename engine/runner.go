@@ -30,7 +30,7 @@ import (
 	usbmonitor "github.com/hootrhino/rhilex/plugin/usb_monitor"
 	"gopkg.in/ini.v1"
 
-	apiServer "github.com/hootrhino/rhilex/component/apiserver"
+	httpserver "github.com/hootrhino/rhilex/component/apiserver"
 	"github.com/hootrhino/rhilex/component/interkv"
 	core "github.com/hootrhino/rhilex/config"
 	"github.com/hootrhino/rhilex/glogger"
@@ -64,18 +64,21 @@ func RunRhilex(iniPath string) {
 	signal.Notify(c, syscall.SIGINT, syscall.SIGABRT, syscall.SIGTERM)
 	engine := InitRuleEngine(mainConfig)
 	engine.Start()
+	// Load Http api Server
+	httpServer := httpserver.NewHttpApiServer(engine)
+	if err := engine.LoadPlugin("plugin.http_server", httpServer); err != nil {
+		glogger.GLogger.Error(err)
+		return
+	}
 	license_manager := license_manager.NewLicenseManager(engine)
 	if err := engine.LoadPlugin("plugin.license_manager", license_manager); err != nil {
 		glogger.GLogger.Error(err)
 		return
 	}
-	apiServer := apiServer.NewHttpApiServer(engine)
-	if err := engine.LoadPlugin("plugin.http_server", apiServer); err != nil {
-		glogger.GLogger.Error(err)
-		return
-	}
+
 	// Load Plugin
 	loadPlugin(engine)
+
 	s := <-c
 	glogger.GLogger.Warn("RHILEX Receive Stop Signal: ", s)
 	typex.GCancel()

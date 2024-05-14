@@ -202,20 +202,11 @@ func main() {
 						utils.CLog("[DATA RECOVER] Remove Old Db File error:%s", err.Error())
 						return nil
 					}
-					if err := os.Remove(ossupport.DataCenterPath); err != nil {
-						utils.CLog("[DATA RECOVER] Remove Old Db File error:%s", err.Error())
-						return nil
-					}
 					utils.CLog("[DATA RECOVER] Remove Old Db File Finished")
 					utils.CLog("[DATA RECOVER] Move New Db File")
 					if err := ossupport.MoveFile(ossupport.RecoveryDbPath,
 						ossupport.RunDbPath); err != nil {
 						utils.CLog("[DATA RECOVER] Move New Db File error:%s", err.Error())
-						return nil
-					}
-					if err := ossupport.MoveFile(ossupport.RecoveryDataCenterPath,
-						ossupport.RunDbPath); err != nil {
-						utils.CLog("[DATA RECOVER] Move DataCenter File error:%s", err.Error())
 						return nil
 					}
 					utils.CLog("[DATA RECOVER] Move New Db File Finished")

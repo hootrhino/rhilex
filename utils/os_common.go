@@ -1,104 +1,14 @@
 package utils
 
 import (
-	"archive/zip"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 	"strings"
 
 	"github.com/hootrhino/rhilex/glogger"
 )
-
-// CreateZip 压缩指定的文件列表到一个ZIP文件中。
-func Zip(zipFilename string, filenames []string) error {
-	// 创建ZIP文件
-	zipFile, err := os.Create(zipFilename)
-	if err != nil {
-		return err
-	}
-	defer zipFile.Close()
-
-	// 创建一个新的ZIP压缩器
-	zipWriter := zip.NewWriter(zipFile)
-	defer zipWriter.Close()
-
-	// 遍历要压缩的文件列表
-	for _, filename := range filenames {
-		// 打开要压缩的文件
-		file, err := os.Open(filename)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-
-		// 获取文件信息
-		info, err := file.Stat()
-		if err != nil {
-			return err
-		}
-
-		// 创建ZIP文件中的文件头
-		header, err := zip.FileInfoHeader(info)
-		if err != nil {
-			return err
-		}
-
-		// 设置压缩文件的名称（在ZIP文件中），不包含路径
-		header.Name = filepath.Base(filename)
-		header.Method = zip.Deflate
-
-		// 将文件头写入ZIP文件
-		writer, err := zipWriter.CreateHeader(header)
-		if err != nil {
-			return err
-		}
-
-		// 将文件内容写入ZIP文件
-		_, err = io.Copy(writer, file)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// 解压缩文件到指定目录
-func Unzip(zipPath string, targetDir string) error {
-	// 打开要解压的 zip 文件
-	zipFile, err := zip.OpenReader(zipPath)
-	if err != nil {
-		return err
-	}
-	defer zipFile.Close()
-
-	// 遍历 zip 文件中的文件并解压
-	for _, file := range zipFile.File {
-		srcFile, err := file.Open()
-		if err != nil {
-			return err
-		}
-		defer srcFile.Close()
-
-		destPath := targetDir + "/" + file.Name
-		destFile, err := os.Create(destPath)
-		if err != nil {
-			return err
-		}
-		defer destFile.Close()
-
-		_, err = io.Copy(destFile, srcFile)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
 
 /*
 *

@@ -1,10 +1,8 @@
 package apis
 
 import (
-	"bytes"
 	"encoding/binary"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -14,7 +12,6 @@ import (
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/ossupport"
 	"github.com/hootrhino/rhilex/typex"
-	"github.com/hootrhino/rhilex/utils"
 )
 
 /*
@@ -28,60 +25,16 @@ func DownloadSqlite(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
-	files := []string{"./rhilex_datacenter.db", "./rhilex.db"}
-	zipFilename := "./backup.zip"
-	if err := utils.Zip(zipFilename, files); err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
+	fileName := "rhilex.db"
 	dir := wd
 	c.Writer.WriteHeader(http.StatusOK)
-	c.FileAttachment(fmt.Sprintf("%s/%s", dir, zipFilename),
-		fmt.Sprintf("rhilex_backup_%d.zip", time.Now().UnixNano()))
+	c.FileAttachment(fmt.Sprintf("%s/%s", dir, fileName),
+		fmt.Sprintf("rhilex_backup_%d_database.db", time.Now().UnixNano()))
 }
 
 /*
 *
 * 上传恢复
-*
- */
-const (
-	zipHeaderBytes = 4
-	zipHeader      = "PK\x03\x04"
-)
-
-// IsValidZip 检查给定的文件路径是否指向一个有效的ZIP文件。
-// 它通过检查文件的头部签名来确定文件是否为ZIP文件。
-func IsValidZip(filePath string) (bool, error) {
-	// 打开文件
-	file, err := os.Open(filePath)
-	if err != nil {
-		return false, fmt.Errorf("Error opening file: %w", err)
-	}
-	defer file.Close()
-	header := make([]byte, zipHeaderBytes)
-	_, err = io.ReadFull(file, header)
-	if err != nil {
-		return false, fmt.Errorf("Error reading file header: %w", err)
-	}
-	isZip := bytes.Equal(header, []byte(zipHeader))
-	return isZip, nil
-}
-
-func FileExists(filePath string) (bool, error) {
-	_, err := os.Stat(filePath)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
-}
-
-/*
-*
-* 上传zip文件, 必须包含数据中心和配置中心两个文件
 *
  */
 func UploadSqlite(c *gin.Context, ruleEngine typex.Rhilex) {
@@ -91,42 +44,21 @@ func UploadSqlite(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.OkWithData(err))
 		return
 	}
-	fileName := "recovery.zip"
-	if err := os.MkdirAll(filepath.Dir(ossupport.DataBackupPath), os.ModePerm); err != nil {
+	fileName := "recovery.db"
+	dir := "./upload/Backup/"
+	if err := os.MkdirAll(filepath.Dir(dir), os.ModePerm); err != nil {
 		c.JSON(common.HTTP_OK, common.OkWithData(err))
 		return
 	}
-	if err := c.SaveUploadedFile(file, ossupport.DataBackupPath+fileName); err != nil {
+	if err := c.SaveUploadedFile(file, dir+fileName); err != nil {
 		c.JSON(common.HTTP_OK, common.OkWithData(err))
 		return
 	}
-	if ok, err := IsValidZip(ossupport.DataBackupPath + fileName); !ok {
-		os.Remove(ossupport.DataBackupPath + fileName)
+	if _, err := ReadSQLiteFileMagicNumber(dir + fileName); err != nil {
 		c.JSON(common.HTTP_OK, common.OkWithData(err))
 		return
 	}
-	// 解压
-	if err := utils.Unzip(ossupport.DataBackupPath+fileName, ossupport.DataBackupPath); err != nil {
-		c.JSON(common.HTTP_OK, common.OkWithData(err))
-		return
-	}
-	if ok, err := FileExists(ossupport.RecoveryDbPath); !ok {
-		c.JSON(common.HTTP_OK, common.OkWithData(err))
-		return
-	}
-	if ok, err := FileExists(ossupport.RecoveryDataCenterPath); !ok {
-		c.JSON(common.HTTP_OK, common.OkWithData(err))
-		return
-	}
-	if _, err := ReadSQLiteFileMagicNumber(ossupport.RecoveryDbPath); err != nil {
-		c.JSON(common.HTTP_OK, common.OkWithData(err))
-		return
-	}
-	if _, err := ReadSQLiteFileMagicNumber(ossupport.RecoveryDataCenterPath); err != nil {
-		c.JSON(common.HTTP_OK, common.OkWithData(err))
-		return
-	}
-	c.JSON(common.HTTP_OK, common.OkWithData("Upload Db Backup Success"))
+	c.JSON(common.HTTP_OK, common.OkWithData(""))
 	ossupport.StartRecoverProcess()
 
 }
