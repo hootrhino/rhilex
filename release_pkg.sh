@@ -2,8 +2,8 @@
 set -e
 APP=rhilex
 RESPOSITORY="https://github.com/hootrhino"
-ARCHS=("arm64linux" "arm32linux" "x64linux")
 
+#
 create_pkg() {
     local target=$1
     local version="$(git describe --tags $(git rev-list --tags --max-count=1))"
@@ -27,6 +27,8 @@ create_pkg() {
     zip -j "$release_dir/$pkg_name" $files_to_include
 }
 
+
+#
 make_zip() {
     if [ -n $1 ]; then
         create_pkg $1
@@ -59,15 +61,16 @@ build_mips64linux() {
 build_mips32linux() {
     make mips32
 }
-
+#------------------------------------------
 cross_compile() {
+    ARCHS=("arm64linux" "arm32linux" "x64linux")
     if [ ! -d "./_release/" ]; then
         mkdir -p ./_release/
     else
         rm -rf ./_release/
         mkdir -p ./_release/
     fi
-    for arch in "${ARCHS[@]}"; do
+    for arch in ${ARCHS[@]}; do
         echo -e "\033[34m [★] Compile target =>\033[43;34m ["$arch"]. \033[0m"
         if [[ "${arch}" == "windows" ]]; then
             build_windows $arch
@@ -100,7 +103,7 @@ cross_compile() {
         fi
     done
 }
-
+# 计算md5
 calculate_and_save_md5() {
     if [ $# -ne 1 ]; then
         echo "Usage: $0 <file_path>"
@@ -115,6 +118,10 @@ calculate_and_save_md5() {
     md5_hash=$(md5sum "$file_path" | awk '{print $1}')
     echo -n "$md5_hash" > md5.sum
 }
+#
+# fetch dashboard
+#
+#!/bin/bash
 
 fetch_dashboard() {
     local owner="hootrhino"
@@ -135,12 +142,19 @@ fetch_dashboard() {
     echo "[√] Extraction complete. www.zip contents have been overwritten to /plugin/apiserver/server/www/."
 }
 
+#
+# gen_changelog
+#
+
 gen_changelog() {
     echo -e "[.]Version Change log:"
     log=$(git log --oneline --pretty=format:" \033[0;31m[*]\033[0m%s\n" $(git describe --abbrev=0 --tags).. | cat)
     echo -e $log
 }
 
+#
+#-----------------------------------
+#
 init_env() {
     if [ ! -d "./_build/" ]; then
         mkdir -p ./_build/
@@ -150,7 +164,9 @@ init_env() {
     fi
 
 }
-
+#
+# 检查是否安装了这些软件
+#
 check_cmd() {
     DEPS=("bash" "git" "jq" "gcc" "make" "x86_64-w64-mingw32-gcc")
     for dep in ${DEPS[@]}; do
@@ -164,16 +180,13 @@ check_cmd() {
     done
 
 }
-main(){
-    check_cmd
-    init_env
-    cp -r $(ls | egrep -v '^_build$') ./_build/
-    cd ./_build/
-    # fetch_dashboard
-    cross_compile
-    gen_changelog
-}
 #
 #-----------------------------------
 #
-main
+check_cmd
+init_env
+cp -r $(ls | egrep -v '^_build$') ./_build/
+cd ./_build/
+# fetch_dashboard
+cross_compile
+gen_changelog
