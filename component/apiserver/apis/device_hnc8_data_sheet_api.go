@@ -77,7 +77,7 @@ func Hnc8PointsExport(c *gin.Context, ruleEngine typex.Rhilex) {
 	}()
 	cell, _ := excelize.CoordinatesToCellName(1, 1)
 	xlsx.SetSheetRow("Sheet1", cell, &Headers)
-	if len(records) > 1 {
+	if len(records) >= 1 {
 		for idx, record := range records[0:] {
 			Row := []string{
 				record.Name, record.Alias, record.ApiFunction, record.Address,

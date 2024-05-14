@@ -68,6 +68,10 @@ func SnmpOidUUID() string {
 	return MakeUUID("SNMP")
 }
 
+func BacnetPointUUID() string {
+	return MakeUUID("BACN")
+}
+
 // 凯帝恩
 func KDNPointUUID() string {
 	return MakeUUID("KDNC")

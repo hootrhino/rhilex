@@ -15,12 +15,18 @@
 
 package model
 
-type MBacnetNode struct {
-	RhilexModel
-	IsMSTP   int    // 是否为 mstp 设备，若是则设备 id 和子网号必须填写
-	DeviceId int    // 设备 id
-	Subnet   int    // 子网号
-	Tag      string // 数据 Tag
-	Type     int    // object 类型
-	Id       int    // object 的 id
+type MBacnetDataPoint struct {
+	RhilexModel    `json:"-"`
+	UUID           string `gorm:"not null"`
+	DeviceUuid     string `gorm:"not null"`
+	Tag            string `gorm:"not null"`
+	Alias          string `gorm:"not null"`
+	BacnetDeviceId int    `gorm:"not null"`
+	ObjectType     string `gorm:"not null"`
+	ObjectId       int    `gorm:"not null"`
+	Frequency      int    `gorm:"not null"`
+}
+
+func (M MBacnetDataPoint) TableName() string {
+	return "m_bacnet_data_points"
 }

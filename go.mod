@@ -3,7 +3,7 @@ module github.com/hootrhino/rhilex
 go 1.22
 
 require (
-	github.com/BeatTime/bacnet v0.2.1
+	github.com/BeatTime/bacnet v0.2.2
 	github.com/DrmagicE/gmqtt v0.5.0
 	github.com/Kowiste/ProfinetServer v0.0.0-20200929093941-9c422ae1f008
 	github.com/adrianmo/go-nmea v1.8.0
@@ -83,6 +83,11 @@ require (
 	github.com/pkg6/go-requests v0.2.2 // indirect
 	golang.ngrok.com/muxado/v2 v2.0.0 // indirect
 	golang.org/x/term v0.19.0 // indirect
+)
+
+require (
+	github.com/samber/lo v1.39.0 // indirect
+	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 )
 
 require (
