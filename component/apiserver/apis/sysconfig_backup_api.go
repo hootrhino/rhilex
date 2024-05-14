@@ -29,7 +29,7 @@ func DownloadSqlite(c *gin.Context, ruleEngine typex.Rhilex) {
 	dir := wd
 	c.Writer.WriteHeader(http.StatusOK)
 	c.FileAttachment(fmt.Sprintf("%s/%s", dir, fileName),
-		fmt.Sprintf("rhilex_backup_%d_database.db", time.Now().UnixNano()))
+		fmt.Sprintf("backup_%d_.db", time.Now().UnixNano()))
 }
 
 /*
