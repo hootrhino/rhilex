@@ -488,12 +488,6 @@ func (e *RuleEngine) RestartDevice(uuid string) error {
  */
 
 func (e *RuleEngine) InitDeviceTypeManager() error {
-	e.DeviceTypeManager.Register(typex.TENCENT_IOTHUB_GATEWAY,
-		&typex.XConfig{
-			Engine:    e,
-			NewDevice: device.NewTencentIoTGateway,
-		},
-	)
 	e.DeviceTypeManager.Register(typex.SMART_HOME_CONTROLLER,
 		&typex.XConfig{
 			Engine:    e,
