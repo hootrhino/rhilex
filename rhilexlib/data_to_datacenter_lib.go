@@ -95,7 +95,7 @@ func InsertToDataCenterTable(rx typex.Rhilex, uuid string) func(L *lua.LState) i
 			// K 只能String
 			if k.Type() == lua.LTString {
 				// create_at 不允许用户填写
-				if Row[0] != "create_at" && Row[0] != "id" {
+				if Row[0] != "create_at" {
 					switch v.Type() {
 					case lua.LTString:
 						Row[0] = lua.LVAsString(k)

@@ -27,7 +27,6 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/xuri/excelize/v2"
-	"gorm.io/gorm"
 )
 
 type SchemaDDLVo struct {
@@ -41,7 +40,6 @@ func InitDataCenterApi() {
 	datacenterApi.GET("/queryLastData", server.AddRoute(QueryDDLLastData))
 	datacenterApi.GET("/exportData", server.AddRoute(ExportData))
 	datacenterApi.GET("/schemaDDLDefine", server.AddRoute(GetSchemaDDLDefine))
-	datacenterApi.DELETE("/clearSchemaData", server.AddRoute(ClearSchemaData))
 }
 
 /*
@@ -161,32 +159,9 @@ func ExportData(c *gin.Context, ruleEngine typex.Rhilex) {
 
 /*
 *
-* 清空
-*
- */
-func ClearSchemaData(c *gin.Context, ruleEngine typex.Rhilex) {
-	uuid, _ := c.GetQuery("uuid")
-	tableName := fmt.Sprintf("data_center_%s", uuid)
-	TxDbError := interdb.DB().Transaction(func(tx *gorm.DB) error {
-		err := tx.Exec(fmt.Sprintf("DELETE FROM %s;", tableName)).Error
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if TxDbError != nil {
-		c.JSON(common.HTTP_OK, common.Error400(TxDbError))
-		return
-	}
-	c.JSON(common.HTTP_OK, common.Ok())
-}
-
-/*
-*
 * 分页查找
 *
  */
-
 func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 	uuid, _ := c.GetQuery("uuid")
 	order, _ := c.GetQuery("order")
@@ -210,13 +185,13 @@ func QueryDDLDataList(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	DbTx := interdb.DB().Scopes(service.Paginate(*pager))
-	records := []map[string]interface{}{}
+	records := []map[string]any{}
 	tableName := fmt.Sprintf("data_center_%s", uuid)
-	// Default order by ts desc
 	Order := "DESC"
 	if order == "DESC" || order == "ASC" {
 		Order = order
 	}
+	// Default order by ts desc
 	result := DbTx.Select(selectFields).Table(tableName).Order("create_at " + Order).Scan(&records)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
@@ -250,17 +225,13 @@ func QueryDDLLastData(c *gin.Context, ruleEngine typex.Rhilex) {
 		return
 	}
 	tableName := fmt.Sprintf("data_center_%s", uuid)
-	record := map[string]interface{}{}
+	record := map[string]any{}
 	result := interdb.DB().Select(selectFields).
-		Table(tableName).Order("create_at DESC").Limit(1).Scan(&record)
+		Table(tableName).
+		Order("create_at DESC").Limit(1).Find(&record)
 	if result.Error != nil {
 		c.JSON(common.HTTP_OK, common.Error400(result.Error))
 		return
-	}
-	for k, v := range record {
-		if v == nil {
-			record[k] = 0
-		}
 	}
 	c.JSON(common.HTTP_OK, common.OkWithData(record))
 }
