@@ -258,10 +258,10 @@ func (e *RuleEngine) RunSourceCallbacks(in *typex.InEnd, callbackArgs string) {
 						LastCall.Name, errA.Error(),
 					)
 				}
-				// _, err0 := ruleengine.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
-				// if err0 != nil {
-				// 	glogger.GLogger.Error(err0)
-				// }
+				_, err0 := ruleengine.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
+				if err0 != nil {
+					glogger.GLogger.Error(err0)
+				}
 			} else {
 				_, errS := ruleengine.ExecuteSuccess(rule.LuaVM)
 				if errS != nil {
@@ -305,10 +305,10 @@ func (e *RuleEngine) RunDeviceCallbacks(Device *typex.Device, callbackArgs strin
 					LastCall.Name, errA.Error(),
 				)
 			}
-			// _, err1 := ruleengine.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
-			// if err1 != nil {
-			// 	glogger.GLogger.Error(err1)
-			// }
+			_, err1 := ruleengine.ExecuteFailed(rule.LuaVM, lua.LString(errA.Error()))
+			if err1 != nil {
+				glogger.GLogger.Error(err1)
+			}
 		} else {
 			_, err2 := ruleengine.ExecuteSuccess(rule.LuaVM)
 			if err2 != nil {

@@ -1,6 +1,7 @@
 package rhilexlib
 
 import (
+	"encoding/json"
 	"errors"
 
 	lua "github.com/hootrhino/gopher-lua"
@@ -37,12 +38,23 @@ func DataToMqttTopic(rx typex.Rhilex, uuid string) func(L *lua.LState) int {
 	}
 }
 
+type mqtt_data struct {
+	Topic   string `json:"topic"`
+	Payload string `json:"payload"`
+}
+
 // 处理MQTT消息
 // 支持自定义MQTT Topic, 需要在Target的to接口来实现这个
-func handleMqttFormat(e typex.Rhilex, uuid string, topic string, incoming string) error {
+func handleMqttFormat(e typex.Rhilex,
+	uuid string,
+	topic string,
+	incoming string) error {
 	outEnd := e.GetOutEnd(uuid)
 	if outEnd != nil {
-		return interqueue.DefaultDataCacheQueue.PushOutQueue(outEnd, incoming)
+		bytes, _ := json.Marshal(mqtt_data{
+			Topic: topic, Payload: incoming,
+		})
+		return interqueue.DefaultDataCacheQueue.PushOutQueue(outEnd, string(bytes))
 	}
 	msg := "target not found:" + uuid
 	glogger.GLogger.Error(msg)
