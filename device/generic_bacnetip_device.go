@@ -5,16 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"net"
 	"time"
-
-	"github.com/hootrhino/rhilex/component/apiserver/model"
-	"github.com/hootrhino/rhilex/component/intercache"
-	"github.com/hootrhino/rhilex/component/interdb"
 
 	bacnet "github.com/hootrhino/gobacnet"
 	"github.com/hootrhino/gobacnet/apdus"
 	"github.com/hootrhino/gobacnet/btypes"
+	"github.com/hootrhino/rhilex/component/intercache"
 
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
@@ -42,10 +40,18 @@ type bacnetDataPoint struct {
 
 	property btypes.PropertyData
 }
+
 type BacnetMainConfig struct {
 	BacnetConfig bacnetConfig       `json:"bacnetConfig" validate:"required"`
 	CommonConfig bacnetCommonConfig `json:"commonConfig" validate:"required"`
 }
+
+type bacnetDataPointConfig struct {
+	BacnetDeviceId uint32 `json:"bacnetDeviceId"`
+	ObjectType     string `json:"objectType"`
+	ObjectId       uint32 `json:"objectId"`
+}
+
 type GenericBacnetIpDevice struct {
 	typex.XStatus
 	bacnetClient bacnet.Client
@@ -85,17 +91,22 @@ func (dev *GenericBacnetIpDevice) Init(devId string, configMap map[string]interf
 	if err != nil {
 		return err
 	}
-	var dataPoints []model.MBacnetDataPoint
-	err = interdb.DB().Table("m_bacnet_data_points").
-		Where("device_uuid=?", devId).Find(&dataPoints).Error
-
+	dataPoints, err := service.ListDataPointByUuid(devId)
+	if err != nil {
+		return err
+	}
 	for _, mDataPoint := range dataPoints {
+		config := bacnetDataPointConfig{}
+		err = json.Unmarshal([]byte(mDataPoint.Config), &config)
+		if err != nil {
+			return err
+		}
 		dataPoint := bacnetDataPoint{
 			UUID:           mDataPoint.UUID,
 			Tag:            mDataPoint.Tag,
-			BacnetDeviceId: mDataPoint.BacnetDeviceId,
-			ObjectType:     getObjectTypeByNumber(mDataPoint.ObjectType),
-			ObjectId:       mDataPoint.ObjectId,
+			BacnetDeviceId: config.BacnetDeviceId,
+			ObjectType:     getObjectTypeByNumber(config.ObjectType),
+			ObjectId:       config.ObjectId,
 		}
 		// Cache Value
 		intercache.SetValue(dev.PointId, mDataPoint.UUID, intercache.CacheValue{

@@ -17,11 +17,11 @@ package device
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"time"
 
 	"github.com/hootrhino/rhilex/component/intercache"
-
-	"github.com/hootrhino/rhilex/component/interdb"
 
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
@@ -87,21 +87,26 @@ func (hnc8Cnc *HNC8_CNC) Init(devId string, configMap map[string]interface{}) er
 		glogger.GLogger.Error(err)
 		return err
 	}
-	var hncDataPointList []hncDataPoint
-	errDb := interdb.DB().Table("m_hnc8_data_points").
-		Where("device_uuid=?", devId).Find(&hncDataPointList).Error
-	if errDb != nil {
-		return errDb
+	dataPoints, err := service.ListDataPointByUuid(devId)
+	if err != nil {
+		glogger.GLogger.Error(err)
+		return err
 	}
 	// 加载点位
-	for _, MHncDataPoint := range hncDataPointList {
+	for _, MHncDataPoint := range dataPoints {
+		config := hncDataPoint{}
+		err = json.Unmarshal([]byte(MHncDataPoint.Config), &config)
+		if err != nil {
+			glogger.GLogger.Error(err)
+			return err
+		}
 		hnc8Cnc.mainConfig.HncDataPoints[MHncDataPoint.UUID] = hncDataPoint{
 			UUID:        MHncDataPoint.UUID,
-			Name:        MHncDataPoint.Name,
+			Name:        MHncDataPoint.Tag,
 			Alias:       MHncDataPoint.Alias,
-			ApiFunction: MHncDataPoint.ApiFunction,
-			Group:       MHncDataPoint.Group,
-			Address:     MHncDataPoint.Address,
+			ApiFunction: config.ApiFunction,
+			Group:       config.Group,
+			Address:     config.Address,
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
 		intercache.SetValue(hnc8Cnc.PointId,

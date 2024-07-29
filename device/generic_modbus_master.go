@@ -21,21 +21,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 	golog "log"
 	"sort"
 	"strconv"
 
 	"time"
 
+	modbus "github.com/hootrhino/gomodbus"
 	"github.com/hootrhino/rhilex/common"
 	"github.com/hootrhino/rhilex/component/hwportmanager"
 	intercache "github.com/hootrhino/rhilex/component/intercache"
-	"github.com/hootrhino/rhilex/component/interdb"
-
-	modbus "github.com/hootrhino/gomodbus"
 	core "github.com/hootrhino/rhilex/config"
-	modbus_device "github.com/hootrhino/rhilex/device/modbus"
-
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -73,6 +70,17 @@ type ModbusMasterConfig struct {
 	CommonConfig ModbusMasterCommonConfig `json:"commonConfig" validate:"required"`
 	HostConfig   common.HostConfig        `json:"hostConfig"`
 	PortUuid     string                   `json:"portUuid"`
+}
+
+type ModbusMasterDataPointConfig struct {
+	Function  int     `json:"function"`
+	SlaverId  byte    `json:"slaverId"`
+	Address   uint16  `json:"address"`
+	Frequency int64   `json:"frequency"`
+	Quantity  uint16  `json:"quantity"`
+	DataType  string  `json:"dataType"`
+	DataOrder string  `json:"dataOrder"`
+	Weight    float64 `json:"weight"`
 }
 
 type ModbusMasterGroupedTag struct {
@@ -151,14 +159,18 @@ func (mdev *GenericModbusMaster) Init(devId string, configMap map[string]interfa
 		return errors.New("unsupported mode, only can be one of 'TCP' or 'UART'")
 	}
 	// 合并数据库里面的点位表
-	var ModbusPointList []modbus_device.ModbusPoint
-	modbusPointLoadErr := interdb.DB().Table("m_modbus_data_points").
-		Where("device_uuid=?", devId).Find(&ModbusPointList).Error
-	if modbusPointLoadErr != nil {
-		return modbusPointLoadErr
+
+	dataPoints, err := service.ListDataPointByUuid(devId)
+	if err != nil {
+		return err
 	}
-	for _, ModbusPoint := range ModbusPointList {
+	for _, ModbusPoint := range dataPoints {
 		// 频率不能太快
+		config := ModbusMasterDataPointConfig{}
+		err = json.Unmarshal([]byte(ModbusPoint.Config), &config)
+		if err != nil {
+			return err
+		}
 		if ModbusPoint.Frequency < 50 {
 			return errors.New("'frequency' must grate than 50 millisecond")
 		}
@@ -166,14 +178,14 @@ func (mdev *GenericModbusMaster) Init(devId string, configMap map[string]interfa
 			UUID:      ModbusPoint.UUID,
 			Tag:       ModbusPoint.Tag,
 			Alias:     ModbusPoint.Alias,
-			Function:  ModbusPoint.Function,
-			SlaverId:  ModbusPoint.SlaverId,
-			Address:   ModbusPoint.Address,
-			Quantity:  ModbusPoint.Quantity,
-			Frequency: ModbusPoint.Frequency,
-			DataType:  ModbusPoint.DataType,
-			DataOrder: ModbusPoint.DataOrder,
-			Weight:    ModbusPoint.Weight,
+			Function:  config.Function,
+			SlaverId:  config.SlaverId,
+			Address:   config.Address,
+			Quantity:  config.Quantity,
+			Frequency: int64(ModbusPoint.Frequency),
+			DataType:  config.DataType,
+			DataOrder: config.DataOrder,
+			Weight:    config.Weight,
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
 		intercache.SetValue(mdev.PointId, ModbusPoint.UUID, intercache.CacheValue{

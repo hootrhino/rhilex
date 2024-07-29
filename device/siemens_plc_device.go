@@ -2,6 +2,7 @@ package device
 
 import (
 	"context"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 
 	"encoding/json"
 	"errors"
@@ -14,7 +15,6 @@ import (
 	"github.com/jinzhu/copier"
 
 	"github.com/hootrhino/rhilex/common"
-	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -28,7 +28,7 @@ type __SiemensDataPoint struct {
 	SiemensAddress  string   `json:"siemensAddress"` // 西门子的地址字符串
 	Tag             string   `json:"tag"`
 	Alias           string   `json:"alias"`
-	Frequency       *int64   `json:"frequency"`
+	Frequency       *int     `json:"frequency"`
 	Status          int      `json:"status"`        // 运行时数据
 	LastFetchTime   uint64   `json:"lastFetchTime"` // 运行时数据
 	Value           string   `json:"value"`         // 运行时数据
@@ -40,6 +40,13 @@ type __SiemensDataPoint struct {
 	ElementNumber   int      `json:"-"`             // // 西门子解析后的地址信息: 元素号:1000...
 	DataSize        int      `json:"-"`             // // 西门子解析后的地址信息: 位号,0-8，只针对I、Q
 	BitNumber       int      `json:"-"`             // // 西门子解析后的地址信息: 位号,0-8，只针对I、Q
+}
+
+type SiemensDataPointConfig struct {
+	SiemensAddress string   `json:"siemensAddress"` // 西门子的地址字符串
+	DataBlockType  string   `json:"dataBlockType"`  // // 西门子解析后的地址信息: 数据类型: INT UINT ....
+	DataBlockOrder string   `json:"dataBlockOrder"` //  西门子解析后的地址信息: 数据类型: INT UINT ....
+	Weight         *float64 `json:"weight"`         // 权重
 }
 
 // https://cloudvpn.beijerelectronics.com/hc/en-us/articles/4406049761169-Siemens-S7
@@ -107,35 +114,46 @@ func (s1200 *SIEMENS_PLC) Init(devId string, configMap map[string]interface{}) e
 	// TODO 这里需要优化一下，而不是直接查表这种形式，应该从物模型组件来加载
 	// DataSchema = schema.load(uuid)
 	// DataSchema.update(k, v)
-	var list []__SiemensDataPoint
-	errDb := interdb.DB().Table("m_siemens_data_points").
-		Where("device_uuid=?", devId).Find(&list).Error
-	if errDb != nil {
-		return errDb
+	dataPoints, err := service.ListDataPointByUuid(devId)
+	if err != nil {
+		return err
 	}
 	// 开始解析地址表
-	for _, SiemensDataPoint := range list {
+	for _, point := range dataPoints {
 		// 频率不能太快
-		if *SiemensDataPoint.Frequency < 50 {
+		if point.Frequency < 50 {
 			return errors.New("'frequency' must grate than 50 millisecond")
 		}
-		//
-		AddressInfo, err1 := utils.ParseSiemensDB(SiemensDataPoint.SiemensAddress)
-		if err1 != nil {
-			return err1
+		config := SiemensDataPointConfig{}
+		err = json.Unmarshal([]byte(point.Config), &config)
+		if err != nil {
+			return err
 		}
-		SiemensDataPoint.DataBlockNumber = AddressInfo.DataBlockNumber
-		SiemensDataPoint.ElementNumber = AddressInfo.ElementNumber
-		SiemensDataPoint.AddressType = AddressInfo.AddressType
-		SiemensDataPoint.BitNumber = AddressInfo.BitNumber
-		SiemensDataPoint.DataSize = AddressInfo.DataBlockSize
+
+		//
+		AddressInfo, err := utils.ParseSiemensDB(config.SiemensAddress)
+		if err != nil {
+			return err
+		}
 
 		// 提前缓冲
 		NewSiemensDataPoint := __SiemensDataPoint{}
-		copier.Copy(&NewSiemensDataPoint, &SiemensDataPoint)
-		s1200.__SiemensDataPoints[SiemensDataPoint.UUID] = &NewSiemensDataPoint
-		intercache.SetValue(s1200.PointId, SiemensDataPoint.UUID, intercache.CacheValue{
-			UUID:          SiemensDataPoint.UUID,
+		copier.Copy(&NewSiemensDataPoint, &point)
+		NewSiemensDataPoint.SiemensAddress = config.SiemensAddress
+		NewSiemensDataPoint.DataBlockType = config.DataBlockType
+		NewSiemensDataPoint.DataBlockOrder = config.DataBlockOrder
+		NewSiemensDataPoint.Weight = config.Weight
+		NewSiemensDataPoint.Frequency = &point.Frequency
+
+		NewSiemensDataPoint.DataBlockNumber = AddressInfo.DataBlockNumber
+		NewSiemensDataPoint.ElementNumber = AddressInfo.ElementNumber
+		NewSiemensDataPoint.AddressType = AddressInfo.AddressType
+		NewSiemensDataPoint.BitNumber = AddressInfo.BitNumber
+		NewSiemensDataPoint.DataSize = AddressInfo.DataBlockSize
+
+		s1200.__SiemensDataPoints[point.UUID] = &NewSiemensDataPoint
+		intercache.SetValue(s1200.PointId, point.UUID, intercache.CacheValue{
+			UUID:          point.UUID,
 			Status:        0,
 			LastFetchTime: 0,
 			Value:         "0",

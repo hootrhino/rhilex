@@ -18,15 +18,14 @@ package device
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"net"
 	"time"
 
 	bacnet "github.com/hootrhino/gobacnet"
 	"github.com/hootrhino/gobacnet/apdus"
 	"github.com/hootrhino/gobacnet/btypes"
-	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/intercache"
-	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
@@ -95,15 +94,19 @@ func (br *BacnetRouter) Init(devId string, configMap map[string]interface{}) err
 	if err != nil {
 		return err
 	}
-	var MBacnetRouterDataPoints []model.MBacnetRouterDataPoint
-	err = interdb.DB().Table("m_bacnet_router_data_points").
-		Where("device_uuid=?", devId).Find(&MBacnetRouterDataPoints).Error
+	dataPoints, err := service.ListDataPointByUuid(devId)
 	if err != nil {
 		glogger.GLogger.Error(err)
 		return err
 	}
 	// Map Model to Point
-	for _, mDataPoint := range MBacnetRouterDataPoints {
+	for _, mDataPoint := range dataPoints {
+		config := BacnetRouterDataPoint{}
+		err = json.Unmarshal([]byte(mDataPoint.Config), &config)
+		if err != nil {
+			glogger.GLogger.Error(err)
+			return err
+		}
 		// Cache Value
 		intercache.SetValue(br.PointId, mDataPoint.UUID, intercache.CacheValue{
 			UUID:          mDataPoint.UUID,
@@ -112,15 +115,15 @@ func (br *BacnetRouter) Init(devId string, configMap map[string]interface{}) err
 			Value:         "0",
 			ErrMsg:        "",
 		})
-		br.selfPropertyData[mDataPoint.ObjectId] = apdus.NewAIPropertyWithRequiredFields(mDataPoint.Tag,
-			mDataPoint.ObjectId, float32(0), "-/-")
+		br.selfPropertyData[config.ObjectId] = apdus.NewAIPropertyWithRequiredFields(mDataPoint.Tag,
+			config.ObjectId, float32(0), "-/-")
 		br.selfPropertyDataKeys[mDataPoint.Tag] = struct {
 			UUID string
 			Id   uint32
 			Tag  string
 		}{
 			UUID: mDataPoint.UUID,
-			Id:   mDataPoint.ObjectId,
+			Id:   config.ObjectId,
 			Tag:  mDataPoint.Tag,
 		}
 	}

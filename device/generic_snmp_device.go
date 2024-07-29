@@ -3,6 +3,7 @@ package device
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hootrhino/rhilex/component/apiserver/service"
 	"sync"
 	"time"
 
@@ -91,6 +92,10 @@ type SnmpSchemaProperty struct {
 	Value         any    // 运行时值
 }
 
+type SnmpDataPointConfig struct {
+	Oid string `json:"oid"`
+}
+
 //  初始化
 func (sd *genericSnmpDevice) Init(devId string, configMap map[string]interface{}) error {
 	sd.PointId = devId
@@ -98,23 +103,26 @@ func (sd *genericSnmpDevice) Init(devId string, configMap map[string]interface{}
 	if err := utils.BindSourceConfig(configMap, &sd.mainConfig); err != nil {
 		return err
 	}
-	snmpOids := []snmpOid{}
-	snmpOidLoadErr := interdb.DB().Table("m_snmp_oids").
-		Where("device_uuid=?", devId).Find(&snmpOids).Error
-	if snmpOidLoadErr != nil {
-		return snmpOidLoadErr
+	dataPoints, err := service.ListDataPointByUuid(devId)
+	if err != nil {
+		return err
 	}
-	for _, oid := range snmpOids {
-		sd.snmpOids[oid.UUID] = snmpOid{
-			UUID:      oid.UUID,
-			Oid:       oid.Oid,
-			Tag:       oid.Tag,
-			Alias:     oid.Alias,
-			Frequency: oid.Frequency,
+	for _, dataPoint := range dataPoints {
+		config := SnmpDataPointConfig{}
+		err = json.Unmarshal([]byte(dataPoint.Config), &config)
+		if err != nil {
+			return err
+		}
+		sd.snmpOids[dataPoint.UUID] = snmpOid{
+			UUID:      dataPoint.UUID,
+			Oid:       config.Oid,
+			Tag:       dataPoint.Tag,
+			Alias:     dataPoint.Alias,
+			Frequency: &dataPoint.Frequency,
 		}
 		LastFetchTime := uint64(time.Now().UnixMilli())
-		intercache.SetValue(sd.PointId, oid.UUID, intercache.CacheValue{
-			UUID:          oid.UUID,
+		intercache.SetValue(sd.PointId, dataPoint.UUID, intercache.CacheValue{
+			UUID:          dataPoint.UUID,
 			Status:        0,
 			LastFetchTime: LastFetchTime,
 			Value:         "",
