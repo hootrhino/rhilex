@@ -124,7 +124,16 @@ type MDataPoint struct {
 	Config     string `gorm:"not null"`
 }
 
-func (mdp MDataPoint) GetConfig() map[string]interface{} {
+func (mdp *MDataPoint) SetConfig(config map[string]interface{}) error {
+	result, err := json.Marshal(config)
+	if err != nil {
+		return err
+	}
+	mdp.Config = string(result)
+	return nil
+}
+
+func (mdp *MDataPoint) GetConfig() map[string]interface{} {
 	result := make(map[string]interface{})
 	err := json.Unmarshal([]byte(mdp.Config), &result)
 	if err != nil {

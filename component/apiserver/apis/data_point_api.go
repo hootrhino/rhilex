@@ -81,6 +81,9 @@ func DataPointSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
+	for i := range points {
+		points[i].DeviceUuid = deviceUuid
+	}
 	err = service.BatchDataPointCreate(points)
 	if err != nil {
 		c.JSON(common.HTTP_OK, common.Error400(err))

@@ -10,7 +10,15 @@ func BatchDataPointCreate(list []model.MDataPoint) error {
 }
 
 func BatchDataPointUpdate(list []model.MDataPoint) error {
-	return interdb.DB().Updates(list).Error
+	for i := range list {
+		err := interdb.DB().Model(&model.MDataPoint{}).
+			Where("device_uuid = ? and uuid = ?", list[i].DeviceUuid, list[i].UUID).
+			Updates(list[i]).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func ListDataPointByUuid(deviceUuid string) ([]model.MDataPoint, error) {
