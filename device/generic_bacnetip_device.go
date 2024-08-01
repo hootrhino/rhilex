@@ -46,7 +46,7 @@ type BacnetMainConfig struct {
 	CommonConfig bacnetCommonConfig `json:"commonConfig" validate:"required"`
 }
 
-type bacnetDataPointConfig struct {
+type BacnetDataPointConfig struct {
 	BacnetDeviceId uint32 `json:"bacnetDeviceId"`
 	ObjectType     string `json:"objectType"`
 	ObjectId       uint32 `json:"objectId"`
@@ -96,7 +96,7 @@ func (dev *GenericBacnetIpDevice) Init(devId string, configMap map[string]interf
 		return err
 	}
 	for _, mDataPoint := range dataPoints {
-		config := bacnetDataPointConfig{}
+		config := BacnetDataPointConfig{}
 		err = json.Unmarshal([]byte(mDataPoint.Config), &config)
 		if err != nil {
 			return err
