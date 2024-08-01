@@ -25,6 +25,8 @@ func GetByType(protocol string) (Validator, error) {
 		return BacnetIpValidator{}, nil
 	case typex.SIEMENS_PLC:
 		return SiemensPLCValidator{}, nil
+	case typex.GENERIC_SNMP:
+		return SnmpValidator{}, nil
 	default:
 		return nil, errors.New("valid protocol data point validator not found")
 	}
