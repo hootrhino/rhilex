@@ -28,7 +28,7 @@ type SnmpOidVo struct {
 type SnmpValidator struct {
 }
 
-func (s SnmpValidator) Validate(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
+func (s SnmpValidator) Convert(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
 	point := model.MDataPoint{}
 	if dto.Tag == "" {
 		return point, fmt.Errorf("'Missing required param 'name'")

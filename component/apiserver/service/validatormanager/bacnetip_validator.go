@@ -17,7 +17,7 @@ import (
 type BacnetIpValidator struct {
 }
 
-func (b BacnetIpValidator) Validate(pointDTO dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
+func (b BacnetIpValidator) Convert(pointDTO dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
 	point := model.MDataPoint{}
 	config := device.BacnetDataPointConfig{}
 	err := mapstructure.Decode(pointDTO.Config, &config)

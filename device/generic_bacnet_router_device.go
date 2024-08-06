@@ -57,11 +57,9 @@ type BacnetRouter struct {
 	}
 }
 
-type BacnetRouterDataPoint struct {
-	UUID       string            `json:"uuid"`
-	Tag        string            `json:"tag" validate:"required" title:"数据Tag"`
-	ObjectId   uint32            `json:"id" title:"object的id"`
-	ObjectType btypes.ObjectType `json:"type" title:"object类型"`
+type BacnetRouterDataPointConfig struct {
+	ObjectId   uint32            `json:"objectId" title:"object的id"`
+	ObjectType btypes.ObjectType `json:"objectType" title:"object类型"`
 }
 
 func NewBacnetRouter(e typex.Rhilex) typex.XDevice {
@@ -101,7 +99,7 @@ func (br *BacnetRouter) Init(devId string, configMap map[string]interface{}) err
 	}
 	// Map Model to Point
 	for _, mDataPoint := range dataPoints {
-		config := BacnetRouterDataPoint{}
+		config := BacnetRouterDataPointConfig{}
 		err = json.Unmarshal([]byte(mDataPoint.Config), &config)
 		if err != nil {
 			glogger.GLogger.Error(err)

@@ -206,7 +206,7 @@ func DataPointSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) (any,
 	creates := make([]model.MDataPoint, 0, len(form.Points))
 	updates := make([]model.MDataPoint, 0, len(form.Points))
 	for i := range form.Points {
-		point, err := validator.Validate(form.Points[i])
+		point, err := validator.Convert(form.Points[i])
 		if err != nil {
 			return nil, err
 		}

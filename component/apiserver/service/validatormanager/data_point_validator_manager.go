@@ -9,7 +9,7 @@ import (
 )
 
 type Validator interface {
-	Validate(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error)
+	Convert(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error)
 	ParseImportFile(file *excelize.File) ([]model.MDataPoint, error)
 	Export(file *excelize.File, list []model.MDataPoint) error
 }
@@ -22,6 +22,8 @@ func GetByType(protocol string) (Validator, error) {
 	case typex.GENERIC_MODBUS_SLAVER:
 		return ModbusValidator{}, nil
 	case typex.GENERIC_BACNET_IP:
+		return BacnetIpValidator{}, nil
+	case typex.BACNET_ROUTER_GW:
 		return BacnetIpValidator{}, nil
 	case typex.SIEMENS_PLC:
 		return SiemensPLCValidator{}, nil

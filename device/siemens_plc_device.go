@@ -42,7 +42,7 @@ type __SiemensDataPoint struct {
 	BitNumber       int      `json:"-"`             // // 西门子解析后的地址信息: 位号,0-8，只针对I、Q
 }
 
-type SiemensDataPointConfig struct {
+type SiemensS1200DataPointConfig struct {
 	SiemensAddress string   `json:"siemensAddress"` // 西门子的地址字符串
 	DataBlockType  string   `json:"dataBlockType"`  // // 西门子解析后的地址信息: 数据类型: INT UINT ....
 	DataBlockOrder string   `json:"dataBlockOrder"` //  西门子解析后的地址信息: 数据类型: INT UINT ....
@@ -124,7 +124,7 @@ func (s1200 *SIEMENS_PLC) Init(devId string, configMap map[string]interface{}) e
 		if point.Frequency < 50 {
 			return errors.New("'frequency' must grate than 50 millisecond")
 		}
-		config := SiemensDataPointConfig{}
+		config := SiemensS1200DataPointConfig{}
 		err = json.Unmarshal([]byte(point.Config), &config)
 		if err != nil {
 			return err
