@@ -73,11 +73,11 @@ type ModbusMasterConfig struct {
 }
 
 type ModbusMasterDataPointConfig struct {
-	Function  int     `json:"function"`
-	SlaverId  byte    `json:"slaverId"`
-	Address   uint16  `json:"address"`
-	Frequency int64   `json:"frequency"`
-	Quantity  uint16  `json:"quantity"`
+	Function  int     `json:"function" validate:"min=1,max=4"`
+	SlaverId  byte    `json:"slaverId" validate:"min=0,max=255"`
+	Address   uint16  `json:"address" validate:"min=0,max=65535"`
+	Frequency int64   `json:"frequency" validate:"min=50,max=100000"`
+	Quantity  uint16  `json:"quantity" validate:"min=1,max=255"`
 	DataType  string  `json:"dataType"`
 	DataOrder string  `json:"dataOrder"`
 	Weight    float64 `json:"weight"`

@@ -55,6 +55,7 @@ func (b BacnetRouterValidator) ParseImportFile(file *excelize.File) ([]model.MDa
 	}
 
 	list := make([]model.MDataPoint, 0)
+	return list, nil
 }
 
 func (b BacnetRouterValidator) Export(file *excelize.File, list []model.MDataPoint) error {

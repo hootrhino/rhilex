@@ -18,13 +18,11 @@ func GetByType(protocol string) (Validator, error) {
 	dt := typex.DeviceType(protocol)
 	switch dt {
 	case typex.GENERIC_MODBUS_MASTER:
-		return ModbusValidator{}, nil
-	case typex.GENERIC_MODBUS_SLAVER:
-		return ModbusValidator{}, nil
+		return ModbusMasterValidator{}, nil
 	case typex.GENERIC_BACNET_IP:
 		return BacnetIpValidator{}, nil
 	case typex.BACNET_ROUTER_GW:
-		return BacnetIpValidator{}, nil
+		return BacnetRouterValidator{}, nil
 	case typex.SIEMENS_PLC:
 		return SiemensPLCValidator{}, nil
 	case typex.GENERIC_SNMP:

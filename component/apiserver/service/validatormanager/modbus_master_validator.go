@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/hootrhino/rhilex/component/apiserver/dto"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/device"
 	"github.com/hootrhino/rhilex/utils"
+	"github.com/mitchellh/mapstructure"
 	"github.com/xuri/excelize/v2"
 	"strconv"
 )
@@ -32,20 +34,30 @@ type ModbusMasterPointVo struct {
 
 }
 
-type ModbusValidator struct {
+type ModbusMasterValidator struct {
 }
 
-func (v ModbusValidator) Convert(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
+func (v ModbusMasterValidator) Convert(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
 	point := model.MDataPoint{}
 	point.UUID = dto.UUID
 	point.Tag = dto.Tag
 	point.Alias = dto.Alias
 	point.Frequency = dto.Frequency
+	config := device.ModbusMasterDataPointConfig{}
+	err := mapstructure.Decode(dto.Config, &config)
+	if err != nil {
+		return point, err
+	}
+	validate := validator.New()
+	err = validate.Struct(&config)
+	if err != nil {
+		return point, err
+	}
 	point.SetConfig(dto.Config)
-	return model.MDataPoint{}, nil
+	return point, nil
 }
 
-func (v ModbusValidator) ParseImportFile(excelFile *excelize.File) ([]model.MDataPoint, error) {
+func (v ModbusMasterValidator) ParseImportFile(excelFile *excelize.File) ([]model.MDataPoint, error) {
 	sheetName := "sheet1"
 	// 读取表格
 	rows, err := excelFile.GetRows(sheetName)
@@ -133,7 +145,7 @@ func (v ModbusValidator) ParseImportFile(excelFile *excelize.File) ([]model.MDat
 	return list, nil
 }
 
-func (v ModbusValidator) Export(file *excelize.File, list []model.MDataPoint) error {
+func (v ModbusMasterValidator) Export(file *excelize.File, list []model.MDataPoint) error {
 	Headers := []string{
 		"tag", "alias",
 		"function", "frequency",
@@ -173,45 +185,6 @@ func (v ModbusValidator) Export(file *excelize.File, list []model.MDataPoint) er
 *
  */
 func checkModbusMasterDataPoints(M ModbusMasterPointVo) error {
-	if M.Tag == "" {
-		return fmt.Errorf("'Missing required param 'tag'")
-	}
-	if len(M.Tag) > 256 {
-		return fmt.Errorf("'Tag length must range of 1-256")
-	}
-	if M.Alias == "" {
-		return fmt.Errorf("'Missing required param 'alias'")
-	}
-	if len(M.Alias) > 256 {
-		return fmt.Errorf("'Alias length must range of 1-256")
-	}
-	if M.Address == nil {
-		return fmt.Errorf("'Missing required param 'address'")
-	}
-	if *M.Address > 65535 {
-		return fmt.Errorf("'Address length must range of 0-65535")
-	}
-	if M.Function == nil {
-		return fmt.Errorf("'Missing required param 'function'")
-	}
-	if *M.Function > 4 {
-		return fmt.Errorf("'Function only support value of 1,2,3,4")
-	}
-	if M.SlaverId == nil {
-		return fmt.Errorf("'Missing required param 'slaverId'")
-	}
-	if (*M.SlaverId) > 255 {
-		return fmt.Errorf("'Alias' length must range of 1-256")
-	}
-	if M.Frequency == nil {
-		return fmt.Errorf("'Missing required param 'frequency'")
-	}
-	if *M.Frequency < 50 {
-		return fmt.Errorf("'Frequency' must greater than 50ms")
-	}
-	if *M.Frequency > 100000 {
-		return fmt.Errorf("'Frequency' must little than 100s")
-	}
 	if M.Quantity == nil {
 		return fmt.Errorf("'Missing required param 'quantity'")
 	}
@@ -240,9 +213,6 @@ func checkModbusMasterDataPoints(M ModbusMasterPointVo) error {
 	}
 	if M.Weight == nil {
 		return fmt.Errorf("'Invalid Weight value:%d", M.Weight)
-	}
-	if !utils.IsValidColumnName(M.Tag) {
-		return fmt.Errorf("'Invalid Tag Name:%s", M.Tag)
 	}
 	return nil
 }

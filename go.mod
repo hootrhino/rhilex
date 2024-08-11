@@ -31,6 +31,7 @@ require (
 	github.com/lithammer/shortuuid/v4 v4.0.0
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mochi-mqtt/server/v2 v2.6.4
 	github.com/nats-io/nats.go v1.36.0
 	github.com/patrikeh/go-deep v0.0.0-20230427173908-a2775168ab3d
@@ -68,6 +69,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 )
 

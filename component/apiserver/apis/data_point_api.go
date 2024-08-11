@@ -2,6 +2,7 @@ package apis
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	common "github.com/hootrhino/rhilex/component/apiserver/common"
 	"github.com/hootrhino/rhilex/component/apiserver/dto"
@@ -13,6 +14,7 @@ import (
 	"github.com/hootrhino/rhilex/component/interdb"
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -206,10 +208,17 @@ func DataPointSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) (any,
 	creates := make([]model.MDataPoint, 0, len(form.Points))
 	updates := make([]model.MDataPoint, 0, len(form.Points))
 	for i := range form.Points {
+		pointDTO := form.Points[i]
+		if !utils.IsValidColumnName(pointDTO.Tag) {
+			return nil, fmt.Errorf("'Invalid Tag Name:%s", pointDTO.Tag)
+		}
 		point, err := validator.Convert(form.Points[i])
 		if err != nil {
 			return nil, err
 		}
+		point.UUID = pointDTO.UUID
+		point.Tag = pointDTO.Tag
+		point.Alias = pointDTO.Alias
 		point.DeviceUuid = form.DeviceUUID
 		if point.UUID == "" ||
 			point.UUID == "new" ||
