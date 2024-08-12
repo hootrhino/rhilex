@@ -82,6 +82,11 @@ func HNC8PointUUID() string {
 	return MakeUUID("HNC8")
 }
 
+// 通用点位
+func UnionPointUUID() string {
+	return MakeUUID("UNION")
+}
+
 // MakeUUID
 func MakeUUID(prefix string) string {
 	return prefix + strings.ToUpper(shortuuid.New()[:8])

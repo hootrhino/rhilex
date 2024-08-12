@@ -47,9 +47,9 @@ type BacnetMainConfig struct {
 }
 
 type BacnetDataPointConfig struct {
-	BacnetDeviceId uint32 `json:"bacnetDeviceId"`
+	BacnetDeviceId uint32 `json:"bacnetDeviceId" validate:"min=0,max=4194303"`
 	ObjectType     string `json:"objectType"`
-	ObjectId       uint32 `json:"objectId"`
+	ObjectId       uint32 `json:"objectId" validate:"min=0,max=4194303"`
 }
 
 type GenericBacnetIpDevice struct {

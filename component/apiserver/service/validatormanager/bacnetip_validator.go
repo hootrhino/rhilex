@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/hootrhino/rhilex/component/apiserver/dto"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/device"
@@ -24,14 +25,14 @@ func (b BacnetIpValidator) Convert(pointDTO dto.DataPointCreateOrUpdateDTO) (mod
 	if err != nil {
 		return point, err
 	}
-	contains := lo.Contains(dto.ValidBacnetObjectType, config.ObjectType)
-	if !contains {
-		return point, errors.New("illegal objectType")
+	err = checkBacnetIpDataPoint(config)
+	if err != nil {
+		return point, err
 	}
 	point.UUID = pointDTO.UUID
 	point.Tag = pointDTO.Tag
-	pointDTO.Alias = pointDTO.Alias
-	pointDTO.Frequency = pointDTO.Frequency
+	point.Alias = pointDTO.Alias
+	point.Frequency = pointDTO.Frequency
 	marshal, err := json.Marshal(pointDTO.Config)
 	if err != nil {
 		return point, err
@@ -78,7 +79,7 @@ func (b BacnetIpValidator) ParseImportFile(file *excelize.File) ([]model.MDataPo
 			ObjectType:     objectType,
 			ObjectId:       uint32(objectId),
 		}
-		err = checkBacnetPoint(pointConfig)
+		err = checkBacnetIpDataPoint(pointConfig)
 		if err != nil {
 			return nil, err
 		}
@@ -127,10 +128,15 @@ func (b BacnetIpValidator) Export(file *excelize.File, list []model.MDataPoint) 
 	return nil
 }
 
-func checkBacnetPoint(point device.BacnetDataPointConfig) error {
+func checkBacnetIpDataPoint(point device.BacnetDataPointConfig) error {
 	contains := lo.Contains(dto.ValidBacnetObjectType, point.ObjectType)
 	if !contains {
 		return errors.New("illegal objectType")
+	}
+	validate := validator.New()
+	err := validate.Struct(&point)
+	if err != nil {
+		return err
 	}
 	return nil
 }
