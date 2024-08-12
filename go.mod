@@ -11,6 +11,7 @@ require (
 	github.com/gin-contrib/graceful v1.0.2
 	github.com/gin-contrib/static v1.1.2
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/google/uuid v1.6.0
 	github.com/gopcua/opcua v0.5.3
@@ -69,8 +70,8 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 )
 
 require (

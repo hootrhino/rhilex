@@ -16,6 +16,7 @@ import (
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
 	"github.com/xuri/excelize/v2"
+	"time"
 )
 
 func InitDataPointRoute() {
@@ -124,6 +125,9 @@ func DataPointSheetExport(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(err))
 		return
 	}
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment;filename=%v.xlsx",
+		time.Now().UnixMilli()))
 
 	xlsx.WriteTo(c.Writer)
 }
