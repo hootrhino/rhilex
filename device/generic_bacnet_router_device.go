@@ -58,8 +58,8 @@ type BacnetRouter struct {
 }
 
 type BacnetRouterDataPointConfig struct {
-	ObjectId   uint32            `json:"objectId" title:"object的id"`
-	ObjectType btypes.ObjectType `json:"objectType" title:"object类型"`
+	ObjectId   uint32 `json:"objectId" title:"object的id" validate:"min=0,max=4194303"`
+	ObjectType string `json:"objectType" title:"object类型"`
 }
 
 func NewBacnetRouter(e typex.Rhilex) typex.XDevice {

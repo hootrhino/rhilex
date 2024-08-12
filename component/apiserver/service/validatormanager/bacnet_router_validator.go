@@ -3,12 +3,16 @@ package validatormanager
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/go-playground/validator"
 	"github.com/hootrhino/rhilex/component/apiserver/dto"
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/device"
+	"github.com/hootrhino/rhilex/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/samber/lo"
 	"github.com/xuri/excelize/v2"
+	"strconv"
 )
 
 type BacnetRouterValidator struct {
@@ -21,10 +25,14 @@ func (b BacnetRouterValidator) Convert(pointDTO dto.DataPointCreateOrUpdateDTO) 
 	if err != nil {
 		return point, err
 	}
+	err = checkBacnetRouterPoint(config)
+	if err != nil {
+		return point, err
+	}
 	point.UUID = pointDTO.UUID
 	point.Tag = pointDTO.Tag
-	pointDTO.Alias = pointDTO.Alias
-	pointDTO.Frequency = pointDTO.Frequency
+	point.Alias = pointDTO.Alias
+	point.Frequency = pointDTO.Frequency
 	marshal, err := json.Marshal(pointDTO.Config)
 	if err != nil {
 		return point, err
@@ -55,6 +63,39 @@ func (b BacnetRouterValidator) ParseImportFile(file *excelize.File) ([]model.MDa
 	}
 
 	list := make([]model.MDataPoint, 0)
+	for i := 1; i < len(rows); i++ {
+		row := rows[i]
+		if len(row) < MIN_LEN {
+			msg := fmt.Sprintf("illegal data, the data cell of row %d less than %d", i+1, MIN_LEN)
+			return nil, errors.New(msg)
+		}
+		// oid,tag,alias,frequency
+		tag := row[0]
+		alias := row[1]
+		objectType := row[2]
+		objectId, _ := strconv.ParseInt(row[3], 10, 32)
+
+		config := device.BacnetRouterDataPointConfig{
+			ObjectType: objectType,
+			ObjectId:   uint32(objectId),
+		}
+		err = checkBacnetRouterPoint(config)
+		if err != nil {
+			return nil, err
+		}
+		marshal, err := json.Marshal(config)
+		if err != nil {
+			return nil, err
+		}
+
+		model := model.MDataPoint{
+			UUID:   utils.BacnetPointUUID(),
+			Tag:    tag,
+			Alias:  alias,
+			Config: string(marshal),
+		}
+		list = append(list, model)
+	}
 	return list, nil
 }
 
@@ -85,10 +126,15 @@ func (b BacnetRouterValidator) Export(file *excelize.File, list []model.MDataPoi
 	return nil
 }
 
-func checkBacnetRouterPoint(point device.BacnetDataPointConfig) error {
+func checkBacnetRouterPoint(point device.BacnetRouterDataPointConfig) error {
 	contains := lo.Contains(dto.ValidBacnetObjectType, point.ObjectType)
 	if !contains {
 		return errors.New("illegal objectType")
+	}
+	validate := validator.New()
+	err := validate.Struct(&point)
+	if err != nil {
+		return err
 	}
 	return nil
 }
