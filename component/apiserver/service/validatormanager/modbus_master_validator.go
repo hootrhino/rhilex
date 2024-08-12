@@ -39,7 +39,6 @@ type ModbusMasterValidator struct {
 
 func (v ModbusMasterValidator) Convert(dto dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
 	point := model.MDataPoint{}
-	point.UUID = dto.UUID
 	point.Tag = dto.Tag
 	point.Alias = dto.Alias
 	point.Frequency = dto.Frequency

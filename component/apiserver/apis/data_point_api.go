@@ -223,6 +223,7 @@ func DataPointSheetCreateOrUpdate(c *gin.Context, ruleEngine typex.Rhilex) (any,
 		if point.UUID == "" ||
 			point.UUID == "new" ||
 			point.UUID == "copy" {
+			point.UUID = utils.ModbusPointUUID()
 			creates = append(creates, point)
 		} else {
 			updates = append(updates, point)
