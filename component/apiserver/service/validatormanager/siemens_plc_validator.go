@@ -17,66 +17,28 @@ import (
 type SiemensPLCValidator struct {
 }
 
-func (s SiemensPLCValidator) Convert(createOrUpdateDTO dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
+func (s SiemensPLCValidator) Convert(pointDTO dto.DataPointCreateOrUpdateDTO) (model.MDataPoint, error) {
 	point := model.MDataPoint{}
-	if createOrUpdateDTO.Tag == "" {
-		return point, fmt.Errorf("Missing required param 'tag'")
-	}
-	if len(createOrUpdateDTO.Tag) > 256 {
-		return point, fmt.Errorf("Tag length must range of 1-256")
-	}
-	if createOrUpdateDTO.Alias == "" {
-		return point, fmt.Errorf("Missing required param 'alias'")
-	}
-	if len(createOrUpdateDTO.Alias) > 256 {
-		return point, fmt.Errorf("Alias length must range of 1-256")
-	}
-
-	if createOrUpdateDTO.Frequency < 50 {
-		return point, fmt.Errorf("Frequency must greater than 50ms")
-	}
-	if createOrUpdateDTO.Frequency > 100000 {
-		return point, fmt.Errorf("Frequency must little than 100s")
-	}
 
 	config := device.SiemensS1200DataPointConfig{}
-	err := mapstructure.Decode(createOrUpdateDTO.Config, &config)
+	err := mapstructure.Decode(pointDTO.Config, &config)
 	if err != nil {
 		return point, err
 	}
 
-	if config.SiemensAddress == "" {
-		return point, fmt.Errorf("Missing required param 'address'")
+	err = checkSiemensS1200DataPointConfig(config)
+	if err != nil {
+		return point, err
 	}
 
-	switch config.DataBlockType {
-	case "I", "Q", "BYTE":
-		if config.DataBlockOrder != "A" {
-			return point, fmt.Errorf("Invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
-		}
-	case "SHORT", "USHORT", "INT16", "UINT16":
-		if !utils.SContains([]string{"AB", "BA"}, config.DataBlockOrder) {
-			return point, fmt.Errorf("'Invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
-		}
-	case "RAW", "INT", "INT32", "UINT", "UINT32", "FLOAT", "UFLOAT":
-		if !utils.SContains([]string{"ABCD", "DCBA", "CDAB"}, config.DataBlockOrder) {
-			return point, fmt.Errorf("Invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
-		}
-	default:
-		return point, fmt.Errorf("Invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
+	point.UUID = pointDTO.UUID
+	point.Tag = pointDTO.Tag
+	point.Alias = pointDTO.Alias
+	point.Frequency = pointDTO.Frequency
+	marshal, err := json.Marshal(pointDTO.Config)
+	if err != nil {
+		return point, err
 	}
-	if config.Weight == nil {
-		return point, fmt.Errorf("Invalid Weight value: nil value", config.Weight)
-	}
-	if !utils.IsValidColumnName(createOrUpdateDTO.Tag) {
-		return point, fmt.Errorf("'Invalid Tag Name:%s", createOrUpdateDTO.Tag)
-	}
-
-	point.UUID = createOrUpdateDTO.UUID
-	point.Tag = createOrUpdateDTO.Tag
-	point.Alias = createOrUpdateDTO.Alias
-	point.Frequency = createOrUpdateDTO.Frequency
-	marshal, err := json.Marshal(createOrUpdateDTO.Config)
 	point.Config = string(marshal)
 	return point, err
 }
@@ -88,7 +50,7 @@ func (s SiemensPLCValidator) ParseImportFile(file *excelize.File) ([]model.MData
 	}
 	// 判断首行标头
 	//
-	err = errors.New("Invalid Sheet Header")
+	err = errors.New("invalid Sheet Header")
 	if len(rows[0]) < 7 {
 		return nil, err
 	}
@@ -117,17 +79,22 @@ func (s SiemensPLCValidator) ParseImportFile(file *excelize.File) ([]model.MData
 			Weight = 1 // 防止解析异常的时候系数0
 		}
 		frequency, _ := strconv.ParseUint(row[6], 10, 64)
-		_, err := utils.ParseSiemensDB(SiemensAddress)
+
+		config := device.SiemensS1200DataPointConfig{}
+		config.SiemensAddress = SiemensAddress
+		config.DataBlockType = Type
+		config.DataBlockOrder = utils.GetDefaultDataOrder(Type, Order)
+		config.Weight = &Weight
+
+		err = checkSiemensS1200DataPointConfig(config)
 		if err != nil {
 			return nil, err
 		}
-		pointConfig := device.SiemensS1200DataPointConfig{}
-		pointConfig.SiemensAddress = SiemensAddress
-		pointConfig.DataBlockType = Type
-		pointConfig.DataBlockOrder = utils.GetDefaultDataOrder(Type, Order)
-		pointConfig.Weight = &Weight
-		// fixme pointConfig字段和不一致
-		marshal, _ := json.Marshal(pointConfig)
+
+		marshal, err := json.Marshal(config)
+		if err != nil {
+			return nil, err
+		}
 		point := model.MDataPoint{
 			UUID:      utils.SiemensPointUUID(),
 			Tag:       Tag,
@@ -147,25 +114,51 @@ func (s SiemensPLCValidator) Export(file *excelize.File, list []model.MDataPoint
 	}
 	cell, _ := excelize.CoordinatesToCellName(1, 1)
 	file.SetSheetRow("Sheet1", cell, &Headers)
-	if len(list) >= 1 {
-		for idx, record := range list[0:] {
-			pointConfig := device.SiemensS1200DataPointConfig{}
-			err := json.Unmarshal([]byte(record.Config), &device.SiemensS1200DataPointConfig{})
-			if err != nil {
-				return err
-			}
-			Row := []string{
-				pointConfig.SiemensAddress,
-				record.Tag,
-				record.Alias,
-				pointConfig.DataBlockType,
-				pointConfig.DataBlockOrder,
-				fmt.Sprintf("%f", *pointConfig.Weight),
-				fmt.Sprintf("%d", record.Frequency),
-			}
-			cell, _ = excelize.CoordinatesToCellName(1, idx+2)
-			file.SetSheetRow("Sheet1", cell, &Row)
+	for idx, record := range list {
+		pointConfig := device.SiemensS1200DataPointConfig{}
+		err := json.Unmarshal([]byte(record.Config), &pointConfig)
+		if err != nil {
+			return err
 		}
+		Row := []string{
+			pointConfig.SiemensAddress,
+			record.Tag,
+			record.Alias,
+			pointConfig.DataBlockType,
+			pointConfig.DataBlockOrder,
+			fmt.Sprintf("%f", *pointConfig.Weight),
+			fmt.Sprintf("%d", record.Frequency),
+		}
+		cell, _ = excelize.CoordinatesToCellName(1, idx+2)
+		file.SetSheetRow("Sheet1", cell, &Row)
+	}
+	return nil
+}
+
+func checkSiemensS1200DataPointConfig(config device.SiemensS1200DataPointConfig) error {
+	_, err := utils.ParseSiemensDB(config.SiemensAddress)
+	if err != nil {
+		return err
+	}
+
+	switch config.DataBlockType {
+	case "I", "Q", "BYTE":
+		if config.DataBlockOrder != "A" {
+			return fmt.Errorf("invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
+		}
+	case "SHORT", "USHORT", "INT16", "UINT16":
+		if !utils.SContains([]string{"AB", "BA"}, config.DataBlockOrder) {
+			return fmt.Errorf("invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
+		}
+	case "RAW", "INT", "INT32", "UINT", "UINT32", "FLOAT", "UFLOAT":
+		if !utils.SContains([]string{"ABCD", "DCBA", "CDAB"}, config.DataBlockOrder) {
+			return fmt.Errorf("invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
+		}
+	default:
+		return fmt.Errorf("invalid '%s' order '%s'", config.DataBlockType, config.DataBlockOrder)
+	}
+	if config.Weight == nil {
+		return fmt.Errorf("invalid Weight value: nil value")
 	}
 	return nil
 }

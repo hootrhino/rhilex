@@ -48,18 +48,18 @@ func (b BacnetRouterValidator) ParseImportFile(file *excelize.File) ([]model.MDa
 	}
 	// 判断首行标头
 	// tag,alias,objectType,objectId
-	err1 := errors.New("'Invalid Sheet Header, must follow fixed format: 【tag,alias,objectType,objectId】")
+	err = errors.New("'Invalid Sheet Header, must follow fixed format: 【tag,alias,objectType,objectId】")
 
 	const MIN_LEN = 4
 	if len(rows[0]) < MIN_LEN {
-		return nil, err1
+		return nil, err
 	}
 	// 严格检查表结构 tag,alias,objectType,objectId
 	if rows[0][0] != "tag" ||
 		rows[0][1] != "alias" ||
 		rows[0][2] != "objectType" ||
 		rows[0][3] != "objectId" {
-		return nil, err1
+		return nil, err
 	}
 
 	list := make([]model.MDataPoint, 0)
@@ -69,7 +69,6 @@ func (b BacnetRouterValidator) ParseImportFile(file *excelize.File) ([]model.MDa
 			msg := fmt.Sprintf("illegal data, the data cell of row %d less than %d", i+1, MIN_LEN)
 			return nil, errors.New(msg)
 		}
-		// oid,tag,alias,frequency
 		tag := row[0]
 		alias := row[1]
 		objectType := row[2]
@@ -88,26 +87,26 @@ func (b BacnetRouterValidator) ParseImportFile(file *excelize.File) ([]model.MDa
 			return nil, err
 		}
 
-		model := model.MDataPoint{
+		point := model.MDataPoint{
 			UUID:   utils.BacnetPointUUID(),
 			Tag:    tag,
 			Alias:  alias,
 			Config: string(marshal),
 		}
-		list = append(list, model)
+		list = append(list, point)
 	}
 	return list, nil
 }
 
 func (b BacnetRouterValidator) Export(file *excelize.File, list []model.MDataPoint) error {
 	Headers := []string{
-		"tag", "alias", "bacnetDeviceId", "objectType", "objectId",
+		"tag", "alias", "objectType", "objectId",
 	}
 	cell, _ := excelize.CoordinatesToCellName(1, 1)
 	file.SetSheetRow("Sheet1", cell, &Headers)
 	if len(list) > 0 {
 		for idx, record := range list[0:] {
-			config := device.BacnetDataPointConfig{}
+			config := device.BacnetRouterDataPointConfig{}
 			err := json.Unmarshal([]byte(record.Config), &config)
 			if err != nil {
 				return err
@@ -115,7 +114,6 @@ func (b BacnetRouterValidator) Export(file *excelize.File, list []model.MDataPoi
 			Row := []any{
 				record.Tag,
 				record.Alias,
-				config.BacnetDeviceId,
 				config.ObjectType,
 				config.ObjectId,
 			}

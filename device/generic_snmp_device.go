@@ -93,7 +93,7 @@ type SnmpSchemaProperty struct {
 }
 
 type SnmpDataPointConfig struct {
-	Oid string `json:"oid"`
+	Oid string `json:"oid" validate:"required"`
 }
 
 //  初始化

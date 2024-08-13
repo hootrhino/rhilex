@@ -86,6 +86,7 @@ func DataPointSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 	}
 	for i := range points {
 		points[i].DeviceUuid = deviceUuid
+		points[i].UUID = utils.UnionPointUUID()
 	}
 	err = service.BatchDataPointCreate(points)
 	if err != nil {
