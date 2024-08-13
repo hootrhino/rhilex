@@ -15,6 +15,7 @@ import (
 	"github.com/hootrhino/rhilex/glogger"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
+	"github.com/samber/lo"
 	"github.com/xuri/excelize/v2"
 	"time"
 )
@@ -87,6 +88,7 @@ func DataPointSheetImport(c *gin.Context, ruleEngine typex.Rhilex) {
 	for i := range points {
 		points[i].DeviceUuid = deviceUuid
 		points[i].UUID = utils.UnionPointUUID()
+		points[i].Frequency = lo.Clamp(points[i].Frequency, 50, 100000)
 	}
 	err = service.BatchDataPointCreate(points)
 	if err != nil {
