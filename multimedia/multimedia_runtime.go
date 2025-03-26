@@ -124,7 +124,7 @@ func StartMultimediaResourceMonitoring() {
 
 // 注册多媒体资源类型
 func RegisterMultimediaResourceType(resourceType string,
-	factory func(*xmanager.GatewayResourceManager) (xmanager.GatewayResource, error)) {
+	factory func(rhilex typex.Rhilex) (xmanager.GatewayResource, error)) {
 	if __DefaultMultimediaResourceManager == nil {
 		return
 	}

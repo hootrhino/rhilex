@@ -20,6 +20,7 @@ import (
 
 	"github.com/hootrhino/rhilex/component/xmanager"
 	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // RTSPResourceConfig RTSP资源配置结构体
@@ -33,18 +34,18 @@ type RTSPResourceConfig struct {
 
 // RTSPResource RTSP资源实现
 type RTSPResource struct {
-	manager *xmanager.GatewayResourceManager
-	state   xmanager.GatewayResourceState
-	uuid    string
-	config  RTSPResourceConfig
+	state  xmanager.GatewayResourceState
+	uuid   string
+	config RTSPResourceConfig
+	rhilex typex.Rhilex
 }
 
 // NewRTSPResource 创建新的RTSP资源
-func NewRTSPResource(manager *xmanager.GatewayResourceManager) (xmanager.GatewayResource, error) {
+func NewRTSPResource(rhilex typex.Rhilex) (xmanager.GatewayResource, error) {
 	return &RTSPResource{
-		state:   xmanager.MEDIA_PENDING,
-		config:  RTSPResourceConfig{},
-		manager: manager,
+		state:  xmanager.MEDIA_PENDING,
+		config: RTSPResourceConfig{},
+		rhilex: rhilex,
 	}, nil
 }
 
@@ -113,12 +114,7 @@ func (r *RTSPResource) OnService(request xmanager.ResourceServiceRequest) (xmana
 
 // Details 获取RTSP资源详情
 func (r *RTSPResource) Details() *xmanager.GatewayResourceWorker {
-	glogger.GLogger.Debugf("RTSP resource %s details: %+v", r.uuid, r.config)
-	if r.manager == nil {
-		return nil
-	}
-	worker, _ := r.manager.GetResource(r.uuid)
-	return worker
+	return nil
 }
 
 // Stop 停止RTSP资源

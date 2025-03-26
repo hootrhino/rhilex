@@ -30,7 +30,7 @@ import (
 // GatewayResourceManager 通用资源管理器
 type GatewayResourceManager struct {
 	resources *orderedmap.OrderedMap[string, *GatewayResourceWorker]
-	types     map[string]func(m *GatewayResourceManager) (GatewayResource, error)
+	types     map[string]func(rhilex typex.Rhilex) (GatewayResource, error)
 	mu        sync.RWMutex
 	rhilex    typex.Rhilex
 }
@@ -39,14 +39,14 @@ type GatewayResourceManager struct {
 func NewGatewayResourceManager(rhilex typex.Rhilex) *GatewayResourceManager {
 	return &GatewayResourceManager{
 		resources: orderedmap.NewOrderedMap[string, *GatewayResourceWorker](),
-		types:     make(map[string]func(m *GatewayResourceManager) (GatewayResource, error)),
+		types:     make(map[string]func(rhilex typex.Rhilex) (GatewayResource, error)),
 		rhilex:    rhilex,
 	}
 }
 
 // RegisterType 注册资源类型和其对应的 worker 实现
 func (m *GatewayResourceManager) RegisterType(resourceType string,
-	factory func(m *GatewayResourceManager) (GatewayResource, error)) {
+	factory func(rhilex typex.Rhilex) (GatewayResource, error)) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.types[resourceType] = factory
@@ -65,17 +65,11 @@ func (m *GatewayResourceManager) LoadResource(uuid string, name string, resource
 		if resource.Name == name {
 			return fmt.Errorf("resource name already exists: %s", name)
 		}
+		if resource.UUID == uuid {
+			return fmt.Errorf("resource uuid already exists: %s", uuid)
+		}
 	}
-	worker, err := factory(m)
-	if err != nil {
-		return err
-	}
-
-	err = worker.Init(uuid, configMap)
-	if err != nil {
-		return err
-	}
-	err = worker.Start(context.Background())
+	worker, err := factory(m.rhilex)
 	if err != nil {
 		return err
 	}
@@ -88,6 +82,16 @@ func (m *GatewayResourceManager) LoadResource(uuid string, name string, resource
 		Description: description,
 	}
 	m.resources.Set(uuid, grw)
+
+	err = worker.Init(uuid, configMap)
+	if err != nil {
+		return err
+	}
+	err = worker.Start(context.Background())
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -162,38 +166,38 @@ func (m *GatewayResourceManager) GetResourceStatus(uuid string) (GatewayResource
 }
 
 // StartMonitoring 开始资源监控
-// StartMonitoring 开始资源监控
 func (m *GatewayResourceManager) StartMonitoring() {
 	go func() {
 		ticker := time.NewTicker(5 * time.Second)
 		defer ticker.Stop()
-
 		for range ticker.C {
-			m.mu.RLock()
-			uuids := m.resources.Keys()
-			workers := make([]*GatewayResourceWorker, len(uuids))
-			for i, uuid := range uuids {
-				worker, _ := m.resources.Get(uuid)
-				workers[i] = worker
+			select {
+			case <-context.Background().Done():
+				return
+			default:
 			}
-			m.mu.RUnlock()
-
-			for _, worker := range workers {
-				glogger.GLogger.Debugf("Monitoring resource %s", worker.UUID)
-				status := worker.Worker.Status()
-
-				switch status {
-				case MEDIA_DOWN:
-					glogger.GLogger.Warningf("Resource %s is down, reloading:", worker.UUID)
-					m.ReloadResource(worker.UUID)
-				case MEDIA_STOP, MEDIA_DISABLE:
-					glogger.GLogger.Warningf("Resource %s is stopped, stopping:", worker.UUID)
-					m.StopResource(worker.UUID)
-				case MEDIA_PENDING:
-					glogger.GLogger.Debugf("Resource %s is pending, starting:", worker.UUID)
-					continue
+			for _, uuid := range m.resources.Keys() {
+				worker, exists := m.resources.Get(uuid)
+				if exists {
+					status := worker.Worker.Status()
+					switch status {
+					case MEDIA_DOWN:
+						glogger.GLogger.Warnf("Resource %s is down, reloading:", worker.UUID)
+						m.ReloadResource(worker.UUID)
+					case MEDIA_STOP, MEDIA_DISABLE:
+						glogger.GLogger.Warnf("Resource %s is stopped, stopping:", worker.UUID)
+						m.StopResource(worker.UUID)
+					case MEDIA_PENDING:
+						glogger.GLogger.Debugf("Resource %s is pending, starting:", worker.UUID)
+						continue
+					}
 				}
+
 			}
+
 		}
 	}()
+}
+func (m *GatewayResourceManager) StopMonitoring() {
+
 }

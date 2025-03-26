@@ -20,6 +20,7 @@ import (
 
 	"github.com/hootrhino/rhilex/component/xmanager"
 	"github.com/hootrhino/rhilex/glogger"
+	"github.com/hootrhino/rhilex/typex"
 )
 
 // IthingsResourceConfig Ithings资源配置结构体
@@ -28,18 +29,18 @@ type IthingsResourceConfig struct {
 
 // IthingsResource Ithings资源实现
 type IthingsResource struct {
-	manager *xmanager.GatewayResourceManager
-	state   xmanager.GatewayResourceState
-	uuid    string
-	config  IthingsResourceConfig
+	state  xmanager.GatewayResourceState
+	uuid   string
+	config IthingsResourceConfig
+	rhilex typex.Rhilex
 }
 
 // NewIthingsResource 创建新的Ithings资源
-func NewIthingsResource(manager *xmanager.GatewayResourceManager) (xmanager.GatewayResource, error) {
+func NewIthingsResource(rhilex typex.Rhilex) (xmanager.GatewayResource, error) {
 	return &IthingsResource{
-		state:   xmanager.MEDIA_PENDING,
-		config:  IthingsResourceConfig{},
-		manager: manager,
+		state:  xmanager.MEDIA_PENDING,
+		config: IthingsResourceConfig{},
+		rhilex: rhilex,
 	}, nil
 }
 
@@ -86,12 +87,7 @@ func (r *IthingsResource) OnService(request xmanager.ResourceServiceRequest) (xm
 
 // Details 获取Ithings资源详情
 func (r *IthingsResource) Details() *xmanager.GatewayResourceWorker {
-	glogger.GLogger.Debugf("Ithings resource %s details: %+v", r.uuid, r.config)
-	if r.manager == nil {
-		return nil
-	}
-	worker, _ := r.manager.GetResource(r.uuid)
-	return worker
+	return nil
 }
 
 // Stop 停止Ithings资源
