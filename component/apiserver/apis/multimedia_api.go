@@ -25,8 +25,6 @@ import (
 	"github.com/hootrhino/rhilex/component/apiserver/model"
 	"github.com/hootrhino/rhilex/component/apiserver/server"
 	"github.com/hootrhino/rhilex/component/apiserver/service"
-	"github.com/hootrhino/rhilex/component/xmanager"
-	"github.com/hootrhino/rhilex/multimedia"
 	"github.com/hootrhino/rhilex/typex"
 	"github.com/hootrhino/rhilex/utils"
 )
@@ -141,11 +139,7 @@ func CreateMultiMedia(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(errSave))
 		return
 	}
-	if errLoad := multimedia.LoadMultimediaResource(Model.UUID, Model.Name, Model.Type,
-		multiMediaVo.Config.ToMap(), Model.Description); errLoad != nil {
-		c.JSON(common.HTTP_OK, common.Error400(errLoad))
-		return
-	}
+
 	c.JSON(common.HTTP_OK, common.Ok())
 }
 
@@ -172,16 +166,6 @@ func UpdateMultiMedia(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(errSave))
 		return
 	}
-	// 重新加载资源
-	if errStop := multimedia.StopMultimediaResource(Model.UUID); errStop != nil {
-		c.JSON(common.HTTP_OK, common.Error400(errStop))
-		return
-	}
-	if errLoad := multimedia.LoadMultimediaResource(Model.UUID, Model.Name, Model.Type,
-		multiMediaVo.Config.ToMap(), Model.Description); errLoad != nil {
-		c.JSON(common.HTTP_OK, common.Error400(errLoad))
-		return
-	}
 	c.JSON(common.HTTP_OK, common.Ok())
 }
 
@@ -206,13 +190,6 @@ func MultiMediaDetail(c *gin.Context, ruleEngine typex.Rhilex) {
 		Type:        Model.Type,
 		Config:      Config,
 		Description: Model.Description,
-	}
-	Worker, _ := multimedia.GetMultimediaResourceDetails(Model.UUID)
-	if Worker == nil {
-		vo.Status = int(xmanager.MEDIA_DOWN)
-	} else {
-		Status := Worker.Worker.Status()
-		vo.Status = int(Status)
 	}
 	c.JSON(common.HTTP_OK, common.OkWithData(vo))
 }
@@ -241,13 +218,13 @@ func ListMultiMedia(c *gin.Context, ruleEngine typex.Rhilex) {
 			Config:      Config,
 			Description: Model.Description,
 		}
-		Worker, _ := multimedia.GetMultimediaResourceDetails(Model.UUID)
-		if Worker == nil {
-			vo.Status = int(xmanager.MEDIA_DOWN)
-		} else {
-			Status := Worker.Worker.Status()
-			vo.Status = int(Status)
-		}
+		// Worker, _ := multimedia.GetMultimediaResourceDetails(Model.UUID)
+		// if Worker == nil {
+		// 	vo.Status = int(xmanager.RESOURCE_DOWN)
+		// } else {
+		// 	Status := Worker.Worker.Status()
+		// 	vo.Status = int(Status)
+		// }
 		MultiMedias = append(MultiMedias, vo)
 	}
 	Result := service.WrapPageResult(*pager, MultiMedias, count)
@@ -265,9 +242,6 @@ func DeleteMultiMedia(c *gin.Context, ruleEngine typex.Rhilex) {
 		c.JSON(common.HTTP_OK, common.Error400(fmt.Errorf("delete failed: %v", err)))
 		return
 	}
-	if err := multimedia.StopMultimediaResource(uuid); err != nil {
-		c.JSON(common.HTTP_OK, common.Error400(err))
-		return
-	}
+
 	c.JSON(common.HTTP_OK, common.Ok())
 }

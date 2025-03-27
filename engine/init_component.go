@@ -18,7 +18,6 @@ package engine
 import (
 	"github.com/hootrhino/rhilex/alarmcenter"
 	"github.com/hootrhino/rhilex/applet"
-	"github.com/hootrhino/rhilex/cecolla"
 	"github.com/hootrhino/rhilex/component/aibase"
 	"github.com/hootrhino/rhilex/component/crontask"
 	"github.com/hootrhino/rhilex/component/eventbus"
@@ -34,7 +33,6 @@ import (
 	core "github.com/hootrhino/rhilex/config"
 	datacenter "github.com/hootrhino/rhilex/datacenter"
 	"github.com/hootrhino/rhilex/glogger"
-	"github.com/hootrhino/rhilex/multimedia"
 	"github.com/hootrhino/rhilex/plugin"
 	"github.com/hootrhino/rhilex/registry"
 	transceiver "github.com/hootrhino/rhilex/transceiver"
@@ -84,10 +82,6 @@ func InitAllComponent(__DefaultRuleEngine typex.Rhilex) {
 	registry.InitTargetRegistry(__DefaultRuleEngine)
 	// Init Plugin Registry
 	plugin.InitPluginRegistry(__DefaultRuleEngine)
-	// Init Multimedia
-	multimedia.InitMultimediaRuntime(__DefaultRuleEngine)
-	// Init Cecolla
-	cecolla.InitCecollaRuntime(__DefaultRuleEngine)
 }
 func StartAllComponent() {
 	// Internal BUS
@@ -102,8 +96,6 @@ func StopAllComponent() {
 	transceiver.Stop()
 	alarmcenter.StopAlarmCenter()
 	plugin.Stop()
-	multimedia.StopMultimediaRuntime()
-	cecolla.StopCecollaRuntime()
 	interdb.StopAll()
 	alarmcenter.StopAll()
 	datacenter.StopAll()

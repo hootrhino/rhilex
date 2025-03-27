@@ -18,9 +18,6 @@ package xmanager
 
 import (
 	"fmt"
-
-	"github.com/go-playground/validator/v10"
-	"github.com/mitchellh/mapstructure"
 )
 
 // GatewayResourceWorker 用于记录流媒体的元信息
@@ -63,41 +60,13 @@ func (g *GatewayResourceWorker) CheckConfig(config any) error {
 	if g.Config["config"] == nil {
 		return fmt.Errorf("config config is nil")
 	}
+
+	if config == nil {
+		return fmt.Errorf("config is nil")
+	}
 	err := MapToConfig(g.Config, config)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-// MapToConfig 将 Map 转换为具体的每个资源专属的结构体配置
-func MapToConfig(m map[string]any, s any) error {
-	validate := validator.New()
-	err := mapstructure.Decode(m, s)
-	if err != nil {
-		return err
-	}
-	return validate.Struct(s)
-}
-
-// ConfigToMap 反向转换
-func ConfigToMap(s any) (map[string]any, error) {
-	var m map[string]any
-	err := mapstructure.Decode(s, &m)
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewGatewayResourceWorker 创建新的 GatewayResourceWorker
-func NewGatewayResourceWorker(uuid string, name string, resourceType string, configMap map[string]any, description string, worker GatewayResource) *GatewayResourceWorker {
-	return &GatewayResourceWorker{
-		Worker:      worker,
-		UUID:        uuid,
-		Name:        name,
-		Type:        resourceType,
-		Config:      configMap,
-		Description: description,
-	}
 }

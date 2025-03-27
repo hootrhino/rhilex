@@ -25,15 +25,15 @@ var __DefaultGenericResourceManager *GenericResourceManager
 *
  */
 type GenericResourceManager struct {
-	RuleEngine                typex.Rhilex
-	MultimediaResourceManager *GatewayResourceManager
+	RuleEngine      typex.Rhilex
+	ResourceManager *GatewayResourceManager
 }
 
 // 初始化多媒体运行时
 func InitGenericRuntime(Rhilex typex.Rhilex) {
 	__DefaultGenericResourceManager = &GenericResourceManager{
-		RuleEngine:                Rhilex,
-		MultimediaResourceManager: NewGatewayResourceManager(Rhilex),
+		RuleEngine:      Rhilex,
+		ResourceManager: NewGatewayResourceManager(),
 	}
 }
 
@@ -41,9 +41,7 @@ func StopGenericRuntime() {
 	if __DefaultGenericResourceManager == nil {
 		return
 	}
-	for _, resource := range __DefaultGenericResourceManager.MultimediaResourceManager.GetResourceList() {
-		if resource.Worker != nil {
-			resource.Worker.Stop()
-		}
+	for _, v := range __DefaultGenericResourceManager.ResourceManager.GetResourceList() {
+		v.Stop()
 	}
 }

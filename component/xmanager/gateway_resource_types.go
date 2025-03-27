@@ -19,6 +19,7 @@ package xmanager
 import (
 	"context"
 	"fmt"
+	"sync"
 )
 
 // GatewayResourceState 资源状态类型
@@ -27,17 +28,17 @@ type GatewayResourceState int
 // to string
 func (s GatewayResourceState) String() string {
 	switch s {
-	case MEDIA_DOWN:
+	case RESOURCE_DOWN:
 		return "DOWN"
-	case MEDIA_UP:
+	case RESOURCE_UP:
 		return "UP"
-	case MEDIA_PAUSE:
+	case RESOURCE_PAUSE:
 		return "PAUSE"
-	case MEDIA_STOP:
+	case RESOURCE_STOP:
 		return "STOP"
-	case MEDIA_PENDING:
+	case RESOURCE_PENDING:
 		return "PENDING"
-	case MEDIA_DISABLE:
+	case RESOURCE_DISABLE:
 		return "DISABLE"
 	default:
 		return "UNKNOWN"
@@ -46,35 +47,24 @@ func (s GatewayResourceState) String() string {
 
 const (
 	// 故障
-	MEDIA_DOWN GatewayResourceState = 0
+	RESOURCE_DOWN GatewayResourceState = 0
 	// 启用
-	MEDIA_UP GatewayResourceState = 1
+	RESOURCE_UP GatewayResourceState = 1
 	// 暂停
-	MEDIA_PAUSE GatewayResourceState = 2
+	RESOURCE_PAUSE GatewayResourceState = 2
 	// 停止
-	MEDIA_STOP GatewayResourceState = 3
+	RESOURCE_STOP GatewayResourceState = 3
 	// 准备
-	MEDIA_PENDING GatewayResourceState = 4
+	RESOURCE_PENDING GatewayResourceState = 4
 	// 禁用
-	MEDIA_DISABLE GatewayResourceState = 5
+	RESOURCE_DISABLE GatewayResourceState = 5
 )
-
-// 资源服务参数
-type ResourceServiceArg struct {
-	UUID string
-	Args []any
-}
-
-// To string
-func (s *ResourceServiceArg) String() string {
-	return fmt.Sprintf(" ResourceServiceArg UUID: %s, Args: %v", s.UUID, s.Args)
-}
 
 // 资源服务
 type ResourceServiceRequest struct {
-	Name   string               // 服务名称
-	Method string               // 服务方法
-	Args   []ResourceServiceArg // 服务参数
+	Name   string // 服务名称
+	Method string // 服务方法
+	Args   []any  // 服务参数
 }
 
 // ResourceServiceReturn 资源服务返回
@@ -94,7 +84,7 @@ type ResourceService struct {
 	Name        string                  // 服务名称
 	Description string                  // 服务描述
 	Method      string                  // 服务方法
-	Args        []ResourceServiceArg    // 服务参数
+	Args        []any                   // 服务参数
 	Response    ResourceServiceResponse // 服务返回
 }
 
@@ -113,4 +103,41 @@ type GatewayResource interface {
 	OnService(request ResourceServiceRequest) (ResourceServiceResponse, error)
 	Details() *GatewayResourceWorker
 	Stop()
+}
+
+// BaseGatewayResource 提供基础实现，确保状态的线程安全
+type BaseGatewayResource struct {
+	mu     sync.RWMutex
+	state  GatewayResourceState
+	config map[string]any
+}
+
+func (r *BaseGatewayResource) Init(uuid string, configMap map[string]any) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.config = configMap
+	r.state = RESOURCE_PENDING
+	return nil
+}
+
+func (r *BaseGatewayResource) Start(ctx context.Context) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.state != RESOURCE_PENDING {
+		return fmt.Errorf("cannot start resource in state %s", r.state)
+	}
+	r.state = RESOURCE_UP
+	return nil
+}
+
+func (r *BaseGatewayResource) Status() GatewayResourceState {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return r.state
+}
+
+func (r *BaseGatewayResource) Stop() {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.state = RESOURCE_STOP
 }

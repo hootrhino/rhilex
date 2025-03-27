@@ -10,7 +10,6 @@ import (
 	"github.com/hootrhino/rhilex/component/crontask"
 	dataschema "github.com/hootrhino/rhilex/component/dataschema"
 	"github.com/hootrhino/rhilex/component/eventbus"
-	"github.com/hootrhino/rhilex/multimedia"
 	"github.com/shirou/gopsutil/cpu"
 
 	"github.com/hootrhino/rhilex/applet"
@@ -70,13 +69,7 @@ func initRhilex(engine typex.Rhilex) {
 		},
 		)
 	}
-	// multimedia
-	for _, Multimedia := range service.AllMultiMedia() {
-		if err := multimedia.LoadMultimediaResource(Multimedia.UUID, Multimedia.Name,
-			Multimedia.Type, Multimedia.GetConfig(), Multimedia.Description); err != nil {
-			glogger.GLogger.Error("Multimedia load failed:", err)
-		}
-	}
+
 	for _, minEnd := range service.AllMInEnd() {
 		if err := server.LoadNewestInEnd(minEnd.UUID, engine); err != nil {
 			glogger.GLogger.Error("InEnd load failed:", err)
