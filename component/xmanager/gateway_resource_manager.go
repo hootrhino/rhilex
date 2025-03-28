@@ -25,37 +25,37 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GatewayResourceFactory 资源构造函数类型
-type GatewayResourceFactory func(uuid string, config map[string]any) (GatewayResource, error)
+// GenericResourceFactory 资源构造函数类型
+type GenericResourceFactory func(uuid string, config map[string]any) (GenericResource, error)
 
-// GatewayResourceManager 管理所有资源
-type GatewayResourceManager struct {
+// GenericResourceManager 管理所有资源
+type GenericResourceManager struct {
 	mu        sync.RWMutex
-	resources map[string]GatewayResource
-	factories map[string]GatewayResourceFactory
+	resources map[string]GenericResource
+	factories map[string]GenericResourceFactory
 	logger    *logrus.Logger
 }
 
-// NewGatewayResourceManager 创建新的资源管理器
-func NewGatewayResourceManager() *GatewayResourceManager {
-	return &GatewayResourceManager{
-		resources: make(map[string]GatewayResource),
-		factories: make(map[string]GatewayResourceFactory),
+// NewGenericResourceManager 创建新的资源管理器
+func NewGenericResourceManager() *GenericResourceManager {
+	return &GenericResourceManager{
+		resources: make(map[string]GenericResource),
+		factories: make(map[string]GenericResourceFactory),
 	}
 }
-func (m *GatewayResourceManager) SetLogger(logger *logrus.Logger) {
+func (m *GenericResourceManager) SetLogger(logger *logrus.Logger) {
 	m.logger = logger
 }
 
 // RegisterFactory 注册资源类型及其构造函数
-func (m *GatewayResourceManager) RegisterFactory(resourceType string, factory GatewayResourceFactory) {
+func (m *GenericResourceManager) RegisterFactory(resourceType string, factory GenericResourceFactory) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.factories[resourceType] = factory
 }
 
 // ReloadResource 重新加载资源
-func (m *GatewayResourceManager) ReloadResource(uuid string) error {
+func (m *GenericResourceManager) ReloadResource(uuid string) error {
 	m.mu.RLock()
 	resource, exists := m.resources[uuid]
 	m.mu.RUnlock()
@@ -92,7 +92,7 @@ func (m *GatewayResourceManager) ReloadResource(uuid string) error {
 }
 
 // CreateResource 创建资源
-func (m *GatewayResourceManager) CreateResource(resourceType, uuid string, config map[string]any) error {
+func (m *GenericResourceManager) CreateResource(resourceType, uuid string, config map[string]any) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -125,7 +125,7 @@ func (m *GatewayResourceManager) CreateResource(resourceType, uuid string, confi
 }
 
 // StartResource 启动资源
-func (m *GatewayResourceManager) StartResource(uuid string, ctx context.Context) error {
+func (m *GenericResourceManager) StartResource(uuid string, ctx context.Context) error {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -138,7 +138,7 @@ func (m *GatewayResourceManager) StartResource(uuid string, ctx context.Context)
 }
 
 // StopResource 停止资源
-func (m *GatewayResourceManager) StopResource(uuid string) error {
+func (m *GenericResourceManager) StopResource(uuid string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -153,7 +153,7 @@ func (m *GatewayResourceManager) StopResource(uuid string) error {
 }
 
 // GetResource 获取资源
-func (m *GatewayResourceManager) GetResource(uuid string) (GatewayResource, error) {
+func (m *GenericResourceManager) GetResource(uuid string) (GenericResource, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -166,10 +166,10 @@ func (m *GatewayResourceManager) GetResource(uuid string) (GatewayResource, erro
 }
 
 // GetResourceList 获取资源列表
-func (m *GatewayResourceManager) GetResourceList() []GatewayResource {
+func (m *GenericResourceManager) GetResourceList() []GenericResource {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	resources := make([]GatewayResource, 0, len(m.resources))
+	resources := make([]GenericResource, 0, len(m.resources))
 	for _, resource := range m.resources {
 		resources = append(resources, resource)
 	}
@@ -177,7 +177,7 @@ func (m *GatewayResourceManager) GetResourceList() []GatewayResource {
 }
 
 // PaginationResources 分页获取
-func (m *GatewayResourceManager) PaginationResources(current, size int) []GatewayResource {
+func (m *GenericResourceManager) PaginationResources(current, size int) []GenericResource {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	resources := m.GetResourceList()
@@ -193,7 +193,7 @@ func (m *GatewayResourceManager) PaginationResources(current, size int) []Gatewa
 }
 
 // GetResourceStatus 获取资源状态
-func (m *GatewayResourceManager) GetResourceStatus(uuid string) (GatewayResourceState, error) {
+func (m *GenericResourceManager) GetResourceStatus(uuid string) (GenericResourceState, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	resource, exists := m.resources[uuid]
@@ -204,52 +204,70 @@ func (m *GatewayResourceManager) GetResourceStatus(uuid string) (GatewayResource
 }
 
 // StartMonitoring 开始资源监控
-func (m *GatewayResourceManager) StartMonitoring() {
+func (m *GenericResourceManager) StartMonitoring() {
 	go func() {
 		ticker := time.NewTicker(5 * time.Second)
 		defer ticker.Stop()
+
+		// Map to track restart attempts for each resource
+		restartAttempts := make(map[string]int)
+		const maxRetries = 3
+		const backoffDuration = 2 * time.Second
 
 		for range ticker.C {
 			select {
 			case <-context.Background().Done():
 				return
 			default:
-				m.monitorResources()
+				m.monitorResourcesWithRestartPolicy(restartAttempts, maxRetries, backoffDuration)
 			}
 		}
 	}()
 }
 
-// monitorResources 监控所有资源的状态
-func (m *GatewayResourceManager) monitorResources() {
+// monitorResourcesWithRestartPolicy 监控所有资源并应用重启策略
+func (m *GenericResourceManager) monitorResourcesWithRestartPolicy(restartAttempts map[string]int, maxRetries int, backoffDuration time.Duration) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	for uuid, resource := range m.resources {
 		status := resource.Status()
-		m.handleResourceStatus(uuid, status)
-	}
-}
 
-// handleResourceStatus 根据资源状态执行相应操作
-func (m *GatewayResourceManager) handleResourceStatus(uuid string, status GatewayResourceState) {
-	switch status {
-	case RESOURCE_DOWN:
-		m.logger.Warnf("Resource %s is down, attempting to reload", uuid)
-		if err := m.ReloadResource(uuid); err != nil {
-			m.logger.Errorf("Failed to reload resource %s: %v", uuid, err)
+		// Handle resource status with restart policy
+		switch status {
+		case RESOURCE_DOWN:
+			m.logger.Warnf("Resource %s is down, attempting to reload", uuid)
+
+			// Check if the resource has exceeded the maximum retries
+			if restartAttempts[uuid] >= maxRetries {
+				m.logger.Errorf("Resource %s has exceeded maximum restart attempts (%d), skipping further retries", uuid, maxRetries)
+				continue
+			}
+
+			// Attempt to reload the resource
+			if err := m.ReloadResource(uuid); err != nil {
+				m.logger.Errorf("Failed to reload resource %s: %v", uuid, err)
+				restartAttempts[uuid]++
+				time.Sleep(backoffDuration) // Apply backoff before the next retry
+			} else {
+				m.logger.Infof("Resource %s successfully reloaded", uuid)
+				restartAttempts[uuid] = 0 // Reset retry count on success
+			}
+
+		case RESOURCE_STOP, RESOURCE_DISABLE:
+			m.logger.Warnf("Resource %s is stopped or disabled, skipping reload", uuid)
+
+		case RESOURCE_PENDING:
+			m.logger.Debugf("Resource %s is pending, waiting for initialization", uuid)
+
+		default:
+			m.logger.Debugf("Resource %s is in state %v, no action required", uuid, status)
 		}
-	case RESOURCE_STOP, RESOURCE_DISABLE:
-		m.logger.Warnf("Resource %s is stopped or disabled, skipping reload", uuid)
-	case RESOURCE_PENDING:
-		m.logger.Debugf("Resource %s is pending, waiting for initialization", uuid)
-	default:
-		m.logger.Debugf("Resource %s is in state %v, no action required", uuid, status)
 	}
 }
 
 // StopMonitoring 停止资源监控
-func (m *GatewayResourceManager) StopMonitoring() {
+func (m *GenericResourceManager) StopMonitoring() {
 
 	m.logger.Infof("Monitoring has been stopped")
 }

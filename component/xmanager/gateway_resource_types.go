@@ -22,11 +22,11 @@ import (
 	"sync"
 )
 
-// GatewayResourceState 资源状态类型
-type GatewayResourceState int
+// GenericResourceState 资源状态类型
+type GenericResourceState int
 
 // to string
-func (s GatewayResourceState) String() string {
+func (s GenericResourceState) String() string {
 	switch s {
 	case RESOURCE_DOWN:
 		return "DOWN"
@@ -47,17 +47,17 @@ func (s GatewayResourceState) String() string {
 
 const (
 	// 故障
-	RESOURCE_DOWN GatewayResourceState = 0
+	RESOURCE_DOWN GenericResourceState = 0
 	// 启用
-	RESOURCE_UP GatewayResourceState = 1
+	RESOURCE_UP GenericResourceState = 1
 	// 暂停
-	RESOURCE_PAUSE GatewayResourceState = 2
+	RESOURCE_PAUSE GenericResourceState = 2
 	// 停止
-	RESOURCE_STOP GatewayResourceState = 3
+	RESOURCE_STOP GenericResourceState = 3
 	// 准备
-	RESOURCE_PENDING GatewayResourceState = 4
+	RESOURCE_PENDING GenericResourceState = 4
 	// 禁用
-	RESOURCE_DISABLE GatewayResourceState = 5
+	RESOURCE_DISABLE GenericResourceState = 5
 )
 
 // 资源服务
@@ -94,25 +94,25 @@ func (s *ResourceService) String() string {
 		s.Name, s.Description, s.Method, s.Args, s.Response)
 }
 
-// GatewayResource 多媒体资源工作接口
-type GatewayResource interface {
+// GenericResource 多媒体资源工作接口
+type GenericResource interface {
 	Init(uuid string, configMap map[string]any) error
 	Start(context.Context) error
-	Status() GatewayResourceState
+	Status() GenericResourceState
 	Services() []ResourceService
 	OnService(request ResourceServiceRequest) (ResourceServiceResponse, error)
-	Details() *GatewayResourceWorker
+	Details() *GenericResourceWorker
 	Stop()
 }
 
-// BaseGatewayResource 提供基础实现，确保状态的线程安全
-type BaseGatewayResource struct {
+// BaseGenericResource 提供基础实现，确保状态的线程安全
+type BaseGenericResource struct {
 	mu     sync.RWMutex
-	state  GatewayResourceState
+	state  GenericResourceState
 	config map[string]any
 }
 
-func (r *BaseGatewayResource) Init(uuid string, configMap map[string]any) error {
+func (r *BaseGenericResource) Init(uuid string, configMap map[string]any) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.config = configMap
@@ -120,7 +120,7 @@ func (r *BaseGatewayResource) Init(uuid string, configMap map[string]any) error 
 	return nil
 }
 
-func (r *BaseGatewayResource) Start(ctx context.Context) error {
+func (r *BaseGenericResource) Start(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if r.state != RESOURCE_PENDING {
@@ -130,13 +130,13 @@ func (r *BaseGatewayResource) Start(ctx context.Context) error {
 	return nil
 }
 
-func (r *BaseGatewayResource) Status() GatewayResourceState {
+func (r *BaseGenericResource) Status() GenericResourceState {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.state
 }
 
-func (r *BaseGatewayResource) Stop() {
+func (r *BaseGenericResource) Stop() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.state = RESOURCE_STOP

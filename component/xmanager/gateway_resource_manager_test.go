@@ -12,16 +12,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Mock implementation of GatewayResource
-type MockGatewayResource struct {
+// Mock implementation of GenericResource
+type MockGenericResource struct {
 	mu       sync.RWMutex
-	state    GatewayResourceState
+	state    GenericResourceState
 	config   map[string]any
 	initErr  error
 	startErr error
 }
 
-func (r *MockGatewayResource) Init(uuid string, configMap map[string]any) error {
+func (r *MockGenericResource) Init(uuid string, configMap map[string]any) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.config = configMap
@@ -32,7 +32,7 @@ func (r *MockGatewayResource) Init(uuid string, configMap map[string]any) error 
 	return nil
 }
 
-func (r *MockGatewayResource) Start(ctx context.Context) error {
+func (r *MockGenericResource) Start(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if r.startErr != nil {
@@ -42,40 +42,40 @@ func (r *MockGatewayResource) Start(ctx context.Context) error {
 	return nil
 }
 
-func (r *MockGatewayResource) Status() GatewayResourceState {
+func (r *MockGenericResource) Status() GenericResourceState {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	return r.state
 }
 
-func (r *MockGatewayResource) Services() []ResourceService {
+func (r *MockGenericResource) Services() []ResourceService {
 	return nil
 }
 
-func (r *MockGatewayResource) OnService(request ResourceServiceRequest) (ResourceServiceResponse, error) {
+func (r *MockGenericResource) OnService(request ResourceServiceRequest) (ResourceServiceResponse, error) {
 	return ResourceServiceResponse{}, nil
 }
 
-func (r *MockGatewayResource) Details() *GatewayResourceWorker {
-	return &GatewayResourceWorker{
+func (r *MockGenericResource) Details() *GenericResourceWorker {
+	return &GenericResourceWorker{
 		Config: r.config,
 	}
 }
 
-func (r *MockGatewayResource) Stop() {
+func (r *MockGenericResource) Stop() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.state = RESOURCE_STOP
 }
 
 // Test cases
-func TestGatewayResourceManager(t *testing.T) {
-	manager := NewGatewayResourceManager()
+func TestGenericResourceManager(t *testing.T) {
+	manager := NewGenericResourceManager()
 	manager.SetLogger(logrus.New())
 
 	// Register a mock factory
-	manager.RegisterFactory("mock", func(uuid string, config map[string]any) (GatewayResource, error) {
-		return &MockGatewayResource{}, nil
+	manager.RegisterFactory("mock", func(uuid string, config map[string]any) (GenericResource, error) {
+		return &MockGenericResource{}, nil
 	})
 
 	t.Run("CreateResource", func(t *testing.T) {
@@ -126,8 +126,8 @@ func TestGatewayResourceManager(t *testing.T) {
 
 	t.Run("StartMonitoring", func(t *testing.T) {
 		// Create a resource that starts in RESOURCE_DOWN state
-		manager.RegisterFactory("mock_down", func(uuid string, config map[string]any) (GatewayResource, error) {
-			return &MockGatewayResource{state: RESOURCE_DOWN}, nil
+		manager.RegisterFactory("mock_down", func(uuid string, config map[string]any) (GenericResource, error) {
+			return &MockGenericResource{state: RESOURCE_DOWN}, nil
 		})
 		err := manager.CreateResource("mock_down", "resource3", map[string]any{"key": "value"})
 		assert.NoError(t, err)
@@ -152,6 +152,9 @@ func TestGatewayResourceManager(t *testing.T) {
 
 		// Paginate resources
 		resources := manager.PaginationResources(1, 5)
+		for _, v := range resources {
+			t.Log(v.Details())
+		}
 		assert.Len(t, resources, 5)
 	})
 }

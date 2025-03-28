@@ -20,9 +20,9 @@ import (
 	"fmt"
 )
 
-// GatewayResourceWorker 用于记录流媒体的元信息
-type GatewayResourceWorker struct {
-	Worker      GatewayResource // 实际的实现接口
+// GenericResourceWorker 用于记录流媒体的元信息
+type GenericResourceWorker struct {
+	Worker      GenericResource // 实际的实现接口
 	UUID        string          // 资源唯一标识
 	Name        string          // 资源名称
 	Type        string          // 资源类型
@@ -31,42 +31,11 @@ type GatewayResourceWorker struct {
 }
 
 // to string
-func (g *GatewayResourceWorker) String() string {
+func (g *GenericResourceWorker) String() string {
 	return fmt.Sprintf("UUID: %s, Name: %s, Type: %s, Description: %s", g.UUID, g.Name, g.Type, g.Description)
 }
 
 // GetConfig 获取配置
-func (g *GatewayResourceWorker) GetConfig() map[string]any {
+func (g *GenericResourceWorker) GetConfig() map[string]any {
 	return g.Config
-}
-
-// Check Config
-func (g *GatewayResourceWorker) CheckConfig(config any) error {
-	if g.Config == nil {
-		return fmt.Errorf("config is nil")
-	}
-	if g.Config["uuid"] == nil {
-		return fmt.Errorf("config uuid is nil")
-	}
-	if g.Config["name"] == nil {
-		return fmt.Errorf("config name is nil")
-	}
-	if g.Config["type"] == nil {
-		return fmt.Errorf("config type is nil")
-	}
-	if g.Config["description"] == nil {
-		return fmt.Errorf("config description is nil")
-	}
-	if g.Config["config"] == nil {
-		return fmt.Errorf("config config is nil")
-	}
-
-	if config == nil {
-		return fmt.Errorf("config is nil")
-	}
-	err := MapToConfig(g.Config, config)
-	if err != nil {
-		return err
-	}
-	return nil
 }
