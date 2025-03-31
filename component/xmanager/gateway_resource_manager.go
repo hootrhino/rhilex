@@ -25,10 +25,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GenericResourceFactory 资源构造函数类型
 type GenericResourceFactory func(uuid string, config map[string]any) (GenericResource, error)
 
-// GenericResourceManager 管理所有资源
 type GenericResourceManager struct {
 	mu        sync.RWMutex
 	resources map[string]GenericResource
@@ -36,25 +34,23 @@ type GenericResourceManager struct {
 	logger    *logrus.Logger
 }
 
-// NewGenericResourceManager 创建新的资源管理器
 func NewGenericResourceManager() *GenericResourceManager {
 	return &GenericResourceManager{
 		resources: make(map[string]GenericResource),
 		factories: make(map[string]GenericResourceFactory),
 	}
 }
+
 func (m *GenericResourceManager) SetLogger(logger *logrus.Logger) {
 	m.logger = logger
 }
 
-// RegisterFactory 注册资源类型及其构造函数
 func (m *GenericResourceManager) RegisterFactory(resourceType string, factory GenericResourceFactory) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.factories[resourceType] = factory
 }
 
-// ReloadResource 重新加载资源
 func (m *GenericResourceManager) ReloadResource(uuid string) error {
 	m.mu.RLock()
 	resource, exists := m.resources[uuid]
@@ -67,20 +63,17 @@ func (m *GenericResourceManager) ReloadResource(uuid string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// Check the current state of the resource
 	currentState := resource.Status()
 	if currentState == RESOURCE_UP {
 		m.logger.Infof("Resource %s is already running, skipping reload", uuid)
 		return nil
 	}
 
-	// Reinitialize the resource
 	if err := resource.Init(uuid, resource.Details().GetConfig()); err != nil {
 		m.logger.Errorf("Failed to reinitialize resource %s: %v", uuid, err)
 		return err
 	}
 
-	// Restart the resource
 	ctx := context.Background()
 	if err := resource.Start(ctx); err != nil {
 		m.logger.Errorf("Failed to restart resource %s: %v", uuid, err)
@@ -91,32 +84,22 @@ func (m *GenericResourceManager) ReloadResource(uuid string) error {
 	return nil
 }
 
-// CreateResource 创建资源
 func (m *GenericResourceManager) CreateResource(resourceType, uuid string, config map[string]any) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// Check if the factory for the resource type exists
 	factory, exists := m.factories[resourceType]
 	if !exists {
 		return fmt.Errorf("resource type '%s' is not registered", resourceType)
 	}
-
-	// Validate the configuration
 	if config == nil {
 		return fmt.Errorf("configuration for resource '%s' cannot be nil", uuid)
 	}
-
-	// Create the resource using the factory
 	resource, err := factory(uuid, config)
 	if err != nil {
 		return fmt.Errorf("failed to create resource '%s' of type '%s': %w", uuid, resourceType, err)
 	}
-
-	// Add the resource to the manager before initialization
 	m.resources[uuid] = resource
-
-	// Initialize the resource
 	if err := resource.Init(uuid, config); err != nil {
 		return fmt.Errorf("failed to initialize resource '%s': %w", uuid, err)
 	}
@@ -124,7 +107,6 @@ func (m *GenericResourceManager) CreateResource(resourceType, uuid string, confi
 	return nil
 }
 
-// StartResource 启动资源
 func (m *GenericResourceManager) StartResource(uuid string, ctx context.Context) error {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -137,22 +119,18 @@ func (m *GenericResourceManager) StartResource(uuid string, ctx context.Context)
 	return resource.Start(ctx)
 }
 
-// StopResource 停止资源
 func (m *GenericResourceManager) StopResource(uuid string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
 	resource, exists := m.resources[uuid]
 	if !exists {
 		return fmt.Errorf("resource %s not found", uuid)
 	}
-
 	resource.Stop()
 	delete(m.resources, uuid)
 	return nil
 }
 
-// GetResource 获取资源
 func (m *GenericResourceManager) GetResource(uuid string) (GenericResource, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -165,7 +143,6 @@ func (m *GenericResourceManager) GetResource(uuid string) (GenericResource, erro
 	return resource, nil
 }
 
-// GetResourceList 获取资源列表
 func (m *GenericResourceManager) GetResourceList() []GenericResource {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -176,7 +153,6 @@ func (m *GenericResourceManager) GetResourceList() []GenericResource {
 	return resources
 }
 
-// PaginationResources 分页获取
 func (m *GenericResourceManager) PaginationResources(current, size int) []GenericResource {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -192,7 +168,6 @@ func (m *GenericResourceManager) PaginationResources(current, size int) []Generi
 	return resources[start:end]
 }
 
-// GetResourceStatus 获取资源状态
 func (m *GenericResourceManager) GetResourceStatus(uuid string) (GenericResourceState, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -203,13 +178,11 @@ func (m *GenericResourceManager) GetResourceStatus(uuid string) (GenericResource
 	return resource.Status(), nil
 }
 
-// StartMonitoring 开始资源监控
 func (m *GenericResourceManager) StartMonitoring() {
 	go func() {
 		ticker := time.NewTicker(5 * time.Second)
 		defer ticker.Stop()
 
-		// Map to track restart attempts for each resource
 		restartAttempts := make(map[string]int)
 		const maxRetries = 3
 		const backoffDuration = 2 * time.Second
@@ -225,7 +198,6 @@ func (m *GenericResourceManager) StartMonitoring() {
 	}()
 }
 
-// monitorResourcesWithRestartPolicy 监控所有资源并应用重启策略
 func (m *GenericResourceManager) monitorResourcesWithRestartPolicy(restartAttempts map[string]int, maxRetries int, backoffDuration time.Duration) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -266,7 +238,6 @@ func (m *GenericResourceManager) monitorResourcesWithRestartPolicy(restartAttemp
 	}
 }
 
-// StopMonitoring 停止资源监控
 func (m *GenericResourceManager) StopMonitoring() {
 
 	m.logger.Infof("Monitoring has been stopped")

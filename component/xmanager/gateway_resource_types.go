@@ -19,13 +19,12 @@ package xmanager
 import (
 	"context"
 	"fmt"
-	"sync"
 )
 
 // GenericResourceState 资源状态类型
 type GenericResourceState int
 
-// to string
+// To String
 func (s GenericResourceState) String() string {
 	switch s {
 	case RESOURCE_DOWN:
@@ -88,7 +87,6 @@ type ResourceService struct {
 	Response    ResourceServiceResponse // 服务返回
 }
 
-// to string
 func (s *ResourceService) String() string {
 	return fmt.Sprintf("ResourceService Name: %s, Description: %s, Method: %s, Args: %v, Response: %v",
 		s.Name, s.Description, s.Method, s.Args, s.Response)
@@ -103,41 +101,4 @@ type GenericResource interface {
 	OnService(request ResourceServiceRequest) (ResourceServiceResponse, error)
 	Details() *GenericResourceWorker
 	Stop()
-}
-
-// BaseGenericResource 提供基础实现，确保状态的线程安全
-type BaseGenericResource struct {
-	mu     sync.RWMutex
-	state  GenericResourceState
-	config map[string]any
-}
-
-func (r *BaseGenericResource) Init(uuid string, configMap map[string]any) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.config = configMap
-	r.state = RESOURCE_PENDING
-	return nil
-}
-
-func (r *BaseGenericResource) Start(ctx context.Context) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	if r.state != RESOURCE_PENDING {
-		return fmt.Errorf("cannot start resource in state %s", r.state)
-	}
-	r.state = RESOURCE_UP
-	return nil
-}
-
-func (r *BaseGenericResource) Status() GenericResourceState {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	return r.state
-}
-
-func (r *BaseGenericResource) Stop() {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.state = RESOURCE_STOP
 }

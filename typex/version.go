@@ -29,10 +29,10 @@ var License = utils.LocalLicense{
 
 var DefaultVersionInfo = VersionInfo{
 	Product:     "COMMON",
-	ReleaseTime: "2025-03-27 19:54:29",
+	ReleaseTime: "2025-03-31 19:32:20",
 }
 var Banner = `
   <<  RHILEX System.©                              -·
-<<·   Version: v0.7.8-a87224bd             -·
+<<·   Version: v0.7.8-932cfc67             -·
   <<  More information: https://www.hootrhino.com  -·
 `
