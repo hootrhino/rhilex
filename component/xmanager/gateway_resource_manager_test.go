@@ -17,6 +17,7 @@ type MockGenericResource struct {
 	mu       sync.RWMutex
 	state    GenericResourceState
 	config   map[string]any
+	uuid     string
 	initErr  error
 	startErr error
 }
@@ -24,6 +25,7 @@ type MockGenericResource struct {
 func (r *MockGenericResource) Init(uuid string, configMap map[string]any) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	r.uuid = uuid
 	r.config = configMap
 	if r.initErr != nil {
 		return r.initErr
@@ -58,7 +60,12 @@ func (r *MockGenericResource) OnService(request ResourceServiceRequest) (Resourc
 
 func (r *MockGenericResource) Details() *GenericResourceWorker {
 	return &GenericResourceWorker{
-		Config: r.config,
+		UUID:        r.uuid,
+		Name:        "mock-resource",
+		Type:        "mock",
+		Worker:      r,
+		Config:      r.config,
+		Description: "Mock resource for testing",
 	}
 }
 
@@ -70,7 +77,7 @@ func (r *MockGenericResource) Stop() {
 
 // Test cases
 func TestGenericResourceManager(t *testing.T) {
-	manager := NewGenericResourceManager()
+	manager := NewGenericResourceManager(nil)
 	manager.SetLogger(logrus.New())
 
 	// Register a mock factory
@@ -157,4 +164,5 @@ func TestGenericResourceManager(t *testing.T) {
 		}
 		assert.Len(t, resources, 5)
 	})
+	time.Sleep(10 * time.Second)
 }

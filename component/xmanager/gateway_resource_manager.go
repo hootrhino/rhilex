@@ -29,19 +29,25 @@ type GenericResourceFactory func(uuid string, config map[string]any) (GenericRes
 
 type GenericResourceManager struct {
 	mu        sync.RWMutex
+	gateway   *Gateway
 	resources map[string]GenericResource
 	factories map[string]GenericResourceFactory
 	logger    *logrus.Logger
 }
 
-func NewGenericResourceManager() *GenericResourceManager {
+func NewGenericResourceManager(Gateway *Gateway) *GenericResourceManager {
+	Logger := logrus.New()
+	Logger.SetFormatter(&logrus.TextFormatter{})
 	return &GenericResourceManager{
+		gateway:   Gateway,
 		resources: make(map[string]GenericResource),
 		factories: make(map[string]GenericResourceFactory),
+		logger:    Logger,
 	}
 }
 
 func (m *GenericResourceManager) SetLogger(logger *logrus.Logger) {
+	m.logger = nil
 	m.logger = logger
 }
 
@@ -198,7 +204,8 @@ func (m *GenericResourceManager) StartMonitoring() {
 	}()
 }
 
-func (m *GenericResourceManager) monitorResourcesWithRestartPolicy(restartAttempts map[string]int, maxRetries int, backoffDuration time.Duration) {
+func (m *GenericResourceManager) monitorResourcesWithRestartPolicy(restartAttempts map[string]int,
+	maxRetries int, backoffDuration time.Duration) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
