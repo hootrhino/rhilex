@@ -26,6 +26,7 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 )
 
 const __INTERNAL_DB_PATH string = "./rhilex.db?cache=shared&mode=rwc"
@@ -55,6 +56,7 @@ func InitInterDb(engine typex.Rhilex) error {
 	if err != nil {
 		glogger.GLogger.Fatal(err)
 	}
+	schema.RegisterSerializer("custom", CustomTypeSerializer{})
 	__InternalSqlite.db.Exec("VACUUM;")
 	return err
 }
