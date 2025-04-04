@@ -8,12 +8,12 @@ import (
 	"strings"
 )
 
-type NetworkController struct {
+type NmcliController struct {
 	Interface string
 }
 
 // Get network interface state (up/down)
-func (n *NetworkController) GetState() (string, error) {
+func (n *NmcliController) GetState() (string, error) {
 	cmd := exec.Command("ip", "link", "show", n.Interface)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -27,7 +27,7 @@ func (n *NetworkController) GetState() (string, error) {
 }
 
 // Get network interface speed
-func (n *NetworkController) GetSpeed() (string, error) {
+func (n *NmcliController) GetSpeed() (string, error) {
 	cmd := exec.Command("ethtool", n.Interface)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -43,7 +43,7 @@ func (n *NetworkController) GetSpeed() (string, error) {
 }
 
 // Get network interface IP address
-func (n *NetworkController) GetIPAddress() (string, error) {
+func (n *NmcliController) GetIPAddress() (string, error) {
 	cmd := exec.Command("ip", "addr", "show", n.Interface)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -59,7 +59,7 @@ func (n *NetworkController) GetIPAddress() (string, error) {
 }
 
 // Get network interface MAC address
-func (n *NetworkController) GetMACAddress() (string, error) {
+func (n *NmcliController) GetMACAddress() (string, error) {
 	cmd := exec.Command("ip", "link", "show", n.Interface)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -75,7 +75,7 @@ func (n *NetworkController) GetMACAddress() (string, error) {
 }
 
 // Get network interface statistics
-func (n *NetworkController) GetStatistics() (string, error) {
+func (n *NmcliController) GetStatistics() (string, error) {
 	cmd := exec.Command("ip", "addr", "show", n.Interface)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -86,7 +86,7 @@ func (n *NetworkController) GetStatistics() (string, error) {
 }
 
 // Get network interface receive bytes
-func (n *NetworkController) GetReceiveBytes() (uint64, error) {
+func (n *NmcliController) GetReceiveBytes() (uint64, error) {
 	cmd := exec.Command("cat", fmt.Sprintf("/sys/class/net/%s/statistics/rx_bytes", n.Interface))
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -101,7 +101,7 @@ func (n *NetworkController) GetReceiveBytes() (uint64, error) {
 }
 
 // Get network interface transmit bytes
-func (n *NetworkController) GetTransmitBytes() (uint64, error) {
+func (n *NmcliController) GetTransmitBytes() (uint64, error) {
 	cmd := exec.Command("cat", fmt.Sprintf("/sys/class/net/%s/statistics/tx_bytes", n.Interface))
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -116,7 +116,7 @@ func (n *NetworkController) GetTransmitBytes() (uint64, error) {
 }
 
 // Restart network interface
-func (n *NetworkController) RestartNetwork() error {
+func (n *NmcliController) RestartNetwork() error {
 	cmd := exec.Command("systemctl", "restart", "networking") // For Debian/Ubuntu
 	output, err := cmd.CombinedOutput()
 	if err != nil {
