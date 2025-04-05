@@ -98,6 +98,7 @@ type GenericResource interface {
 	Start(context.Context) error
 	Status() GenericResourceState
 	Services() []ResourceService
+	Topology() *LocalTopology
 	OnService(request ResourceServiceRequest) (ResourceServiceResponse, error)
 	Details() *GenericResourceWorker
 	Stop()

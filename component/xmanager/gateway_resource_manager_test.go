@@ -68,7 +68,9 @@ func (r *MockGenericResource) Details() *GenericResourceWorker {
 		Description: "Mock resource for testing",
 	}
 }
-
+func (r *MockGenericResource) Topology() *LocalTopology {
+	return &LocalTopology{}
+}
 func (r *MockGenericResource) Stop() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
