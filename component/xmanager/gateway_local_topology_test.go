@@ -50,6 +50,9 @@ func (m *MockResource) Topology() *LocalTopology {
 	topology.AddDevice(Device{
 		ID:              "device1",
 		Type:            "device1",
+		Protocol:        "MODBUSTCP",
+		IP:              "127.0.0.1",
+		Port:            502,
 		Name:            "device1",
 		Status:          "device1",
 		Location:        "device1",
