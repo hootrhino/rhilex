@@ -39,7 +39,6 @@ func TestStart_Success(t *testing.T) {
 			Interface: "eth0",
 			Timeout:   5,
 		},
-		Runner: mock,
 	}
 
 	mock.Output["udhcpc -i eth0 -T 5"] = "bound"
@@ -53,7 +52,6 @@ func TestStart_Success(t *testing.T) {
 func TestStart_MissingInterface(t *testing.T) {
 	ctrl := &UDHCPCController{
 		Config: Config{},
-		Runner: newMockRunner(),
 	}
 
 	err := ctrl.Start()
@@ -66,7 +64,6 @@ func TestRelease_Success(t *testing.T) {
 	mock := newMockRunner()
 	ctrl := &UDHCPCController{
 		Config: Config{Interface: "eth0"},
-		Runner: mock,
 	}
 	mock.Output["udhcpc -i eth0 -n -q -R"] = "released"
 
@@ -80,7 +77,6 @@ func TestGetLeaseInfo_Success(t *testing.T) {
 	mock := newMockRunner()
 	ctrl := &UDHCPCController{
 		Config: Config{Interface: "eth0"},
-		Runner: mock,
 	}
 
 	mock.Output["ip -4 addr show dev eth0"] = `
@@ -113,7 +109,6 @@ func TestGetLeaseInfo_NoIP(t *testing.T) {
 	mock := newMockRunner()
 	ctrl := &UDHCPCController{
 		Config: Config{Interface: "eth0"},
-		Runner: mock,
 	}
 
 	mock.Output["ip -4 addr show dev eth0"] = `
