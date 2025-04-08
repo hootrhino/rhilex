@@ -31,13 +31,13 @@ func NewGenericReadWriteCloser() *GenericReadWriteCloser {
 	}
 }
 func (s *GenericReadWriteCloser) Read(p []byte) (n int, err error) {
-	GenericByteParser := NewGenericByteParser(&SimpleChecker{}, PacketEdger{
+	GenericByteParser := NewGenericByteParser(PacketEdger{
 		Head: [2]byte{0xAB, 0xAB},
 		Tail: [2]byte{0xBA, 0xBA},
-	})
-	ApplicationFrame := NewApplicationFrame([]byte{0xAA, 0xBB, 0xCC, 0xDD})
+	}, 1, 1024)
+	ApplicationFrame := BuildApplicationFrame([]byte{0xAA, 0xBB, 0xCC, 0xDD})
 	Response, _ := GenericByteParser.PackBytes(ApplicationFrame)
-	p = append(p, Response...)
+	copy(p, Response)
 	// fmt.Println("[= TEST OUTPUT =] .Read:", p)
 	return len(p), nil
 }

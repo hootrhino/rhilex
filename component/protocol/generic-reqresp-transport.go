@@ -44,8 +44,7 @@ func NewTransport(config ExchangeConfig) *Transport {
 		reader:       bufio.NewReader(config.Port),
 		writer:       bufio.NewWriter(config.Port),
 		parser: GenericByteParser{
-			edger:   config.PacketEdger,
-			checker: &SimpleChecker{},
+			edger: config.PacketEdger,
 		},
 	}
 }

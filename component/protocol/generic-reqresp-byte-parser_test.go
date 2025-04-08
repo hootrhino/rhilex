@@ -1,17 +1,3 @@
-// Copyright (C) 2024 wwhai
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package protocol
 
 import (
@@ -20,100 +6,73 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// 单元测试
 func TestGenericByteParser(t *testing.T) {
-	// 定义包头和包尾
+	// Define the header and tail for the protocol
 	edger := PacketEdger{
 		Head: [2]byte{0xAF, 0x00},
 		Tail: [2]byte{0xFA, 0x00},
 	}
 
-	// 创建数据校验器
-	checker := &SimpleChecker{}
+	// Create an instance of GenericByteParser
+	parser := NewGenericByteParser(edger, 1, 1024)
 
-	// 创建 GenericByteParser 实例
-	parser := NewGenericByteParser(checker, edger)
-
-	// 测试数据：正确的有效数据包
-	validPacket := []byte{
+	// Test case: Valid packet
+	validPayload := []byte{0x01, 0x02, 0x03}
+	validChecksum := calculateCRC16(validPayload)
+	validPacket := append([]byte{
 		0xAF, 0x00, // Header
-		0x03,             // Length (3 bytes data)
-		0x01, 0x02, 0x03, // Data
-		0x00,       // Checksum (0x01 ^ 0x02 ^ 0x03)
-		0xFA, 0x00, // Tail
-	}
+		0x00, 0x03, // Length (3 bytes payload)
+	}, validPayload...)
+	validPacket = append(validPacket, byte(validChecksum>>8), byte(validChecksum&0xFF)) // CRC16 checksum
+	validPacket = append(validPacket, 0xFA, 0x00)                                       // Tail
 
 	t.Run("Valid Packet", func(t *testing.T) {
 		data, err := parser.ParseBytes(validPacket)
 		assert.NoError(t, err)
-		assert.Equal(t, []byte{0x01, 0x02, 0x03}, data)
+		assert.Equal(t, validPayload, data)
 	})
 
-	// 测试数据：包头错误
-	invalidHeader := []byte{
-		0x00, 0x00, // 错误的包头
-		0x03, // Length
-		0x01, 0x02, 0x03,
-		0x00,       // Checksum
-		0xFA, 0x00, // Tail
-	}
-
-	t.Run("Invalid Header", func(t *testing.T) {
-		data, err := parser.ParseBytes(invalidHeader)
-		assert.Error(t, err)
-		assert.Nil(t, data)
-		assert.Equal(t, "no valid header found", err.Error())
-	})
-
-	// 测试数据：包尾错误
-	invalidTail := []byte{
+	// Test case: Invalid checksum
+	invalidChecksumPacket := append([]byte{
 		0xAF, 0x00, // Header
-		0x03, // Length
-		0x01, 0x02, 0x03,
-		0x00,       // Checksum
-		0x00, 0x00, // 错误的包尾
-	}
-
-	t.Run("Invalid Tail", func(t *testing.T) {
-		data, err := parser.ParseBytes(invalidTail)
-		assert.Error(t, err)
-		assert.Nil(t, data)
-		assert.Equal(t, "no valid tail found", err.Error())
-	})
-
-	// 测试数据：数据长度不匹配
-	lengthMismatch := []byte{
-		0xAF, 0x00, // Header
-		0x03, // Length (3 bytes)
-		0x01, 0x02, 0x03,
-		0x00,       // Checksum (expecting 0x00)
-		0xFA, 0x00, // Tail
-	}
-
-	t.Run("Length Mismatch", func(t *testing.T) {
-		data, err := parser.ParseBytes(lengthMismatch)
-		assert.Error(t, err)
-		assert.Nil(t, data)
-		assert.Equal(t, "data length mismatch", err.Error())
-	})
-
-	// 测试数据：校验和错误
-	invalidChecksum := []byte{
-		0xAF, 0x00, // Header
-		0x03, // Length
-		0x01, 0x02, 0x03,
-		0x01,       // 错误的校验和（正确应为0x00）
-		0xFA, 0x00, // Tail
-	}
+		0x00, 0x03, // Length (3 bytes payload)
+	}, validPayload...)
+	invalidChecksumPacket = append(invalidChecksumPacket, 0x00, 0x00) // Invalid checksum
+	invalidChecksumPacket = append(invalidChecksumPacket, 0xFA, 0x00) // Tail
 
 	t.Run("Invalid Checksum", func(t *testing.T) {
-		data, err := parser.ParseBytes(invalidChecksum)
+		data, err := parser.ParseBytes(invalidChecksumPacket)
 		assert.Error(t, err)
 		assert.Nil(t, data)
-		assert.Equal(t, "data validation failed: data is empty", err.Error())
+		assert.Equal(t, "checksum validation failed", err.Error())
 	})
 
-	// 测试数据：空数据
+	// Test case: Invalid tail
+	invalidTailPacket := append(validPacket[:len(validPacket)-2], 0x00, 0x00) // Invalid tail
+
+	t.Run("Invalid Tail", func(t *testing.T) {
+		data, err := parser.ParseBytes(invalidTailPacket)
+		assert.Error(t, err)
+		assert.Nil(t, data)
+		assert.Equal(t, "invalid tail", err.Error())
+	})
+
+	// Test case: Length mismatch
+	lengthMismatchPacket := append([]byte{
+		0xAF, 0x00, // Header
+		0x00, 0x05, // Length (5 bytes, but only 3 bytes provided)
+	}, validPayload...)
+	lengthMismatchPacket = append(lengthMismatchPacket, byte(validChecksum>>8), byte(validChecksum&0xFF)) // CRC16 checksum
+	lengthMismatchPacket = append(lengthMismatchPacket, 0xFA, 0x00)                                       // Tail
+
+	t.Run("Length Mismatch", func(t *testing.T) {
+		data, err := parser.ParseBytes(lengthMismatchPacket)
+		assert.Error(t, err)
+		assert.Nil(t, data)
+		assert.Equal(t, "data length out of range", err.Error())
+	})
+
+	// Test case: Empty data
 	t.Run("Empty Data", func(t *testing.T) {
 		data, err := parser.ParseBytes([]byte{})
 		assert.Error(t, err)
@@ -121,18 +80,19 @@ func TestGenericByteParser(t *testing.T) {
 		assert.Equal(t, "no valid header found", err.Error())
 	})
 
-	// 测试数据：包头和包尾不匹配
+	// Test case: Header and tail mismatch
+	mismatchedPacket := []byte{
+		0xAF, 0x00, // Header
+		0x00, 0x03, // Length
+		0x01, 0x02, 0x03, // Payload
+		0x00, 0x00, // Invalid checksum
+		0xFB, 0x00, // Invalid tail
+	}
+
 	t.Run("Header Tail Mismatch", func(t *testing.T) {
-		mismatchedPacket := []byte{
-			0xAF, 0x00, // Header
-			0x03, // Length
-			0x01, 0x02, 0x03,
-			0x00,       // Checksum
-			0xFB, 0x00, // 错误的包尾
-		}
 		data, err := parser.ParseBytes(mismatchedPacket)
 		assert.Error(t, err)
 		assert.Nil(t, data)
-		assert.Equal(t, "no valid tail found", err.Error())
+		assert.Equal(t, "invalid tail", err.Error())
 	})
 }

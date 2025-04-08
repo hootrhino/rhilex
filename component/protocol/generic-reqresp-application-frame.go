@@ -35,6 +35,13 @@ func NewApplicationFrame(payload []byte) *ApplicationFrame {
 		Crc16:   CRC16(payload),
 	}
 }
+func BuildApplicationFrame(payload []byte) ApplicationFrame {
+	return ApplicationFrame{
+		Length:  uint16(len(payload)),
+		Payload: payload,
+		Crc16:   CRC16(payload),
+	}
+}
 func CRC16(data []byte) uint16 {
 	crc := uint16(0xFFFF)
 	for _, b := range data {

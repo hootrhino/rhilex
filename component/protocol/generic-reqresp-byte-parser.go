@@ -12,79 +12,180 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 package protocol
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 )
 
-// 定义通用解析器
+// GenericByteParser implements a state-machine-based parser
 type GenericByteParser struct {
-	edger   PacketEdger
-	checker DataChecker
+	edger         PacketEdger
+	buffer        bytes.Buffer
+	state         parserState
+	payloadLength int
+	minPayloadLen int
+	maxPayloadLen int
 }
 
-// 创建一个新的解析器
-func NewGenericByteParser(checker DataChecker, edger PacketEdger) *GenericByteParser {
+// parserState defines the states of the state machine
+type parserState int
+
+const (
+	stateIdle parserState = iota
+	stateHeader
+	stateLength
+	statePayload
+	stateChecksum
+	stateTail
+)
+
+// NewGenericByteParser creates a new parser instance
+func NewGenericByteParser(edger PacketEdger, minPayloadLen, maxPayloadLen int) *GenericByteParser {
 	return &GenericByteParser{
-		edger:   edger,
-		checker: checker,
+		edger:         edger,
+		state:         stateIdle,
+		minPayloadLen: minPayloadLen,
+		maxPayloadLen: maxPayloadLen,
 	}
 }
-func (parser *GenericByteParser) PackBytes(frame *ApplicationFrame) ([]byte, error) {
-	b, err := frame.Encode()
+
+// PackBytes creates a packet with the given frame
+func (parser *GenericByteParser) PackBytes(frame ApplicationFrame) ([]byte, error) {
+	data, err := frame.Encode()
 	if err != nil {
+		return nil, fmt.Errorf("failed to encode frame: %w", err)
+	}
+
+	bodyLength := len(data)
+	if bodyLength < parser.minPayloadLen || bodyLength > parser.maxPayloadLen {
+		return nil, errors.New("payload length out of range")
+	}
+
+	packet := bytes.Buffer{}
+	packet.Write(parser.edger.Head[:]) // Write header
+
+	// Write length
+	packet.WriteByte(byte(bodyLength >> 8))
+	packet.WriteByte(byte(bodyLength & 0xFF))
+
+	// Write payload
+	packet.Write(data)
+
+	// Write checksum
+	checksum := calculateCRC16(data)
+	packet.WriteByte(byte(checksum >> 8))
+	packet.WriteByte(byte(checksum & 0xFF))
+
+	// Write tail
+	packet.Write(parser.edger.Tail[:])
+
+	return packet.Bytes(), nil
+}
+
+// ParseBytes parses the input bytes and returns the payload if valid
+func (parser *GenericByteParser) ParseBytes(b []byte) ([]byte, error) {
+	parser.buffer.Write(b)
+
+	for {
+		switch parser.state {
+		case stateIdle:
+			if parser.buffer.Len() < len(parser.edger.Head) {
+				return nil, nil // Wait for more data
+			}
+			header := parser.buffer.Next(len(parser.edger.Head))
+			if !bytes.Equal(header, parser.edger.Head[:]) {
+				return nil, errors.New("invalid header")
+			}
+			parser.state = stateLength
+
+		case stateLength:
+			if parser.buffer.Len() < 2 {
+				return nil, nil // Wait for more data
+			}
+			lengthBytes := parser.buffer.Next(2)
+			length := int(lengthBytes[0])<<8 | int(lengthBytes[1])
+			if length < parser.minPayloadLen || length > parser.maxPayloadLen {
+				parser.state = stateIdle
+				return nil, errors.New("data length out of range")
+			}
+			parser.payloadLength = length
+			parser.state = statePayload
+
+		case statePayload:
+			if parser.buffer.Len() < parser.payloadLength {
+				return nil, nil // Wait for more data
+			}
+			payload := parser.buffer.Next(parser.payloadLength)
+			parser.state = stateChecksum
+			return payload, nil
+
+		case stateChecksum:
+			if parser.buffer.Len() < 2 {
+				return nil, nil // Wait for more data
+			}
+			checksumBytes := parser.buffer.Next(2)
+			calculatedChecksum := calculateCRC16(parser.buffer.Bytes()[:parser.payloadLength])
+			receivedChecksum := int(checksumBytes[0])<<8 | int(checksumBytes[1])
+			if calculatedChecksum != receivedChecksum {
+				parser.state = stateIdle
+				return nil, errors.New("checksum validation failed")
+			}
+			parser.state = stateTail
+
+		case stateTail:
+			if parser.buffer.Len() < len(parser.edger.Tail) {
+				return nil, nil // Wait for more data
+			}
+			tail := parser.buffer.Next(len(parser.edger.Tail))
+			if !bytes.Equal(tail, parser.edger.Tail[:]) {
+				parser.state = stateIdle
+				return nil, errors.New("invalid tail")
+			}
+			parser.state = stateIdle
+			return parser.buffer.Bytes()[:parser.payloadLength], nil
+		}
+	}
+}
+
+// calculateCRC16 calculates the CRC16 checksum for the given data
+func calculateCRC16(data []byte) int {
+	var crc uint16 = 0xFFFF
+	for _, b := range data {
+		crc ^= uint16(b)
+		for i := 0; i < 8; i++ {
+			if crc&0x0001 != 0 {
+				crc = (crc >> 1) ^ 0xA001
+			} else {
+				crc >>= 1
+			}
+		}
+	}
+	return int(crc)
+}
+
+// ReadAndParse reads data from an io.Reader and parses it
+func (parser *GenericByteParser) ReadAndParse(r io.Reader) ([]byte, error) {
+	buffer := make([]byte, 1024)
+	n, err := r.Read(buffer)
+	if err != nil && err != io.EOF {
 		return nil, err
 	}
-	bodyLength := len(b)
-	packetLength := 2 + bodyLength + 2
-	packet := make([]byte, packetLength)
-	copy(packet[:2], parser.edger.Head[:])
-	copy(packet[2:], b)
-	copy(packet[packetLength-2:], parser.edger.Tail[:])
-	return packet, nil
+	if n == 0 {
+		return nil, nil
+	}
+	return parser.ParseBytes(buffer[:n])
 }
 
-// 解析字节流，提取有效数据包
-func (parser *GenericByteParser) ParseBytes(b []byte) ([]byte, error) {
-	// 查找包头
-	startIdx := -1
-	for i := 0; i < len(b)-1; i++ {
-		if b[i] == parser.edger.Head[0] && b[i+1] == parser.edger.Head[1] {
-			startIdx = i
-			break
-		}
+// WritePacket writes a packet to an io.Writer
+func (parser *GenericByteParser) WritePacket(frame ApplicationFrame, w io.Writer) error {
+	packet, err := parser.PackBytes(frame)
+	if err != nil {
+		return err
 	}
-
-	// 如果没有找到包头
-	if startIdx == -1 {
-		return nil, errors.New("no valid header found")
-	}
-
-	// 查找包尾
-	endIdx := -1
-	for i := startIdx + 2; i < len(b)-1; i++ {
-		if b[i] == parser.edger.Tail[0] && b[i+1] == parser.edger.Tail[1] {
-			endIdx = i + 2 // 包尾的位置（包含包尾的字节）
-			break
-		}
-	}
-
-	// 如果没有找到包尾
-	if endIdx == -1 {
-		return nil, errors.New("no valid tail found")
-	}
-
-	// 提取包体数据（包含包头和包尾之间的部分）
-	packetData := b[startIdx+2 : endIdx-2]
-
-	// 使用用户自定义的校验器验证数据
-	if err := parser.checker.CheckData(packetData); err != nil {
-		return nil, fmt.Errorf("data validation failed: %v", err)
-	}
-
-	// 返回有效数据
-	return packetData, nil
+	_, err = w.Write(packet)
+	return err
 }
