@@ -80,11 +80,11 @@ func (s *ResourceServiceResponse) String() string {
 
 // 资源服务
 type ResourceService struct {
-	Name        string                  // 服务名称
-	Description string                  // 服务描述
-	Method      string                  // 服务方法
-	Args        []any                   // 服务参数
-	Response    ResourceServiceResponse // 服务返回
+	Name        string
+	Description string
+	Method      string
+	Args        []any
+	Response    ResourceServiceResponse
 }
 
 func (s *ResourceService) String() string {
@@ -100,6 +100,26 @@ type GenericResource interface {
 	Services() []ResourceService
 	Topology() *LocalTopology
 	OnService(request ResourceServiceRequest) (ResourceServiceResponse, error)
-	Details() *GenericResourceWorker
+	Worker() *GenericResourceWorker
 	Stop()
+}
+
+// GenericResourceWorker
+type GenericResourceWorker struct {
+	Worker      GenericResource // 实际的实现接口
+	UUID        string          // 资源唯一标识
+	Name        string          // 资源名称
+	Type        string          // 资源类型
+	Config      map[string]any  // 资源配置
+	Description string          // 资源描述
+}
+
+// to string
+func (g *GenericResourceWorker) String() string {
+	return fmt.Sprintf("UUID: %s, Name: %s, Type: %s, Description: %s", g.UUID, g.Name, g.Type, g.Description)
+}
+
+// GetConfig 获取配置
+func (g *GenericResourceWorker) GetConfig() map[string]any {
+	return g.Config
 }

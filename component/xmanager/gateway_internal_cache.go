@@ -1,3 +1,17 @@
+// Copyright (C) 2025 wwhai
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package xmanager
 
 import (
@@ -16,14 +30,14 @@ type CacheEntry struct {
 // GatewayInternalCache represents a thread-safe internal cache
 type GatewayInternalCache struct {
 	mu       sync.RWMutex
-	cache    map[string]CacheEntry
-	stopChan chan struct{} // Channel to signal the cleanup goroutine to stop
+	cache    map[string]map[string]CacheEntry // Nested map for hierarchical keys
+	stopChan chan struct{}                    // Channel to signal the cleanup goroutine to stop
 }
 
 // NewGatewayInternalCache creates a new instance of GatewayInternalCache
 func NewGatewayInternalCache(cleanupInterval time.Duration) *GatewayInternalCache {
 	cache := &GatewayInternalCache{
-		cache:    make(map[string]CacheEntry),
+		cache:    make(map[string]map[string]CacheEntry),
 		stopChan: make(chan struct{}),
 	}
 
@@ -35,76 +49,147 @@ func NewGatewayInternalCache(cleanupInterval time.Duration) *GatewayInternalCach
 
 // Set adds a key-value pair to the cache with an optional expiration time (in seconds)
 // Use NoTTL (0) for entries that should never expire
-func (c *GatewayInternalCache) Set(key string, value any, ttl int64) {
+func (c *GatewayInternalCache) Set(namespace, key string, value any, ttl int64) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
+	if _, exists := c.cache[namespace]; !exists {
+		c.cache[namespace] = make(map[string]CacheEntry)
+	}
 
 	var expiration int64
 	if ttl > 0 {
 		expiration = time.Now().Unix() + ttl
 	}
 
-	c.cache[key] = CacheEntry{
+	c.cache[namespace][key] = CacheEntry{
 		Value:      value,
 		Expiration: expiration,
 	}
 }
 
-// Get retrieves a value from the cache by key
-func (c *GatewayInternalCache) Get(key string) (any, bool) {
+func (c *GatewayInternalCache) Get(namespace, key string) (any, bool) {
 	c.mu.RLock()
-	defer c.mu.RUnlock()
-
-	entry, exists := c.cache[key]
+	ns, exists := c.cache[namespace]
 	if !exists {
+		c.mu.RUnlock()
+		return nil, false
+	}
+
+	entry, exists := ns[key]
+	if !exists {
+		c.mu.RUnlock()
 		return nil, false
 	}
 
 	// Check if the entry has expired
 	if entry.Expiration > 0 && time.Now().Unix() > entry.Expiration {
-		// Remove expired entry
-		c.mu.RUnlock()
-		c.mu.Lock()
+		c.mu.RUnlock() // 释放读锁
+		c.mu.Lock()    // 获取写锁
 		defer c.mu.Unlock()
-		delete(c.cache, key)
+
+		// Double-check to ensure the entry still exists and is expired
+		if ns, exists := c.cache[namespace]; exists {
+			if entry, exists := ns[key]; exists && entry.Expiration > 0 && time.Now().Unix() > entry.Expiration {
+				delete(ns, key)
+				if len(ns) == 0 {
+					delete(c.cache, namespace)
+				}
+			}
+		}
 		return nil, false
 	}
 
+	c.mu.RUnlock()
 	return entry.Value, true
 }
 
 // Delete removes a key-value pair from the cache
-func (c *GatewayInternalCache) Delete(key string) {
+func (c *GatewayInternalCache) Delete(namespace, key string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	delete(c.cache, key)
+
+	if ns, exists := c.cache[namespace]; exists {
+		delete(ns, key)
+		if len(ns) == 0 {
+			delete(c.cache, namespace)
+		}
+	}
+}
+
+// ClearNamespace removes all entries from a specific namespace
+func (c *GatewayInternalCache) ClearNamespace(namespace string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	delete(c.cache, namespace)
 }
 
 // Clear removes all entries from the cache
 func (c *GatewayInternalCache) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cache = make(map[string]CacheEntry)
+	c.cache = make(map[string]map[string]CacheEntry)
 }
 
-// Keys returns a list of all keys currently in the cache
-func (c *GatewayInternalCache) Keys() []string {
+// Keys returns a list of all keys in a specific namespace
+func (c *GatewayInternalCache) Keys(namespace string) []string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	keys := make([]string, 0, len(c.cache))
-	for key := range c.cache {
+	ns, exists := c.cache[namespace]
+	if !exists {
+		return nil
+	}
+
+	keys := make([]string, 0, len(ns))
+	for key := range ns {
 		keys = append(keys, key)
 	}
 	return keys
 }
 
-// Size returns the number of items currently in the cache
-func (c *GatewayInternalCache) Size() int {
+// Namespaces returns a list of all namespaces currently in the cache
+func (c *GatewayInternalCache) Namespaces() []string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	return len(c.cache)
+	namespaces := make([]string, 0, len(c.cache))
+	for namespace := range c.cache {
+		namespaces = append(namespaces, namespace)
+	}
+	return namespaces
+}
+
+// Size returns the number of items in a specific namespace
+func (c *GatewayInternalCache) Size(namespace string) int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	ns, exists := c.cache[namespace]
+	if !exists {
+		return 0
+	}
+
+	return len(ns)
+}
+
+// TotalSize returns the total number of items in the cache across all namespaces
+func (c *GatewayInternalCache) TotalSize() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	total := 0
+	now := time.Now().Unix()
+	for _, ns := range c.cache {
+		for key, entry := range ns {
+			if entry.Expiration == 0 || entry.Expiration > now {
+				total++
+			} else {
+				delete(ns, key)
+			}
+		}
+	}
+	return total
 }
 
 // StopCleanup stops the background cleanup goroutine
@@ -133,9 +218,14 @@ func (c *GatewayInternalCache) cleanupExpiredEntries() {
 	defer c.mu.Unlock()
 
 	now := time.Now().Unix()
-	for key, entry := range c.cache {
-		if entry.Expiration > 0 && now > entry.Expiration {
-			delete(c.cache, key)
+	for namespace, ns := range c.cache {
+		for key, entry := range ns {
+			if entry.Expiration > 0 && now > entry.Expiration {
+				delete(ns, key)
+			}
+		}
+		if len(ns) == 0 {
+			delete(c.cache, namespace)
 		}
 	}
 }

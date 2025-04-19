@@ -75,7 +75,7 @@ func (m *GenericResourceManager) ReloadResource(uuid string) error {
 		return nil
 	}
 
-	if err := resource.Init(uuid, resource.Details().GetConfig()); err != nil {
+	if err := resource.Init(uuid, resource.Worker().GetConfig()); err != nil {
 		m.logger.Errorf("Failed to reinitialize resource %s: %v", uuid, err)
 		return err
 	}

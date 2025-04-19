@@ -1,3 +1,18 @@
+// Copyright (C) 2025 wwhai
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 package xmanager
 
 import (
@@ -21,17 +36,17 @@ type Callback struct {
 	Handler func(Message)
 }
 
-// MessageQueue represents a topic-based message queue
-type MessageQueue struct {
+// GenericMessageQueue represents a topic-based message queue
+type GenericMessageQueue struct {
 	mu       sync.RWMutex
 	topics   map[string][]Callback // Map of topics to their subscribers
 	queue    chan Message          // Internal message queue
 	stopChan chan struct{}         // Channel to signal queue destruction
 }
 
-// NewMessageQueue creates a new MessageQueue with a specified buffer size
-func NewMessageQueue(size int) *MessageQueue {
-	mq := &MessageQueue{
+// NewGenericMessageQueue creates a new GenericMessageQueue with a specified buffer size
+func NewGenericMessageQueue(size int) *GenericMessageQueue {
+	mq := &GenericMessageQueue{
 		topics:   make(map[string][]Callback),
 		queue:    make(chan Message, size),
 		stopChan: make(chan struct{}),
@@ -44,7 +59,7 @@ func NewMessageQueue(size int) *MessageQueue {
 }
 
 // Publish publishes a message to a specific topic
-func (mq *MessageQueue) Publish(topic string, message Message) {
+func (mq *GenericMessageQueue) Publish(topic string, message Message) {
 	mq.mu.RLock()
 	defer mq.mu.RUnlock()
 
@@ -65,7 +80,7 @@ func (mq *MessageQueue) Publish(topic string, message Message) {
 }
 
 // Subscribe subscribes a callback to a specific topic
-func (mq *MessageQueue) Subscribe(topic string, callback Callback) {
+func (mq *GenericMessageQueue) Subscribe(topic string, callback Callback) {
 	mq.mu.Lock()
 	defer mq.mu.Unlock()
 
@@ -74,7 +89,7 @@ func (mq *MessageQueue) Subscribe(topic string, callback Callback) {
 }
 
 // UnSubscribe removes all subscribers from a specific topic
-func (mq *MessageQueue) UnSubscribe(topic string) {
+func (mq *GenericMessageQueue) UnSubscribe(topic string) {
 	mq.mu.Lock()
 	defer mq.mu.Unlock()
 
@@ -83,13 +98,13 @@ func (mq *MessageQueue) UnSubscribe(topic string) {
 }
 
 // Destroy stops the message queue and cleans up resources
-func (mq *MessageQueue) Destroy() {
+func (mq *GenericMessageQueue) Destroy() {
 	close(mq.stopChan) // Signal the dispatcher to stop
 	close(mq.queue)    // Close the internal queue
 }
 
 // dispatchMessages dispatches messages to the appropriate topic subscribers
-func (mq *MessageQueue) dispatchMessages() {
+func (mq *GenericMessageQueue) dispatchMessages() {
 	for {
 		select {
 		case message, ok := <-mq.queue:
