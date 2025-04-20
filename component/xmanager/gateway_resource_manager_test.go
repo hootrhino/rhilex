@@ -33,8 +33,7 @@ type MockGenericResource struct {
 	state    GenericResourceState
 	config   map[string]any
 	uuid     string
-	initErr  error
-	startErr error
+
 }
 
 func (r *MockGenericResource) Init(uuid string, configMap map[string]any) error {
@@ -42,9 +41,6 @@ func (r *MockGenericResource) Init(uuid string, configMap map[string]any) error 
 	defer r.mu.Unlock()
 	r.uuid = uuid
 	r.config = configMap
-	if r.initErr != nil {
-		return r.initErr
-	}
 	r.state = RESOURCE_PENDING
 	return nil
 }
@@ -52,9 +48,6 @@ func (r *MockGenericResource) Init(uuid string, configMap map[string]any) error 
 func (r *MockGenericResource) Start(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	if r.startErr != nil {
-		return r.startErr
-	}
 	r.state = RESOURCE_UP
 	return nil
 }

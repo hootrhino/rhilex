@@ -24,13 +24,15 @@ import (
 
 // Gateway
 type Gateway struct {
-	northerns *GenericResourceManager
-	southerns *GenericResourceManager
-	plugins   *GenericResourceManager
-	natives   *GenericResourceManager
-	queue     *GenericMessageQueue
-	cache     *GatewayInternalCache
-	logger    *logrus.Logger
+	northerns   *GenericResourceManager
+	southerns   *GenericResourceManager
+	plugins     *GenericResourceManager
+	natives     *GenericResourceManager
+	queue       *GenericMessageQueue
+	broker      *Broker
+	cronManager *CronManager
+	cache       *GatewayInternalCache
+	logger      *logrus.Logger
 }
 
 // NewGateway
@@ -44,6 +46,8 @@ func NewGateway(logger *logrus.Logger) *Gateway {
 	gateway.natives = NewGenericResourceManager(gateway)
 	gateway.cache = NewGatewayInternalCache(5 * time.Second)
 	gateway.queue = NewGenericMessageQueue(1024)
+	gateway.cronManager = NewCronManager("./")
+	gateway.broker = NewBroker(1024)
 	return gateway
 }
 
@@ -66,6 +70,8 @@ func (g *Gateway) StopAllManagers() {
 	g.natives.StopMonitoring()
 	g.queue.Destroy()
 	g.cache.StopCleanup()
+	g.broker.Close()
+	g.cronManager.Stop()
 	g.logger.Info("All resource managers stopped.")
 }
 
