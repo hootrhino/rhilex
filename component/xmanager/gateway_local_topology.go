@@ -18,46 +18,45 @@ package xmanager
 import "encoding/json"
 
 // LocalTopology represents the local topology of devices in the system
-type DataPoint struct {
-	ID          string         `json:"id"`          // Unique identifier for the data point
-	Name        string         `json:"name"`        // Name of the data point: "temperature", "humidity", etc.
-	Type        string         `json:"type"`        // Modbus Type: "holding", "input", "coil", "discrete"
-	Address     int            `json:"address"`     // Modbus Address: 0x0000, 0x0001, etc.
-	Quantity    int            `json:"quantity"`    // Number of registers or coils to read
-	Endian      string         `json:"endian"`      // Endianess: ABCD or DCBA (Modbus)
-	Description string         `json:"description"` // Description of the data point
-	Unit        string         `json:"unit"`        // Unit of measurement: "Celsius", "Fahrenheit", etc.
-	Properties  map[string]any `json:"properties"`  // Additional properties for the data point: "min", "max", "scale"
-	Values      []any          `json:"values"`      // Values read from the data points
+type MetricPoint struct {
+	UUID         string  `json:"uuid"`         // Unique identifier for the metric point
+	Tag          string  `json:"tag"`          // A unique identifier or label for the register
+	Alias        string  `json:"alias"`        // A human-readable name or alias for the register
+	SlaverId     uint8   `json:"slaverId"`     // ID of the Modbus slave device
+	Function     uint8   `json:"function"`     // Modbus function code (e.g., 3 for Read Holding Registers)
+	ReadAddress  uint16  `json:"readAddress"`  // Address of the register in the Modbus device
+	ReadQuantity uint16  `json:"readQuantity"` // Number of registers to read/write
+	DataType     string  `json:"dataType"`     // Data type of the register value (e.g., uint16, int32, float32)
+	DataOrder    string  `json:"dataOrder"`    // Byte order for multi-byte values (e.g., ABCD, DCBA)
+	BitPosition  uint16  `json:"bitPosition"`  // bit position for bit-level operations (e.g., 0, 1, 2)
+	BitMask      uint16  `json:"bitMask"`      // Bitmask for bit-level operations (e.g., 0x01, 0x02)
+	Weight       float64 `json:"weight"`       // Scaling factor for the register value
+	Frequency    uint64  `json:"frequency"`    // Polling frequency in milliseconds
+	Unit         string  `json:"unit"`         // Unit of measurement: "Celsius", "Fahrenheit", etc.
+	Status       string  `json:"status"`       // Status of the register: "active", "inactive", etc.
+	Values       []any   `json:"values"`       // Values read from the data points
 }
 
 // Device represents a device in the local topology
 type Device struct {
-	ID              string         `json:"id"`
-	Type            string         `json:"type"`      // Type of the device: "sensor", "actuator", "gateway", etc.
-	Protocol        string         `json:"protocol"`  // Communication protocol: "Modbus", "MQTT", etc.
-	IP              string         `json:"ip"`        // IP address of the device
-	Port            int            `json:"port"`      // Port number of the device
-	SlaverId        int            `json:"slaver_id"` // Slaver ID for Modbus devices
-	Name            string         `json:"name"`
-	Status          string         `json:"status"`
-	Location        string         `json:"location"`
-	Model           string         `json:"model"`
-	Manufacturer    string         `json:"manufacturer"`
-	SerialNumber    string         `json:"serial_number"`
-	FirmwareVersion string         `json:"firmware_version"`
-	SoftwareVersion string         `json:"software_version"`
-	Properties      map[string]any `json:"properties"`
-	DataPoints      []DataPoint    `json:"data_points"`
-	LastSeen        string         `json:"last_seen"`
-	LastUpdated     string         `json:"last_updated"`
+	UUID          string         `json:"uuid"`           // Unique identifier for the device
+	Type          string         `json:"type"`           // Type of the device: "sensor", "actuator", "gateway", etc.
+	Name          string         `json:"name"`           // Name of the device
+	Protocol      string         `json:"protocol"`       // Communication protocol: "Modbus", "MQTT", etc.
+	SlaverAddress string         `json:"slaver_address"` // Slaver address of the device
+	Status        string         `json:"status"`         // Status of the device: "online", "offline", etc.
+	SerialNumber  string         `json:"serial_number"`  // Serial number of the device
+	Properties    map[string]any `json:"properties"`     // Additional properties of the device
+	MetricPoints  []MetricPoint  `json:"data_points"`    // Data points for the device
+	LastSeen      string         `json:"last_seen"`      // Last seen timestamp of the device
+	LastUpdated   string         `json:"last_updated"`   // Last updated timestamp of the device
 }
 
 // LocalTopology represents the local topology of devices in the system
 type LocalTopology struct {
-	ID      string   `json:"id"`
-	Name    string   `json:"name"`
-	Devices []Device `json:"devices"`
+	ID      string   `json:"id"`      // Unique identifier for the topology
+	Name    string   `json:"name"`    // Name of the topology
+	Devices []Device `json:"devices"` // List of devices in the topology
 }
 
 func (lt LocalTopology) String() string {
@@ -80,9 +79,9 @@ func (lt *LocalTopology) AddDevice(device Device) {
 }
 
 // RemoveDevice removes a device from the local topology by ID
-func (lt *LocalTopology) RemoveDevice(deviceID string) {
+func (lt *LocalTopology) RemoveDevice(uuid string) {
 	for i, device := range lt.Devices {
-		if device.ID == deviceID {
+		if device.UUID == uuid {
 			lt.Devices = append(lt.Devices[:i], lt.Devices[i+1:]...)
 			break
 		}
@@ -90,9 +89,9 @@ func (lt *LocalTopology) RemoveDevice(deviceID string) {
 }
 
 // GetDevice retrieves a device from the local topology by ID
-func (lt *LocalTopology) GetDevice(deviceID string) *Device {
+func (lt *LocalTopology) GetDevice(uuid string) *Device {
 	for _, device := range lt.Devices {
-		if device.ID == deviceID {
+		if device.UUID == uuid {
 			return &device
 		}
 	}
@@ -100,9 +99,9 @@ func (lt *LocalTopology) GetDevice(deviceID string) *Device {
 }
 
 // UpdateDevice updates the properties of a device in the local topology
-func (lt *LocalTopology) UpdateDevice(deviceID string, updatedDevice Device) {
+func (lt *LocalTopology) UpdateDevice(uuid string, updatedDevice Device) {
 	for i, device := range lt.Devices {
-		if device.ID == deviceID {
+		if device.UUID == uuid {
 			lt.Devices[i] = updatedDevice
 			break
 		}
