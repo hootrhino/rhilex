@@ -419,3 +419,48 @@ func (g *Gateway) GatewaySnapshot() map[string]any {
 	g.logger.Info("Successfully took a snapshot of all resources.")
 	return snapshot
 }
+
+// GetLogger retrieves the logger for the gateway
+func (g *Gateway) GetLogger() *logrus.Logger {
+	return g.logger
+}
+
+// SetLogger sets the logger for the gateway
+func (g *Gateway) SetLogger(logger *logrus.Logger) {
+	g.logger = logger
+}
+
+// GetNorthernResourceManager retrieves the Northern resource manager
+func (g *Gateway) GetNorthernResourceManager() *GenericResourceManager {
+	return g.northerns
+}
+
+// GetSouthernResourceManager retrieves the Southern resource manager
+func (g *Gateway) GetSouthernResourceManager() *GenericResourceManager {
+	return g.southerns
+}
+
+// GetPluginResourceManager retrieves the Plugin resource manager
+func (g *Gateway) GetPluginResourceManager() *GenericResourceManager {
+	return g.plugins
+}
+
+// GetNativeResourceManager retrieves the Native resource manager
+func (g *Gateway) GetNativeResourceManager() *GenericResourceManager {
+	return g.natives
+}
+
+// GetQueue retrieves the message queue for the gateway
+func (g *Gateway) GetQueue() *GenericMessageQueue {
+	return g.queue
+}
+
+// GetCache retrieves the internal cache for the gateway
+func (g *Gateway) GetCache() *GatewayInternalCache {
+	return g.cache
+}
+
+// GetGateway retrieves the gateway instance
+func (g *Gateway) GetGateway() *Gateway {
+	return g
+}
