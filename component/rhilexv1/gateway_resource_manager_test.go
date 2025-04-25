@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package xmanager
+package rhilex
 
 import (
 	"context"
@@ -29,11 +29,10 @@ import (
 
 // Mock implementation of GenericResource
 type MockGenericResource struct {
-	mu       sync.RWMutex
-	state    GenericResourceState
-	config   map[string]any
-	uuid     string
-
+	mu     sync.RWMutex
+	state  GenericResourceState
+	config map[string]any
+	uuid   string
 }
 
 func (r *MockGenericResource) Init(uuid string, configMap map[string]any) error {

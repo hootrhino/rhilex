@@ -1,4 +1,4 @@
-package xmanager
+package rhilex
 
 import (
 	"context"

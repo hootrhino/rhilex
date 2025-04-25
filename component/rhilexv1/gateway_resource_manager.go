@@ -14,7 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // gateway_resource_worker.go
-package xmanager
+package rhilex
 
 import (
 	"context"

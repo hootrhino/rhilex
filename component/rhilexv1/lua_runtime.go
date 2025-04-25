@@ -1,9 +1,10 @@
-package xmanager
+package rhilex
 
 import (
 	"fmt"
-	lua "github.com/hootrhino/gopher-lua"
 	"sync"
+
+	lua "github.com/hootrhino/gopher-lua"
 )
 
 // ScriptState represents the execution state of a script
