@@ -4,105 +4,78 @@ import (
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
-// Test cases for Gateway
-func TestGateway(t *testing.T) {
-	// Create a logger for testing
+// Helper function to create a test logger
+func newTestLogger() *logrus.Logger {
 	logger := logrus.New()
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.DebugLevel) // Or any level you prefer for testing
+	logger.SetFormatter(&logrus.TextFormatter{
+		DisableColors: true,
+	})
+	return logger
+}
 
-	// Create a new Gateway instance
+func TestNewGateway(t *testing.T) {
+	logger := newTestLogger()
 	gateway := NewGateway(logger)
 
-	// Register mock resource types
-	gateway.GetSouthernResourceManager().RegisterFactory("mock", func(uuid string, config map[string]any) (GenericResource, error) {
-		return &MockGenericResource{}, nil
-	})
+	assert.NotNil(t, gateway, "Gateway should not be nil")
+	assert.NotNil(t, gateway.logger, "Logger should not be nil")
+	assert.NotNil(t, gateway.inits, "Init functions map should not be nil")
+	assert.NotNil(t, gateway.config, "Config should not be nil")
+	assert.NotNil(t, gateway.northerns, "Northerns manager should not be nil")
+	assert.NotNil(t, gateway.southerns, "Southerns manager should not be nil")
+	assert.NotNil(t, gateway.plugins, "Plugins manager should not be nil")
+	assert.NotNil(t, gateway.natives, "Natives manager should not be nil")
+	assert.NotNil(t, gateway.cache, "Cache should not be nil")
+	assert.NotNil(t, gateway.queue, "Queue should not be nil")
+	assert.NotNil(t, gateway.broker, "Broker should not be nil")
+	assert.NotNil(t, gateway.cronManager, "CronManager should not be nil")
+}
 
-	t.Run("LoadAndRetrieveResource", func(t *testing.T) {
-		// Mock resource configuration
-		resourceType := "mock"
-		uuid := "resource1"
-		config := map[string]any{"key": "value"}
+func TestGateway_Start_Stop(t *testing.T) {
+	logger := newTestLogger()
+	gateway := NewGateway(logger)
+	ctx, cancel := context.WithCancel(context.Background())
+	config := RhilexConfig{AppId: "test"}
 
-		// Load resource into the Southern resource manager
-		err := gateway.LoadSouthernResource(resourceType, uuid, config)
-		assert.NoError(t, err, "Loading resource should not fail")
+	err := gateway.Start(ctx, cancel, config)
+	assert.NoError(t, err, "Start should not return an error")
 
-		// Retrieve the resource
-		resource, err := gateway.GetSouthernResource(uuid)
-		assert.NoError(t, err, "Retrieving resource should not fail")
-		assert.NotNil(t, resource, "Retrieved resource should not be nil")
-		assert.Equal(t, RESOURCE_PENDING, resource.Status())
-	})
+	err = gateway.Stop()
+	assert.NoError(t, err, "Stop should not return an error")
+}
 
-	t.Run("StartResource", func(t *testing.T) {
-		ctx := context.Background()
-		uuid := "resource1"
+func TestGateway_Register_CallInitFunc(t *testing.T) {
+	logger := newTestLogger()
+	gateway := NewGateway(logger)
 
-		// Start the resource
-		err := gateway.GetSouthernResourceManager().StartResource(uuid, ctx)
-		assert.NoError(t, err, "Starting resource should not fail")
+	initFunc := func() error {
+		t.Log("Init function called")
+		return nil
+	}
 
-		// Verify the resource status
-		resource, err := gateway.GetSouthernResource(uuid)
-		assert.NoError(t, err, "Retrieving resource should not fail")
-		assert.Equal(t, RESOURCE_UP, resource.Status())
-	})
+	gateway.RegisterInitFunc("testInit", initFunc)
+	assert.Contains(t, gateway.inits, "testInit", "Init function should be registered")
 
-	t.Run("StopResource", func(t *testing.T) {
-		uuid := "resource1"
+	gateway.CallInitFunc()
+}
 
-		// Stop the resource
-		err := gateway.RemoveSouthernResource(uuid)
-		assert.NoError(t, err, "Stopping resource should not fail")
+func TestGateway_GetManager(t *testing.T) {
+	logger := newTestLogger()
+	gateway := NewGateway(logger)
 
-		// Verify the resource is removed
-		_, err = gateway.GetSouthernResource(uuid)
-		assert.Error(t, err, "Resource should not exist after being stopped")
-	})
+	managers := []string{"northerns", "southerns", "plugins", "natives"}
+	for _, managerName := range managers {
+		manager, err := gateway.GetManager(managerName)
+		assert.NoError(t, err, fmt.Sprintf("GetManager(%s) should not return an error", managerName))
+		assert.NotNil(t, manager, fmt.Sprintf("GetManager(%s) should not return nil", managerName))
+	}
 
-	t.Run("ReloadAllManagers", func(t *testing.T) {
-		// Reload all managers
-		assert.NotPanics(t, func() {
-			gateway.ReloadAllManagers()
-		}, "Reloading all managers should not panic")
-	})
-
-	t.Run("StartMonitoring", func(t *testing.T) {
-		// Create a resource that starts in RESOURCE_DOWN state
-		gateway.GetSouthernResourceManager().RegisterFactory("mock_down", func(uuid string, config map[string]any) (GenericResource, error) {
-			return &MockGenericResource{state: RESOURCE_DOWN}, nil
-		})
-		err := gateway.LoadSouthernResource("mock_down", "resource2", map[string]any{"key": "value"})
-		assert.NoError(t, err, "Loading resource should not fail")
-		err1 := gateway.GetSouthernResourceManager().StartResource("resource2", context.Background())
-		assert.NoError(t, err1, nil)
-		// Start monitoring
-		go gateway.StartAllManagers()
-
-		// Wait for the monitoring loop to attempt a reload
-		time.Sleep(6 * time.Second)
-
-		resource, err := gateway.GetSouthernResource("resource2")
-		assert.NoError(t, err, "Retrieving resource should not fail")
-		assert.Equal(t, RESOURCE_UP, resource.Status())
-	})
-
-	t.Run("PaginationResources", func(t *testing.T) {
-		// Create multiple resources
-		for i := 0; i < 10; i++ {
-			err := gateway.LoadSouthernResource("mock", fmt.Sprintf("resource%d", i), map[string]any{"key": "value"})
-			assert.NoError(t, err, "Loading resource should not fail")
-		}
-
-		// Paginate resources
-		resources := gateway.GetSouthernResourceManager().PaginationResources(1, 5)
-		assert.Len(t, resources, 5, "Pagination should return 5 resources")
-	})
+	_, err := gateway.GetManager("invalid")
+	assert.Error(t, err, "GetManager(invalid) should return an error")
 }

@@ -16,6 +16,7 @@
 package rhilex
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -24,6 +25,10 @@ import (
 
 // Gateway
 type Gateway struct {
+	ctx         context.Context
+	cancel      context.CancelFunc
+	config      RhilexConfig
+	inits       map[string]func() error
 	northerns   *GenericResourceManager
 	southerns   *GenericResourceManager
 	plugins     *GenericResourceManager
@@ -39,7 +44,18 @@ type Gateway struct {
 func NewGateway(logger *logrus.Logger) *Gateway {
 	gateway := new(Gateway)
 	gateway.logger = logger
-	gateway.logger.SetFormatter(&logrus.TextFormatter{})
+	gateway.inits = make(map[string]func() error)
+	gateway.config = RhilexConfig{
+		AppId:         "rhilex",
+		MaxQueueSize:  1024,
+		GomaxProcs:    4,
+		EnablePProf:   false,
+		DebugMode:     false,
+		LogLevel:      "info",
+		LogMaxSize:    10,
+		LogMaxBackups: 5,
+		LogMaxAge:     30,
+	}
 	gateway.northerns = NewGenericResourceManager(gateway)
 	gateway.southerns = NewGenericResourceManager(gateway)
 	gateway.plugins = NewGenericResourceManager(gateway)
@@ -51,19 +67,21 @@ func NewGateway(logger *logrus.Logger) *Gateway {
 	return gateway
 }
 
-// StartAllManagers starts monitoring for all resource managers
-func (g *Gateway) StartAllManagers() {
-	g.logger.Info("Starting all resource managers...")
+// CallInitFuncByName calls a specific initialization function by name
+func (g *Gateway) Start(ctx context.Context, cancel context.CancelFunc, config RhilexConfig) error {
+	g.ctx = ctx
+	g.cancel = cancel
+	g.config = config
+	g.CallInitFunc()
 	g.northerns.StartMonitoring()
 	g.southerns.StartMonitoring()
 	g.plugins.StartMonitoring()
 	g.natives.StartMonitoring()
-	g.logger.Info("All resource managers started.")
+	return nil
 }
 
-// StopAllManagers stops monitoring for all resource managers
-func (g *Gateway) StopAllManagers() {
-	g.logger.Info("Stopping all resource managers...")
+// Stop stops the gateway and all resource managers
+func (g *Gateway) Stop() error {
 	g.northerns.StopMonitoring()
 	g.southerns.StopMonitoring()
 	g.plugins.StopMonitoring()
@@ -72,7 +90,34 @@ func (g *Gateway) StopAllManagers() {
 	g.cache.StopCleanup()
 	g.broker.Close()
 	g.cronManager.Stop()
-	g.logger.Info("All resource managers stopped.")
+	g.cancel()
+	return nil
+}
+
+// RegisterInitFunc registers an initialization function
+func (g *Gateway) RegisterInitFunc(name string, fn func() error) {
+	if _, exists := g.inits[name]; exists {
+		g.logger.Errorf("Init function %s already registered", name)
+		return
+	}
+	g.logger.Infof("Registering init function %s", name)
+	// Check if the function is nil
+	if fn == nil {
+		g.logger.Errorf("Init function %s is nil", name)
+		return
+	}
+	g.inits[name] = fn
+}
+
+// CallInitFunc calls all registered initialization functions
+func (g *Gateway) CallInitFunc() {
+	for name, fn := range g.inits {
+		if err := fn(); err != nil {
+			g.logger.Errorf("Failed to execute init function %s: %v", name, err)
+		} else {
+			g.logger.Infof("Successfully executed init function %s", name)
+		}
+	}
 }
 
 // GetManager retrieves a specific resource manager by name
@@ -469,4 +514,47 @@ func (g *Gateway) GetCache() *GatewayInternalCache {
 // GetGateway retrieves the gateway instance
 func (g *Gateway) GetGateway() *Gateway {
 	return g
+}
+
+// GetBroker retrieves the broker for the gateway
+func (g *Gateway) GetBroker() *Broker {
+	return g.broker
+}
+
+// GetCronManager retrieves the cron manager for the gateway
+func (g *Gateway) GetCronManager() *CronManager {
+	return g.cronManager
+}
+
+// GetInits retrieves the initialization functions for the gateway
+func (g *Gateway) GetInits() map[string]func() error {
+	return g.inits
+}
+
+// GetInitFunc retrieves a specific initialization function by name
+func (g *Gateway) GetInitFunc(name string) (func() error, error) {
+	if fn, exists := g.inits[name]; exists {
+		return fn, nil
+	}
+	return nil, fmt.Errorf("init function %s not found", name)
+}
+
+// SetInitFunc sets a specific initialization function by name
+func (g *Gateway) SetInitFunc(name string, fn func() error) {
+	if _, exists := g.inits[name]; exists {
+		g.logger.Errorf("Init function %s already registered", name)
+		return
+	}
+	g.logger.Infof("Setting init function %s", name)
+	// Check if the function is nil
+	if fn == nil {
+		g.logger.Errorf("Init function %s is nil", name)
+		return
+	}
+	g.inits[name] = fn
+}
+
+// GetAllInitFunc retrieves all initialization functions
+func (g *Gateway) GetAllInitFunc() map[string]func() error {
+	return g.inits
 }
