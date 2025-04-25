@@ -1,6 +1,7 @@
 package rhilex
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -9,6 +10,44 @@ type TestStruct struct {
 	Value int
 }
 
+// to str
+func (s TestStruct) String() string {
+	return fmt.Sprintf("TestStruct{Name: %s, Value: %d}", s.Name, s.Value)
+}
+func TestKVSet(t *testing.T) {
+	store, err := NewSqliteCacheStore("./sql-kv-test.db")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	for i := 0; i < 100; i++ {
+		key := fmt.Sprintf("k%d", i)
+		slot := fmt.Sprintf("slot%d", i)
+		obj := TestStruct{Name: "hello", Value: i}
+		data, _ := EncodeStruct(obj)
+
+		err = store.Set(slot, key, data)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		raw, err := store.Get(slot, key)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var decoded TestStruct
+		err = DecodeStruct(raw, &decoded)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if decoded != obj {
+			t.Fatalf("Expected %v, got %v", obj, decoded)
+		}
+		t.Log(decoded.String())
+	}
+}
 func TestKVSetGet(t *testing.T) {
 	store, err := NewSqliteCacheStore("./sql-kv-test.db")
 	if err != nil {
